@@ -1,32 +1,65 @@
-🔍 Apie testą
-Šis testas paremtas Liz Wiseman knyga Multipliers: How the Best Leaders Make Everyone Smarter. Jis padeda identifikuoti, ar jūsų vadovavimo stilius skatina kitų augimą (dauginantis poveikis), ar netyčia riboja jų potencialą (menkinantis poveikis).
-Testas skirtas savirefleksijai ir vadovavimo įgūdžių tobulinimui – tiek vadovams, tiek komandos nariams, siekiantiems geresnio bendradarbiavimo.
+# Multipliers Test
 
-🎯 Testo tikslas
+Šis testas paremtas Liz Wiseman knyga **„Multipliers: How the Best Leaders Make Everyone Smarter“** ir jos tyrimais apie vadovavimo efektyvumą.
 
-Įvertinti, kokie jūsų elgesio modeliai gali skatinti arba riboti kitų augimą.
-Padėti atpažinti „netyčinius menkintojus“ – elgesio formas, kurios atrodo pozityvios, bet gali slopinti komandos narių iniciatyvą, savarankiškumą ar kūrybiškumą.
-Skatinti sąmoningą lyderystę ir komandinį efektyvumą.
+## 🔍 Kaip veikia testas?
 
+Testą sudaro 24 teiginiai, kuriuos vertinate skalėje nuo 1 iki 5:
 
-🧠 Testo struktūra
+- **1** – Visiškai nesutinku
+- **2** – Iš dalies nesutinku
+- **3** – Nei sutinku, nei nesutinku
+- **4** – Iš dalies sutinku
+- **5** – Visiškai sutinku
 
-Klausimų skaičius: 10–15
-Klausimų tipai: Pasirinkimo (dažniausiai – kaip dažnai elgiatės tam tikru būdu)
-Trukmė: ~5 minutės
-Rezultatai: Parodoma, kokie „netyčiniai menkintojai“ jums būdingi (pvz., Gelbėtojas, Patarėjas, Mikrotvarkytojas, Entuziastas ir kt.)
+### 🔄 Invertavimo logika
 
+Kai kurie teiginiai yra „negatyvūs“ – aukštas balas reiškia menkinantį vadovavimą. Todėl jų atsakymai yra **invertuojami**:
 
-📊 Rezultatų interpretacija
-Po testo gausite:
+- 1 → 5
+- 2 → 4
+- 3 → 3
+- 4 → 2
+- 5 → 1
 
-Trumpą aprašymą apie kiekvieną jūsų dominuojantį „menkintojų“ tipą.
-Rekomendacijas, kaip transformuoti šiuos elgesio modelius į „dauginančius“.
-Galimybę reflektuoti ir kurti asmeninį tobulėjimo planą.
+Taip užtikrinamas psichometrinis balanso principas.
 
+## 📊 Rezultatai
 
-✅ Naudojimo rekomendacijos
+Po testo pateikiamas:
 
-Atlikite testą sąžiningai ir reflektuodami realias situacijas.
-Pasidalinkite rezultatais su komanda, jei siekiate gerinti bendradarbiavimą.
-Naudokite testą kaip įžangą į vadovavimo mokymus ar komandos formavimo sesijas.
+- **Bendras vidutinis balas**
+- **AI interpretacija** pagal bendrą rezultatą
+- **AI interpretacijos pagal klasterius**:
+  - Komunikacija
+  - Delegavimas
+  - Emocinis intelektas
+  - Kontrolė
+  - Autonomija
+  - Ugdymas
+  - Prieinamumas
+  - Sprendimų priėmimas
+
+Kiekvienam klasteriui pateikiamas vidurkis ir AI komentaras (pvz., „Stiprus modelis, rodo brandą“).
+
+## 📚 Šaltiniai
+
+Testas paremtas Liz Wiseman tyrimais ir knyga:
+
+- [Multipliers: How the Best Leaders Make Everyone Smarter – The Wiseman Group](https://thewisemangroup.com/books/multipliers/)
+- [Multipliers 360 Leadership Assessments](https://thewisemangroup.com/services/assessments/)
+- [Multipliers Book Summary – Leader Navigation](https://www.leadernavigation.com/multipliers-book-summary/)
+
+Liz Wiseman identifikavo 5 pagrindines dauginančio vadovo disciplinas:
+
+- **Talent Magnet**
+- **Liberator**
+- **Challenger**
+- **Debate Maker**
+- **Investor**
+
+Testas išplečia šiuos modelius į 20 vadovavimo stilių, kurie interpretuojami AI pagal atsakymų profilį.
+
+---
+
+Sukūrė: [Oleg Mozochin](https://olemoz1977.github.io/multipliers-test/)
