@@ -4,7 +4,7 @@
 
 ## 🔗 Atidaryti testą
 
-[Multipliers Test – GitHub Pages]👉 [Pradėti testą](https://olemoz1977.github.io/multipliers-test/test/)
+[Multipliers Test – GitHub Pages]👉 [Pradėti testą](https://olemoz1977.github.io/multipliers-test/Test/)
 
 ## 🧪 Kaip veikia testas?
 
