@@ -13,7 +13,7 @@ Sveiki atvykę 👋
 Pasiruošęs(-usi) testui?  
 Tiesiog spausk mygtuką žemiau 👇
 
-[🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/Test/)
+[🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/test/)
 
 ---
 
