@@ -96,5 +96,78 @@ const questions = [
 ];
 
 
-let answers = new Array(questions.length).fill(null);
-let finalScore=Math.max(1,Math.min(5,(avgMul-avgDim)+3
+let answers=new Array(questions.length).fill(null);
+const qNumber=document.getElementById('qNumber');
+const questionText=document.getElementById('questionText');
+const scaleArea=document.getElementById('scaleArea');
+const backBtn=document.getElementById('backBtn');
+const nextBtn=document.getElementById('nextBtn');
+const progressFill=document.getElementById('progressFill');
+const finalScoreText=document.getElementById('finalScoreText');
+const percentFill=document.getElementById('percentFill');
+const interpretationEl=document.getElementById('interpretation');
+const startBtn=document.getElementById('startBtn');
+
+
+function meanSafe(arr){return arr.reduce((a,b)=>a+b,0)/arr.length;}
+
+
+function renderQuestion(i){
+qNumber.textContent=`${i+1} / ${questions.length}`;
+questionText.textContent=questions[i];
+scaleArea.innerHTML='';
+for(let v=1;v<=5;v++){
+const btn=document.createElement('button');
+btn.type='button';btn.innerText=v;btn.dataset.value=v;
+if(answers[i]==v) btn.classList.add('active');
+btn.addEventListener('click',()=>{answers[i]=v;Array.from(scaleArea.children).forEach(c=>c.classList.remove('active'));btn.classList.add('active');nextBtn.disabled=false;});
+scaleArea.appendChild(btn);
+}
+backBtn.disabled=i===0;
+nextBtn.textContent=i===questions.length-1?'Baigti':'Kitas';
+nextBtn.disabled=answers[i]===null;
+questionCard.style.display='block';introCard.style.display='none';
+}
+
+
+startBtn.addEventListener('click',()=>{
+const name=document.getElementById('name').value.trim();
+const email=document.getElementById('email').value.trim();
+if(!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert('Įveskite vardą ir galiojantį el. paštą.');return;}
+idx=0;renderQuestion(idx);
+});
+
+
+backBtn.addEventListener('click',()=>{if(idx>0){idx--;renderQuestion(idx);}});
+nextBtn.addEventListener('click',()=>{if(answers[idx]===null){alert('Pasirinkite atsakymą.');return;}if(idx<questions.length-1){idx++;renderQuestion(idx);return;}computeAndShow();});
+
+
+function computeAndShow(){
+const avgDim=meanSafe(answers.slice(0,10));
+const avgMul=meanSafe(answers.slice(10));
+let finalScore=Math.max(1,Math.min(5,(avgMul-avgDim)+3));
+const percent=Math.round((finalScore-1)/4*100);
+let interp='';
+if(finalScore<3){interp='<strong>Profilis:</strong> Labiau menkintojas...';}
+else if(finalScore<4){interp='<strong>Profilis:</strong> Mišrus stilius...';}
+else{interp='<strong>Profilis:</strong> Dauginantis(-i) lyderis...';}
+finalScoreText.textContent=finalScore.toFixed(2);
+percentFill.style.width=percent+'%';
+interpretationEl.innerHTML=interp;
+questionCard.style.display='none';resultCard.style.display='block';
+sendResults();
+}
+
+
+function sendResults(){
+const name=document.getElementById('name').value.trim();
+const email=document.getElementById('email').value.trim();
+const payload={name,email,answers};
+fetch(GOOGLE_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)}).catch(console.error);
+emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_name:name,to_email:email,scores:answers.join(',')}).catch(console.error);
+}
+
+
+</script>
+</body>
+</html>
