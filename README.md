@@ -1,8 +1,12 @@
 # Multipliers Test
 
-Šis testas paremtas Liz Wiseman knyga **„Multipliers: How the Best Leaders Make Everyone Smarter“** ir jos tyrimais apie vadovavimo efektyvumą.
+Šis testas paremtas Liz Wiseman knyga **„Multipliers: How the Best Leaders Make Everyone Smarter“**.
 
-## 🔍 Kaip veikia testas?
+## 🔗 Atidaryti testą
+
+[Multipliers Test – GitHub Pages](https://olemoz1977.github.io/multipliers-test/)
+
+## 🧪 Kaip veikia testas?
 
 Testą sudaro 24 teiginiai, kuriuos vertinate skalėje nuo 1 iki 5:
 
@@ -12,35 +16,15 @@ Testą sudaro 24 teiginiai, kuriuos vertinate skalėje nuo 1 iki 5:
 - **4** – Iš dalies sutinku
 - **5** – Visiškai sutinku
 
-### 🔄 Invertavimo logika
-
-Kai kurie teiginiai yra „negatyvūs“ – aukštas balas reiškia menkinantį vadovavimą. Todėl jų atsakymai yra **invertuojami**:
-
-- 1 → 5
-- 2 → 4
-- 3 → 3
-- 4 → 2
-- 5 → 1
-
-Taip užtikrinamas psichometrinis balanso principas.
+Kai kurie teiginiai yra „negatyvūs“ – aukštas balas reiškia menkinantį vadovavimą, todėl jų atsakymai yra invertuojami.
 
 ## 📊 Rezultatai
 
 Po testo pateikiamas:
 
-- **Bendras vidutinis balas**
+- **Vidutinis balas**
 - **AI interpretacija** pagal bendrą rezultatą
-- **AI interpretacijos pagal klasterius**:
-  - Komunikacija
-  - Delegavimas
-  - Emocinis intelektas
-  - Kontrolė
-  - Autonomija
-  - Ugdymas
-  - Prieinamumas
-  - Sprendimų priėmimas
-
-Kiekvienam klasteriui pateikiamas vidurkis ir AI komentaras (pvz., „Stiprus modelis, rodo brandą“).
+- **AI interpretacijos pagal klasterius** (pvz., komunikacija, delegavimas, emocinis intelektas)
 
 ## 📚 Šaltiniai
 
@@ -48,18 +32,16 @@ Testas paremtas Liz Wiseman tyrimais ir knyga:
 
 - [Multipliers: How the Best Leaders Make Everyone Smarter – The Wiseman Group](https://thewisemangroup.com/books/multipliers/)
 - [Multipliers 360 Leadership Assessments](https://thewisemangroup.com/services/assessments/)
-- [Multipliers Book Summary – Leader Navigation](https://www.leadernavigation.com/multipliers-book-summary/)
+- [Multipliers Book Summary](https://www.leadernavigation.com/multipliers-book-summary/)
 
 Liz Wiseman identifikavo 5 pagrindines dauginančio vadovo disciplinas:
+- Talent Magnet
+- Liberator
+- Challenger
+- Debate Maker
+- Investor
 
-- **Talent Magnet**
-- **Liberator**
-- **Challenger**
-- **Debate Maker**
-- **Investor**
+## 👤 Autorius
 
-Testas išplečia šiuos modelius į 20 vadovavimo stilių, kurie interpretuojami AI pagal atsakymų profilį.
+Sukūrė: **Oleg Mozochin**
 
----
-
-Sukūrė: [Oleg Mozochin](https://olemoz1977.github.io/multipliers-test/)
