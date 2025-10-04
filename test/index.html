@@ -121,7 +121,7 @@ async function getAIInterpretation(answers) {
       "Authorization": "Bearer YOUR_API_KEY" // Replace with your actual API key
     },
     body: JSON.stringify({
-      model: "gpt-4",
+      model: "gpt-5",
       messages: [
         { role: "system", content: "Tu esi Multipliers testų interpretatorius." },
         { role: "user", content: `Štai atsakymai: ${JSON.stringify(answers)}. Duok interpretaciją lietuviškai.` }
