@@ -2,9 +2,24 @@
 
 Šis testas paremtas Liz Wiseman knyga **„Multipliers: How the Best Leaders Make Everyone Smarter“**.
 
-## 🔗 Atidaryti testą
+Sveiki atvykę 👋  
 
-[Multipliers Test – GitHub Pages]👉 [Pradėti testą](https://olemoz1977.github.io/multipliers-test/Test/)
+Šis testas padeda įvertinti, kaip stipriai **padaugini** (multipliuoti) kitų žmonių potencialą — remiantis „Multipliers“ filosofija.
+
+---
+
+## 🧭 Kaip pradėti
+
+Pasiruošęs(-usi) testui?  
+Tiesiog spausk mygtuką žemiau 👇
+
+[🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/test/)
+
+---
+
+💡 Patarimas:
+- Testas geriausiai veikia „Chrome“ ar „Safari“ naršyklėje.
+- Rezultatus matysi iškart pabaigus testą.
 
 ## 🧪 Kaip veikia testas?
 
