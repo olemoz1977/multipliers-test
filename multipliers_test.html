@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <title>Dauginančiojo efekto testas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #2c3e50; }
+        .question { margin-bottom: 20px; }
+        .result { margin-top: 30px; padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h1>Dauginančiojo efekto ir netyčinio menkintojo testas</h1>
+    <p>Pasirinkite atsakymą į kiekvieną klausimą: <strong>Dažnai</strong>, <strong>Kartais</strong> arba <strong>Retai</strong>.</p>
+
+    <form id="quizForm">
+        <div class="question">
+            <p>1. Ar dažnai perimate užduotis iš kitų, kad padėtumėte jiems?</p>
+            <label><input type="radio" name="q1" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q1" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q1" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>2. Ar dažnai duodate atsakymus vietoj to, kad skatintumėte kitus mąstyti?</p>
+            <label><input type="radio" name="q2" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q2" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q2" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>3. Ar dažnai kalbate daugiau nei klausote?</p>
+            <label><input type="radio" name="q3" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q3" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q3" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>4. Ar dažnai mikrotvarkote komandos narius?</p>
+            <label><input type="radio" name="q4" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q4" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q4" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>5. Ar dažnai pertraukiate kitus, kai jie kalba?</p>
+            <label><input type="radio" name="q5" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q5" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q5" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>6. Ar dažnai manote, kad jūsų idėjos yra geriausios?</p>
+            <label><input type="radio" name="q6" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q6" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q6" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>7. Ar dažnai skubate priimti sprendimus be komandos įsitraukimo?</p>
+            <label><input type="radio" name="q7" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q7" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q7" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>8. Ar dažnai stengiatės kontroliuoti visus procesus?</p>
+            <label><input type="radio" name="q8" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q8" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q8" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>9. Ar dažnai neleidžiate kitiems klysti?</p>
+            <label><input type="radio" name="q9" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q9" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q9" value="multiplier"> Retai</label>
+        </div>
+        <div class="question">
+            <p>10. Ar dažnai pats sprendžiate problemas, užuot leidęs komandai tai padaryti?</p>
+            <label><input type="radio" name="q10" value="diminisher"> Dažnai</label>
+            <label><input type="radio" name="q10" value="neutral"> Kartais</label>
+            <label><input type="radio" name="q10" value="multiplier"> Retai</label>
+        </div>
+
+        <button type="submit">Pateikti</button>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <script>
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const answers = document.querySelectorAll('input[type=radio]:checked');
+            let multiplier = 0, diminisher = 0, neutral = 0;
+
+            answers.forEach(ans => {
+                if (ans.value === 'multiplier') multiplier++;
+                if (ans.value === 'diminisher') diminisher++;
+                if (ans.value === 'neutral') neutral++;
+            });
+
+            let conclusion = "";
+            if (diminisher >= 6) {
+                conclusion = "Jūsų elgesyje vyrauja netyčinio menkintojo bruožai. Rekomenduojama sąmoningai skatinti kitų savarankiškumą ir augimą.";
+            } else if (multiplier >= 6) {
+                conclusion = "Jūsų elgesys dažniausiai skatina kitų augimą – esate dauginantis lyderis!";
+            } else {
+                conclusion = "Jūsų elgesyje yra tiek dauginančių, tiek menkinančių bruožų. Rekomenduojama atkreipti dėmesį į situacijas, kuriose galite skatinti kitų potencialą.";
+            }
+
+            document.getElementById('result').innerHTML = `
+                <h2>Rezultatas:</h2>
+                <p>Dauginančiojo atsakymų: ${multiplier}</p>
+                <p>Menkinančiojo atsakymų: ${diminisher}</p>
+                <p>Neutralūs atsakymai: ${neutral}</p>
+                <p><strong>Išvada:</strong> ${conclusion}</p>
+            `;
+        });
+    </script>
+</body>
+</html>
