@@ -1,0 +1,67 @@
+
+<!DOCTYPE html>
+
+<html lang="lt">
+<head>
+<meta charset="utf-8"/>
+<title>Testo Rezultatai</title>
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 40px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333333;
+        }
+        .result-block {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .competency {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #eef2f5;
+            border-radius: 8px;
+        }
+        .competency h3 {
+            margin: 0 0 10px 0;
+            color: #0077cc;
+        }
+        .competency p {
+            margin: 5px 0;
+            color: #444444;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<h1>Jūsų Multipliers Testo Rezultatai</h1>
+<div id="results"></div>
+<p>Apdorojami atsakymai...</p>
+</div>
+
+<script src="script.js"></script>
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const answers = JSON.parse(localStorage.getItem("multipliersAnswers"));
+            if (answers) {
+                const results = calculateResults(answers);
+                displayResults(results);
+            } else {
+                document.getElementById("results").innerHTML = "<p>Nerasta atsakymų. Prašome grįžti ir užpildyti testą.</p>";
+            }
+        });
+    script.js</script>
+</body>
+</html>
