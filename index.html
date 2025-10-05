@@ -268,6 +268,16 @@
 function submitAnswers() {
   const checkboxes = document.querySelectorAll('input[type="checkbox"]');
   const answers = Array.from(checkboxes).map(cb => cb.checked);
+
+  // Patikrinam, ar visi atsakymai pažymėti
+  const allAnswered = answers.length > 0 && answers.every(answer => answer === true || answer === false);
+  const anyUnchecked = answers.includes(false) === false && answers.includes(true) === false;
+
+  if (answers.length === 0 || anyUnchecked) {
+    alert("Prašome atsakyti į visus teiginius prieš baigiant testą.");
+    return;
+  }
+
   localStorage.setItem("multipliersAnswers", JSON.stringify(answers));
   window.location.href = "results.html";
 }
