@@ -381,15 +381,24 @@
         </form>
     </main>
 
-    <script>
-        document.getElementById("finishButton").addEventListener("click", function () {
-            const form = document.getElementById("testForm");
-            const totalQuestions = document.querySelectorAll('.question-block').length;
-            const inputs = form.querySelectorAll('input[type="radio"]:checked');
+   <script>
+  document.getElementById("finishButton").addEventListener("click", function () {
+    const form = document.getElementById("testForm");
+    const totalQuestions = document.querySelectorAll('.question-block').length;
+    const inputs = form.querySelectorAll('input[type="radio"]:checked');
 
-            if (inputs.length < totalQuestions) {
-                alert("Prašome atsakyti į visus klausimus.");
-                return;
-            }
+    if (inputs.length < totalQuestions) {
+      alert("Prašome atsakyti į visus klausimus.");
+      return;
+    }
 
-            const answers = [];
+    const answers = [];
+    for (let i = 1; i <= totalQuestions; i++) {
+      const selected = form.querySelector('input[name="q' + i + '"]:checked');
+      answers.push(parseInt(selected.value));
+    }
+
+    localStorage.setItem("multipliersAnswers", JSON.stringify(answers));
+    window.location.href = "results.html";
+  });
+</script>
