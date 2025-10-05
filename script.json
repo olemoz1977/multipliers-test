@@ -1,0 +1,52 @@
+// script.js – dinaminė rezultatų analizė
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const answers = [];
+
+    // Surenkame atsakymus iš URL (pvz., ?q0=1&q1=0...)
+    for (const [key, value] of urlParams.entries()) {
+        if (key.startsWith("q")) {
+            answers.push(value === "1");
+        }
+    }
+
+    // Įkeliame teiginius ir analizę
+    Promise.all([
+        fetch("multipliers_questions_first_person.json").then(res => res.json()),
+        fetch("multipliers_analysis.json").then(res => res.json())
+    ]).then(([questions, analysis]) => {
+        const competencyScores = {};
+
+        answers.forEach((selected, i) => {
+            const q = questions[i];
+            if (!q) return;
+
+            const comp = q.competency;
+            const invert = q.invert;
+
+            if (!competencyScores[comp]) {
+                competencyScores[comp] = { strength: 0, weakness: 0 };
+            }
+
+            if (selected && !invert) {
+                competencyScores[comp].strength += 1;
+            } else if (selected && invert) {
+                competencyScores[comp].weakness += 1;
+            } else if (!selected && invert) {
+                competencyScores[comp.strength] += 1;
+            } else if (!selected && !invert) {
+                competencyScores[comp.weakness] += 1;
+            }
+        });
+
+        // Rodyti rezultatus
+        const resultsDiv = document.getElementById("results");
+        for (const comp in competencyScores) {
+            const summary = analysis[comp]?.summary || "Rezultatas nerastas.";
+            const block = document.createElement("div");
+            block.className = "result-block";
+            block.innerHTML = `<h2>${comp}</h2><p>${summary}</p>`;
+            resultsDiv.appendChild(block);
+        }
+    });
+});
