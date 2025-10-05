@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8">
+  <title>Multipliers Testas</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    .question-box { margin-bottom: 20px; }
+    .likert-option { margin: 5px 0; }
+    #next-btn { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>Multipliers Testas</h1>
+  <div id="question-container" class="question-box"></div>
+  <button id="next-btn">Kitas</button>
+
+  <script>
+    const questions = [
+      // MULTIPLIER
+      { text: "Aš skatinu kitus prisiimti atsakomybę ir veikti savarankiškai.", type: "Multiplier", invert: false },
+      { text: "Aš domiuosi kitų nuomone ir ją įtraukiu į sprendimus.", type: "Multiplier", invert: false },
+      { text: "Aš padedu kitiems augti ir tobulėti per iššūkius.", type: "Multiplier", invert: false },
+
+      // ACCIDENTAL DIMINISHER
+      { text: "Aš dažnai pateikiu sprendimus per greitai, neįtraukiant kitų.", type: "Accidental Diminisher", invert: true },
+      { text: "Aš per daug padedu, todėl kiti neturi galimybės mokytis iš klaidų.", type: "Accidental Diminisher", invert: true },
+      { text: "Aš dažnai kalbu per daug, todėl kiti neturi galimybės pasisakyti.", type: "Accidental Diminisher", invert: true },
+
+      // DIMINISHER
+      { text: "Aš manau, kad tik mano sprendimai yra teisingi.", type: "Diminisher", invert: true },
+      { text: "Aš kontroliuoju kiekvieną darbo aspektą.", type: "Diminisher", invert: true },
+      { text: "Aš retai pripažįstu kitų indėlį.", type: "Diminisher", invert: true }
+    ];
+
+    let currentIndex = 0;
+    const responses = [];
+
+    function likertLabel(value) {
+      const labels = {
+        1: "Visiškai nesutinku",
+        2: "Nesutinku",
+        3: "Neutralu",
+        4: "Sutinku",
+        5: "Visiškai sutinku"
+      };
+      return labels[value];
+    }
+
+    function renderQuestion() {
+      const q = questions[currentIndex];
+      const container = document.getElementById("question-container");
+      container.innerHTML = `<p><strong>${q.text}</strong></p>`;
+      for (let i = 1; i <= 5; i++) {
+        container.innerHTML += `
+          <div class="likert-option">
+            <label>
+              <input type="radio" name="response" value="${i}">
+              ${i} – ${likertLabel(i)}
+            </label>
+          </div>
+        `;
+      }
+    }
+
+    function calculateResults() {
+      const grouped = {
+        Multiplier: [],
+        "Accidental Diminisher": [],
+        Diminisher: []
+      };
+
+      responses.forEach(r => {
+        grouped[r.type].push(r.value);
+      });
+
+      const averages = {};
+      for (const type in grouped) {
+        const values = grouped[type];
+        const sum = values.reduce((a, b) => a + b, 0);
+        const avg = (sum / values.length).toFixed(2);
+        averages[type] = avg;
+      }
+
+      const container = document.getElementById("question-container");
+      container.innerHTML = "<h2>Rezultatai</h2>";
+      for (const type in averages) {
+        container.innerHTML += `<p><strong>${type}:</strong> ${averages[type]}</p>`;
+      }
+
+      generateInterpretations(averages);
+    }
+
+    function generateInterpretations(averages) {
+      const interpretations = {
+        Multiplier: "",
+        "Accidental Diminisher": "",
+        Diminisher: ""
+      };
+
+      for (const type in averages) {
+        const score = parseFloat(averages[type]);
+
+        if (type === "Multiplier") {
+          if (score >= 4) {
+            interpretations[type] = "Jūs turite stiprių Multipliers bruožų – skatinate kitų augimą ir savarankiškumą.";
+          } else if (score >= 2.5) {
+            interpretations[type] = "Jūsų Multipliers bruožai yra mišrūs – kartais skatinate kitus, bet yra kur tobulėti.";
+          } else {
+            interpretations[type] = "Multipliers bruožai silpni – verta ugdyti gebėjimą įgalinti kitus.";
+          }
+        }
+
+        if (type === "Accidental Diminisher") {
+          if (score >= 4) {
+            interpretations[type] = "Jūsų elgesyje dažnai pasireiškia Accidental Diminisher bruožai – geranoriški veiksmai gali riboti kitų augimą.";
+          } else if (score >= 2.5) {
+            interpretations[type] = "Yra požymių, kad kartais netyčia ribojate kitus – verta atkreipti dėmesį į bendravimo stilių.";
+          } else {
+            interpretations[type] = "Accidental Diminisher bruožai nėra ryškūs – tai teigiamas ženklas.";
+          }
+        }
+
+        if (type === "Diminisher") {
+          if (score >= 4) {
+            interpretations[type] = "Pastebimas stiprus Diminisher elgesys – tai gali slopinti kitų potencialą. Rekomenduojama keisti kontrolės stilių.";
+          } else if (score >= 2.5) {
+            interpretations[type] = "Yra Diminisher bruožų – verta sąmoningai stebėti, kaip veikiate kitus.";
+          } else {
+            interpretations[type] = "Diminisher bruožai silpni – tai rodo sveiką lyderystės stilių.";
+          }
+        }
+      }
+
+      const container = document.getElementById("question-container");
+      container.innerHTML += "<h3>AI Interpretacijos</h3>";
+      for (const type in interpretations) {
+        container.innerHTML += `<p><strong>${type}:</strong> ${interpretations[type]}</p>`;
+      }
+    }
+
+    document.getElementById("next-btn").addEventListener("click", () => {
+      const selected = document.querySelector('input[name="response"]:checked');
+      if (!selected) {
+        alert("Pasirinkite atsakymą prieš tęsdami.");
+        return;
+      }
+
+      let value = parseInt(selected.value);
+      if (questions[currentIndex].invert) {
+        value = 6 - value;
+      }
+
+      responses.push({
+        question: questions[currentIndex].text,
+        type: questions[currentIndex].type,
+        value: value
+      });
+
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        renderQuestion();
+      } else {
+        document.getElementById("question-container").innerHTML = "<p>Testas baigtas. Ačiū!</p>";
+        document.getElementById("next-btn").style.display = "none";
+        calculateResults();
+      }
+    });
+
+    renderQuestion();
+  </script>
+
+</body>
+</html>
