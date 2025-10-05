@@ -23,7 +23,7 @@ Tiesiog spausk mygtuką žemiau 👇
 
 ## 🧪 Kaip veikia testas?
 
-Testą sudaro 24 teiginiai, kuriuos vertinate skalėje nuo 1 iki 5:
+Testą sudaro 10 teiginių, kuriuos vertinate skalėje nuo 1 iki 5:
 
 - **1** – Visiškai nesutinku
 - **2** – Iš dalies nesutinku
@@ -31,15 +31,6 @@ Testą sudaro 24 teiginiai, kuriuos vertinate skalėje nuo 1 iki 5:
 - **4** – Iš dalies sutinku
 - **5** – Visiškai sutinku
 
-Kai kurie teiginiai yra „negatyvūs“ – aukštas balas reiškia menkinantį vadovavimą, todėl jų atsakymai yra invertuojami.
-
-## 📊 Rezultatai
-
-Po testo pateikiamas:
-
-- **Vidutinis balas**
-- **AI interpretacija** pagal bendrą rezultatą
-- **AI interpretacijos pagal klasterius** (pvz., komunikacija, delegavimas, emocinis intelektas)
 
 ## 📚 Šaltiniai
 
