@@ -1,168 +1,28 @@
-script.js</script
-        
 <!DOCTYPE html>
-
 <html lang="lt">
 <head>
-<meta charset="utf-8"/>
-<title>Multipliers Testas</title>
-<style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-        .question {
-            background: #fff;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-        .question h3 {
-            margin-top: 0;
-        }
-        .options label {
-            margin-right: 10px;
-            padding: 6px 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .options input[type="radio"] {
-            display: none;
-        }
-        .options input[type="radio"]:checked + span {
-            background-color: #007BFF;
-            color: white;
-            border-color: #007BFF;
-        }
-        .options span {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 4px;
-        }
-    </style>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multipliers Testas</title>
+    style.css
+</head>
 <body>
-<h1>Multipliers Testas</h1>
-<form><div class="question"><label>1. Kai kas nors stringa, imuosi pats.</label><input name="q1" type="radio" value="1"/>1 <input name="q1" type="radio" value="2"/>2 <input name="q1" type="radio" value="3"/>3 <input name="q1" type="radio" value="4"/>4 <input name="q1" type="radio" value="5"/>5 <input name="type_q1" type="hidden" value="negative"/></div><div class="question"><label>2. Kontroliuoju sprendimus ir retai deleguoju.</label><input name="q2" type="radio" value="1"/>1 <input name="q2" type="radio" value="2"/>2 <input name="q2" type="radio" value="3"/>3 <input name="q2" type="radio" value="4"/>4 <input name="q2" type="radio" value="5"/>5 <input name="type_q2" type="hidden" value="negative"/></div><div class="question"><label>3. Laikau informaciją sau, kol ji tikrai reikalinga.</label><input name="q3" type="radio" value="1"/>1 <input name="q3" type="radio" value="2"/>2 <input name="q3" type="radio" value="3"/>3 <input name="q3" type="radio" value="4"/>4 <input name="q3" type="radio" value="5"/>5 <input name="type_q3" type="hidden" value="negative"/></div><div class="question"><label>4. Retai klausiu komandos nuomonės.</label><input name="q4" type="radio" value="1"/>1 <input name="q4" type="radio" value="2"/>2 <input name="q4" type="radio" value="3"/>3 <input name="q4" type="radio" value="4"/>4 <input name="q4" type="radio" value="5"/>5 <input name="type_q4" type="hidden" value="negative"/></div><div class="question"><label>5. Neskatinu eksperimentavimo ar rizikos.</label><input name="q5" type="radio" value="1"/>1 <input name="q5" type="radio" value="2"/>2 <input name="q5" type="radio" value="3"/>3 <input name="q5" type="radio" value="4"/>4 <input name="q5" type="radio" value="5"/>5 <input name="type_q5" type="hidden" value="negative"/></div><div class="question"><label>6. Neturiu laiko ugdyti kitus.</label><input name="q6" type="radio" value="1"/>1 <input name="q6" type="radio" value="2"/>2 <input name="q6" type="radio" value="3"/>3 <input name="q6" type="radio" value="4"/>4 <input name="q6" type="radio" value="5"/>5 <input name="type_q6" type="hidden" value="negative"/></div><div class="question"><label>7. Pasiekimus laikau savaime suprantamais.</label><input name="q7" type="radio" value="1"/>1 <input name="q7" type="radio" value="2"/>2 <input name="q7" type="radio" value="3"/>3 <input name="q7" type="radio" value="4"/>4 <input name="q7" type="radio" value="5"/>5 <input name="type_q7" type="hidden" value="negative"/></div><div class="question"><label>8. Klaidos yra nepriimtinos.</label><input name="q8" type="radio" value="1"/>1 <input name="q8" type="radio" value="2"/>2 <input name="q8" type="radio" value="3"/>3 <input name="q8" type="radio" value="4"/>4 <input name="q8" type="radio" value="5"/>5 <input name="type_q8" type="hidden" value="negative"/></div><div class="question"><label>9. Suteikiu mažai laisvės veikti.</label><input name="q9" type="radio" value="1"/>1 <input name="q9" type="radio" value="2"/>2 <input name="q9" type="radio" value="3"/>3 <input name="q9" type="radio" value="4"/>4 <input name="q9" type="radio" value="5"/>5 <input name="type_q9" type="hidden" value="negative"/></div><div class="question"><label>10. Dažnai abejoju komandos sprendimais.</label><input name="q10" type="radio" value="1"/>1 <input name="q10" type="radio" value="2"/>2 <input name="q10" type="radio" value="3"/>3 <input name="q10" type="radio" value="4"/>4 <input name="q10" type="radio" value="5"/>5 <input name="type_q10" type="hidden" value="negative"/></div><div class="question"><label>11. Skyriai dirba atskirai, be bendradarbiavimo.</label><input name="q11" type="radio" value="1"/>1 <input name="q11" type="radio" value="2"/>2 <input name="q11" type="radio" value="3"/>3 <input name="q11" type="radio" value="4"/>4 <input name="q11" type="radio" value="5"/>5 <input name="type_q11" type="hidden" value="negative"/></div><div class="question"><label>12. Esu užimtas ir sunkiai pasiekiamas.</label><input name="q12" type="radio" value="1"/>1 <input name="q12" type="radio" value="2"/>2 <input name="q12" type="radio" value="3"/>3 <input name="q12" type="radio" value="4"/>4 <input name="q12" type="radio" value="5"/>5 <input name="type_q12" type="hidden" value="negative"/></div><div class="question"><label>13. Leidžiu klysti ir suteikiu erdvės augimui.</label><input name="q13" type="radio" value="1"/>1 <input name="q13" type="radio" value="2"/>2 <input name="q13" type="radio" value="3"/>3 <input name="q13" type="radio" value="4"/>4 <input name="q13" type="radio" value="5"/>5 <input name="type_q13" type="hidden" value="positive"/></div><div class="question"><label>14. Skatinu savarankiškumą ir pasitikėjimą komandoje.</label><input name="q14" type="radio" value="1"/>1 <input name="q14" type="radio" value="2"/>2 <input name="q14" type="radio" value="3"/>3 <input name="q14" type="radio" value="4"/>4 <input name="q14" type="radio" value="5"/>5 <input name="type_q14" type="hidden" value="positive"/></div><div class="question"><label>15. Dalinuosi informacija ir žiniomis atvirai.</label><input name="q15" type="radio" value="1"/>1 <input name="q15" type="radio" value="2"/>2 <input name="q15" type="radio" value="3"/>3 <input name="q15" type="radio" value="4"/>4 <input name="q15" type="radio" value="5"/>5 <input name="type_q15" type="hidden" value="positive"/></div><div class="question"><label>16. Klausausi kitų nuomonių ir skatinu diskusijas.</label><input name="q16" type="radio" value="1"/>1 <input name="q16" type="radio" value="2"/>2 <input name="q16" type="radio" value="3"/>3 <input name="q16" type="radio" value="4"/>4 <input name="q16" type="radio" value="5"/>5 <input name="type_q16" type="hidden" value="positive"/></div><div class="question"><label>17. Palaikau iniciatyvą ir kūrybiškumą.</label><input name="q17" type="radio" value="1"/>1 <input name="q17" type="radio" value="2"/>2 <input name="q17" type="radio" value="3"/>3 <input name="q17" type="radio" value="4"/>4 <input name="q17" type="radio" value="5"/>5 <input name="type_q17" type="hidden" value="positive"/></div><div class="question"><label>18. Skiriu laiko ugdymui ir mentorystei.</label><input name="q18" type="radio" value="1"/>1 <input name="q18" type="radio" value="2"/>2 <input name="q18" type="radio" value="3"/>3 <input name="q18" type="radio" value="4"/>4 <input name="q18" type="radio" value="5"/>5 <input name="type_q18" type="hidden" value="positive"/></div><div class="question"><label>19. Pripažįstu komandos pasiekimus viešai.</label><input name="q19" type="radio" value="1"/>1 <input name="q19" type="radio" value="2"/>2 <input name="q19" type="radio" value="3"/>3 <input name="q19" type="radio" value="4"/>4 <input name="q19" type="radio" value="5"/>5 <input name="type_q19" type="hidden" value="positive"/></div><div class="question"><label>20. Skatinu mokymąsi iš klaidų.</label><input name="q20" type="radio" value="1"/>1 <input name="q20" type="radio" value="2"/>2 <input name="q20" type="radio" value="3"/>3 <input name="q20" type="radio" value="4"/>4 <input name="q20" type="radio" value="5"/>5 <input name="type_q20" type="hidden" value="positive"/></div><div class="question"><label>21. Suteikiu aiškius lūkesčius ir autonomiją.</label><input name="q21" type="radio" value="1"/>1 <input name="q21" type="radio" value="2"/>2 <input name="q21" type="radio" value="3"/>3 <input name="q21" type="radio" value="4"/>4 <input name="q21" type="radio" value="5"/>5 <input name="type_q21" type="hidden" value="positive"/></div><div class="question"><label>22. Rodau pasitikėjimą komandos sprendimais.</label><input name="q22" type="radio" value="1"/>1 <input name="q22" type="radio" value="2"/>2 <input name="q22" type="radio" value="3"/>3 <input name="q22" type="radio" value="4"/>4 <input name="q22" type="radio" value="5"/>5 <input name="type_q22" type="hidden" value="positive"/></div><div class="question"><label>23. Skatinu bendradarbiavimą tarp skyrių.</label><input name="q23" type="radio" value="1"/>1 <input name="q23" type="radio" value="2"/>2 <input name="q23" type="radio" value="3"/>3 <input name="q23" type="radio" value="4"/>4 <input name="q23" type="radio" value="5"/>5 <input name="type_q23" type="hidden" value="positive"/></div><div class="question"><label>24. Esu prieinamas ir palaikantis vadovas.</label><input name="q24" type="radio" value="1"/>1 <input name="q24" type="radio" value="2"/>2 <input name="q24" type="radio" value="3"/>3 <input name="q24" type="radio" value="4"/>4 <input name="q24" type="radio" value="5"/>5 <input name="type_q24" type="hidden" value="positive"/></div></form>
-<div id="result">Jūsų vidurkis: </div><div id="result" style="margin-top:20px; font-weight:bold;"></div><canvas height="200" id="resultChart" width="400"></canvas><button onclick="calculateResults()" type="button">Skaičiuoti rezultatą</button><div id="results"></div><script>
-function calculateResults() {
-    const questions = document.querySelectorAll('.question');
-    let total = 0;
-    let count = 0;
-    let clusterScores = {};
-    let clusterCounts = {};
-    const negativeQuestions = [1,2,3,4,5,6,7,8,9,10,11,12]; // example neg IDs
-    const clusterMap = {
-        4: "Komunikacija", 2: "Delegavimas", 3: "Emocinis intelektas", 1: "Kontrolė",
-        5: "Autonomija", 6: "Ugdymas", 12: "Prieinamumas", 8: "Sprendimų priėmimas",
-        11: "Komunikacija", 10: "Delegavimas", 7: "Emocinis intelektas", 9: "Kontrolė",
-        13: "Autonomija", 14: "Ugdymas", 15: "Prieinamumas", 16: "Sprendimų priėmimas",
-        17: "Komunikacija", 22: "Delegavimas", 19: "Emocinis intelektas", 20: "Kontrolė",
-        21: "Autonomija", 18: "Ugdymas", 24: "Prieinamumas", 23: "Sprendimų priėmimas"
-    };
+    <main>
+        <h1>Multipliers Testas</h1>
+        results.html
+            <!-- Teiginiai -->
+            <!-- Pavyzdys: -->
+            <div class="question-block">
+                <label>
+                    <input type="checkbox" name="q0" value="1">
+                    Aš dažnai mikrovadybinu ir kontroliuoju kiekvieną mano komandos žingsnį.
+                </label>
+            </div>
+            <!-- Toliau įkelk visus teiginius iš multipliers_questions_first_person.json -->
+            <!-- Arba naudok dinaminį JS generavimą -->
 
-    questions.forEach((q, index) => {
-        const radios = q.querySelectorAll('input[type="radio"]');
-        radios.forEach(r => {
-            if (r.checked) {
-                let val = parseInt(r.value);
-                const qNum = index + 1;
-                if (negativeQuestions.includes(qNum)) {
-                    val = 6 - val;
-                }
-                total += val;
-                count += 1;
-
-                const cluster = clusterMap[qNum];
-                if (!clusterScores[cluster]) {
-                    clusterScores[cluster] = 0;
-                    clusterCounts[cluster] = 0;
-                }
-                clusterScores[cluster] += val;
-                clusterCounts[cluster] += 1;
-            }
-        });
-    });
-
-    const avg = (total / count).toFixed(2);
-    let interpretation = "";
-    if (avg >= 4.5) interpretation = "Transformacinis vadovas";
-    else if (avg >= 4.0) interpretation = "Empatiškas vadovas";
-    else if (avg >= 3.5) interpretation = "Demokratinis vadovas";
-    else if (avg >= 3.0) interpretation = "Operatyvus vadovas";
-    else if (avg >= 2.5) interpretation = "Kontroliuojantis vadovas";
-    else interpretation = "Menkinantis vadovas";
-
-    let clusterText = "<h3>AI interpretacijos pagal klasterius</h3>";
-    for (const cluster in clusterScores) {
-        const avgCluster = (clusterScores[cluster] / clusterCounts[cluster]).toFixed(2);
-        let interp = "";
-        if (avgCluster >= 4.5) interp = "Stiprus modelis, rodo brandą ir aukštą pasitikėjimą.";
-        else if (avgCluster >= 3.5) interp = "Vidutinis modelis, rodo potencialą.";
-        else interp = "Silpnas modelis, rekomenduojama ugdyti šią sritį.";
-        clusterText += `<p><strong>${cluster}</strong>: ${avgCluster} – ${interp}</p>`;
-    }
-
-    document.getElementById("results").innerHTML = `
-        <h2>Vidutinis balas: ${avg}</h2>
-        <p>AI interpretacija: ${interpretation}</p>
-        ${clusterText}
-    `;
-}
-</script><div id="ai-result" style="margin-top:20px;font-family:Arial;"></div>
-<script>
-async function getAIInterpretation(answers) {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer YOUR_API_KEY" // Replace with your actual API key
-    },
-    body: JSON.stringify({
-      model: "gpt-5",
-      messages: [
-        { role: "system", content: "Tu esi Multipliers testų interpretatorius." },
-        { role: "user", content: `Štai atsakymai: ${JSON.stringify(answers)}. Duok interpretaciją lietuviškai.` }
-      ]
-    })
-  });
-
-  const data = await response.json();
-  return data.choices[0].message.content;
-}
-
-function collectAnswers() {
-  const answers = {};
-  document.querySelectorAll("input[type='radio']:checked").forEach(input => {
-    const question = input.name;
-    const value = input.value;
-    answers[question] = value;
-  });
-  return answers;
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-  const submitButton = document.getElementById("submit-button");
-  if (submitButton) {
-    submitButton.addEventListener("click", async function (e) {
-      e.preventDefault();
-      const resultDiv = document.getElementById("ai-result");
-      resultDiv.innerHTML = "Apdorojama...";
-      const answers = collectAnswers();
-      try {
-        const interpretation = await getAIInterpretation(answers);
-        resultDiv.innerHTML = `<strong>AI interpretacija:</strong><br>${interpretation}`;
-      } catch (error) {
-        resultDiv.innerHTML = "Įvyko klaida generuojant interpretaciją.";
-        console.error(error);
-      }
-    });
-  }
-});
-</script>
-
+            <button type="submit">Baigti testą</button>
+        </form>
+    </main>
 </body>
-                                                               </html>
+</html>
