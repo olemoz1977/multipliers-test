@@ -263,7 +263,18 @@
         Aš ignoruoju mano komandos emocinius poreikius ir retai rodau empatiją.
     </label>
 </div>
-        <button type="submit">Baigti testą</button>
+        
+ onclick="submitAnswers()">Baigti testą</button>
+
+<script>
+function submitAnswers() {
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const answers = Array.from(checkboxes).map(cb => cb.checked);
+  localStorage.setItem("multipliersAnswers", JSON.stringify(answers));
+  window.location.href = "results.html";
+}
+</script>
+
     </form>
 </main>
 </body>
