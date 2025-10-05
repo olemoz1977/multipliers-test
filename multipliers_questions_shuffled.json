@@ -1,0 +1,177 @@
+[
+  {
+    "text": "Aš padedu mano mano komandai mokytis iš klaidų ir skatinu augimą.",
+    "competency": "Ugdymas",
+    "invert": false
+  },
+  {
+    "text": "Aš vengiu spręsti konfliktus ir leidžiu jiems eskaluotis.",
+    "competency": "Sprendimų priėmimas",
+    "invert": true
+  },
+  {
+    "text": "Aš viešai pripažįstu ir vertinu mano komandos indėlį.",
+    "competency": "Talentų magnetas",
+    "invert": false
+  },
+  {
+    "text": "Aš dažnai reaguoja neigiamai į nesėkmes ir kaltinu savo komandą.",
+    "competency": "Emocinis intelektas",
+    "invert": true
+  },
+  {
+    "text": "Aš retai pripažįstu mano komandos pasiekimus.",
+    "competency": "Talentų magnetas",
+    "invert": true
+  },
+  {
+    "text": "Aš dažnai ignoruoju mano komandos idėjas.",
+    "competency": "Iššūkių teikėjas",
+    "invert": true
+  },
+  {
+    "text": "Aš skatinu atvirą bendravimą ir yra lengvai pasiekiamas.",
+    "competency": "Prieinamumas",
+    "invert": false
+  },
+  {
+    "text": "Aš kuriu kultūrą, kurioje mano komanda jaučiasi įgalinta ir savarankiška.",
+    "competency": "Autonomija",
+    "invert": false
+  },
+  {
+    "text": "Aš pasitikiu mano komanda ir leidžiu jiems savarankiškai priimti sprendimus.",
+    "competency": "Autonomija",
+    "invert": false
+  },
+  {
+    "text": "Aš skatina savo komandą dalyvauti strateginiuose sprendimuose.",
+    "competency": "Sprendimų priėmimas",
+    "invert": false
+  },
+  {
+    "text": "Aš aiškiai komunikuoju tikslus ir lūkesčius mano komandai.",
+    "competency": "Komunikacija",
+    "invert": false
+  },
+  {
+    "text": "Aš išlieka ramus ir palaikantis net sudėtingose situacijose.",
+    "competency": "Emocinis intelektas",
+    "invert": false
+  },
+  {
+    "text": "Aš dažnai pasilieku sprendimus sau ir nepaaiškina jų savo komandai.",
+    "competency": "Komunikacija",
+    "invert": true
+  },
+  {
+    "text": "Aš dažnai nutraukiu diskusijas ir priimu sprendimus vienas.",
+    "competency": "Diskusijų skatintojas",
+    "invert": true
+  },
+  {
+    "text": "Aš kuriu saugią aplinką, kurioje mano komanda gali laisvai reikšti mintis.",
+    "competency": "Išlaisvintojas",
+    "invert": false
+  },
+  {
+    "text": "Aš skatinu konstruktyvias diskusijas ir įtraukiu komandą į sprendimų priėmimą.",
+    "competency": "Diskusijų skatintojas",
+    "invert": false
+  },
+  {
+    "text": "Aš retai skatinu savo komandą prisiimti atsakomybę.",
+    "competency": "Investuotojas",
+    "invert": true
+  },
+  {
+    "text": "Aš aktyviai ieškau ir pritraukiu talentingus žmones į komandą.",
+    "competency": "Talentų magnetas",
+    "invert": false
+  },
+  {
+    "text": "Aš efektyviai sprendžiu konfliktus ir skatinu bendradarbiavimą.",
+    "competency": "Sprendimų priėmimas",
+    "invert": false
+  },
+  {
+    "text": "Aš aktyviai skatinu savo komandą siūlyti naujas idėjas.",
+    "competency": "Iššūkių teikėjas",
+    "invert": false
+  },
+  {
+    "text": "Aš vengiu deleguoti atsakomybę ir dažnai viską darau pats.",
+    "competency": "Delegavimas",
+    "invert": true
+  },
+  {
+    "text": "Aš investuoja laiką į mano komandos ugdymą ir tobulėjimą.",
+    "competency": "Ugdymas",
+    "invert": false
+  },
+  {
+    "text": "Aš dažnai reaguoju impulsyviai ir neapgalvotai stresinėse situacijose.",
+    "competency": "Emocinis intelektas",
+    "invert": true
+  },
+  {
+    "text": "Aš dažnai mikrovadybinu ir kontroliuoju kiekvieną mano komandos žingsnį.",
+    "competency": "Kontrolė",
+    "invert": true
+  },
+  {
+    "text": "Aš retai skiriu laiko mano komandos tobulėjimui.",
+    "competency": "Ugdymas",
+    "invert": true
+  },
+  {
+    "text": "Aš aktyviai klausau ir vertina savo mano komandos įžvalgas.",
+    "competency": "Komunikacija",
+    "invert": false
+  },
+  {
+    "text": "Aš skatinu savo komandą rizikuoti ir mokytis iš patirties.",
+    "competency": "Išlaisvintojas",
+    "invert": false
+  },
+  {
+    "text": "Aš retai deleguoju strateginius sprendimus mano komandai.",
+    "competency": "Delegavimas",
+    "invert": true
+  },
+  {
+    "text": "Aš retai būnu pasiekiamas ir vengiu tiesiogiai bendrauti su mano komanda.",
+    "competency": "Prieinamumas",
+    "invert": true
+  },
+  {
+    "text": "Aš dažnai neleidžiu mano komandai eksperimentuoti ir mokytis iš klaidų.",
+    "competency": "Išlaisvintojas",
+    "invert": true
+  },
+  {
+    "text": "Aš dažnai kalbu, bet retai klausau ir girdžiu savo komandos nuomonę.",
+    "competency": "Komunikacija",
+    "invert": true
+  },
+  {
+    "text": "Aš retai būnu prieinamas mano komandai.",
+    "competency": "Prieinamumas",
+    "invert": true
+  },
+  {
+    "text": "Aš retai įtraukiu komandą į sprendimų priėmimą.",
+    "competency": "Sprendimų priėmimas",
+    "invert": true
+  },
+  {
+    "text": "Aš suteikiu mano komandai atsakomybę ir pasitikėjimą įgyvendinant projektus.",
+    "competency": "Investuotojas",
+    "invert": false
+  },
+  {
+    "text": "Aš ignoruoju mano komandos emocinius poreikius ir retai rodau empatiją.",
+    "competency": "Emocinis intelektas",
+    "invert": true
+  }
+]
