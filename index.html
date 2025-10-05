@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="lt">
 <head>
@@ -12,26 +13,8 @@
     </header>
     <main>
         <form id="testForm">
-            <!-- Klausimų blokai -->
-            <div class="question-block">
-                <p>Aš padedu savo komandai mokytis iš klaidų ir skatinu augimą.</p>
-                <label><input type="radio" name="q1" value="1"> Visiškai nesutinku</label>
-                <label><input type="radio" name="q1" value="2"> Nesutinku</label>
-                <label><input type="radio" name="q1" value="3"> Nei sutinku, nei nesutinku</label>
-                <label><input type="radio" name="q1" value="4"> Sutinku</label>
-                <label><input type="radio" name="q1" value="5"> Visiškai sutinku</label>
-            </div>
-            <div class="question-block">
-                <p>Aš vengiu spręsti konfliktus ir leidžiu jiems eskaluotis.</p>
-                <label><input type="radio" name="q2" value="1"> Visiškai nesutinku</label>
-                <label><input type="radio" name="q2" value="2"> Nesutinku</label>
-                <label><input type="radio" name="q2" value="3"> Nei sutinku, nei nesutinku</label>
-                <label><input type="radio" name="q2" value="4"> Sutinku</label>
-                <label><input type="radio" name="q2" value="5"> Visiškai sutinku</label>
-            </div>
-            <!-- ... (likę klausimai sugeneruoti tokiu pačiu formatu) -->
 
-            <button type="button" id="finishButton">Baigti testą</button>
+<button type="button" id="finishButton">Baigti testą</button>
         </form>
     </main>
 
@@ -47,14 +30,3 @@
             }
 
             const answers = [];
-            for (let i = 1; i <= totalQuestions; i++) {
-                const selected = form.querySelector('input[name="q' + i + '"]:checked');
-                answers.push(parseInt(selected.value));
-            }
-
-            localStorage.setItem("multipliersAnswers", JSON.stringify(answers));
-            window.location.href = "results.html";
-        });
-    </script>
-</body>
-</html>
