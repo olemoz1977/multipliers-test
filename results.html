@@ -2,18 +2,74 @@
 <html lang="lt">
 <head>
     <meta charset="UTF-8">
-    <title>Multipliers Testo Rezultatai</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <title>Rezultatai</title>
+    style.css
 </head>
 <body>
-    <header>
-        <h1>Jūsų Multipliers Testo Rezultatai</h1>
-    </header>
-    <main>
-        <div id="results">
-            <p>Apdorojami atsakymai...</p>
-        </div>
-    </main>
+    <h1>Jūsų rezultatai</h1>
+    <div id="resultsContainer">Apdorojami atsakymai...</div>
+
+    <script>
+        const questions = [
+            // čia įkeliami klausimai iš multipliers_questions_first_person.json
+            // pvz.:
+            { text: "Aš padedu savo komandai mokytis iš klaidų ir skatinu augimą.", cluster: "Ugdymas", invert: false },
+            { text: "Aš vengiu spręsti konfliktus ir leidžiu jiems eskaluotis.", cluster: "Sprendimų priėmimas", invert: true },
+            // ... ir t.t.
+        ];
+
+        const analysis = {
+            // čia įkeliamos AI interpretacijos iš multipliers_analysis.json
+            // pvz.:
+            "Ugdymas": {
+                strength: "Jūsų stiprybė – ugdymas. Atsakymai rodo, kad dažniau demonstruojate šią kompetenciją.",
+                weakness: "Jūsų tobulėjimo sritis – ugdymas. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių.",
+                summary: "Kompetencija ugdymas yra subalansuota – tiek stiprybių, tiek silpnybių po lygiai."
+            },
+            // ... ir t.t.
+        };
+
+        const responses = JSON.parse(localStorage.getItem('responses'));
+        const clusterScores = {};
+        const clusterCounts = {};
+
+        questions.forEach((q, i) => {
+            const cluster = q.cluster;
+            const invert = q.invert;
+            const score = invert ? 6 - responses[i] : responses[i];
+
+            if (!clusterScores[cluster]) {
+                clusterScores[cluster] = 0;
+                clusterCounts[cluster] = 0;
+            }
+
+            clusterScores[cluster] += score;
+            clusterCounts[cluster] += 1;
+        });
+
+        const container = document.getElementById('resultsContainer');
+        container.innerHTML = '';
+
+        for (const cluster in clusterScores) {
+            const avg = clusterScores[cluster] / clusterCounts[cluster];
+            let interpretation = '';
+
+            if (avg >= 4.0) {
+                interpretation = analysis[cluster].strength;
+            } else if (avg >= 3.0) {
+                interpretation = analysis[cluster].summary;
+            } else {
+                interpretation = analysis[cluster].weakness;
+            }
+
+            container.innerHTML += `
+                <div class="result-block">
+                    <h2>${cluster}</h2>
+                    <p><strong>Vidurkis:</strong> ${avg.toFixed(2)}</p>
+                    <p>${interpretation}</p>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
