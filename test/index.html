@@ -249,16 +249,32 @@
       if(details.length){
         breakdown='<p class="small">Klausimai, kur jūsų įvertinimai yra aukšti (4–5): '+details.join(', ')+'</p>';
       }
+<script>
+const profile = 'Multiplier';
+const profileText = `Jūsų elgesys dažniau įgalina komandą. Tęskite patirtį dalinantis atsakomybėmis ir suteikiant erdvę klaidoms.`;
+const totalScore = 17;
+const analysis = {"Kontrolė": {"strength": 0, "weakness": 1, "summary": "Jūsų tobulėjimo sritis – kontrolė. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių (1 iš 1 teiginių)."}, "Autonomija": {"strength": 2, "weakness": 0, "summary": "Jūsų stiprybė – autonomija. Atsakymai rodo, kad dažniau demonstruojate šią kompetenciją (2 iš 2 teiginių)."}, "Delegavimas": {"strength": 0, "weakness": 2, "summary": "Jūsų tobulėjimo sritis – delegavimas. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių (2 iš 2 teiginių)."}, "Iššūkių teikėjas": {"strength": 1, "weakness": 1, "summary": "Kompetencija iššūkių teikėjas yra subalansuota – tiek stiprybių, tiek silpnybių po lygiai (1 iš 2)."}, "Emocinis intelektas": {"strength": 1, "weakness": 3, "summary": "Jūsų tobulėjimo sritis – emocinis intelektas. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių (3 iš 4 teiginių)."}, "Išlaisvintojas": {"strength": 2, "weakness": 1, "summary": "Jūsų stiprybė – išlaisvintojas. Atsakymai rodo, kad dažniau demonstruojate šią kompetenciją (2 iš 3 teiginių)."}, "Diskusijų skatintojas": {"strength": 1, "weakness": 1, "summary": "Kompetencija diskusijų skatintojas yra subalansuota – tiek stiprybių, tiek silpnybių po lygiai (1 iš 2)."}, "Ugdymas": {"strength": 2, "weakness": 1, "summary": "Jūsų stiprybė – ugdymas. Atsakymai rodo, kad dažniau demonstruojate šią kompetenciją (2 iš 3 teiginių)."}, "Prieinamumas": {"strength": 1, "weakness": 2, "summary": "Jūsų tobulėjimo sritis – prieinamumas. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių (2 iš 3 teiginių)."}, "Investuotojas": {"strength": 1, "weakness": 1, "summary": "Kompetencija investuotojas yra subalansuota – tiek stiprybių, tiek silpnybių po lygiai (1 iš 2)."}, "Talentų magnetas": {"strength": 2, "weakness": 1, "summary": "Jūsų stiprybė – talentų magnetas. Atsakymai rodo, kad dažniau demonstruojate šią kompetenciją (2 iš 3 teiginių)."}, "Sprendimų priėmimas": {"strength": 2, "weakness": 2, "summary": "Kompetencija sprendimų priėmimas yra subalansuota – tiek stiprybių, tiek silpnybių po lygiai (2 iš 4)."}, "Komunikacija": {"strength": 2, "weakness": 2, "summary": "Kompetencija komunikacija yra subalansuota – tiek stiprybių, tiek silpnybių po lygiai (2 iš 4)."}};
 
-      area.hidden=false;
-      area.innerHTML = '<h3>'+interp.title+'</h3><p>'+interp.desc+'</p>'+
-        '<p><strong>Viso balų:</strong> '+res.score+'</p>'+breakdown+
-        '<hr><div class="small"><strong>Rekomendacijos:</strong><ul>'+
-        '<li>Praktikuokite delegavimą: duokite 51% sprendimų galios užduočiai.</li>'+
-        '<li>Padarykite vietos klaidoms: aptarkite, ko išmokote po nesėkmės.</li>'+
-        '<li>Skatinkite komandą siūlyti sprendimus prieš siūlant savo.</li>'+
-        '</ul></div>';
-    });
+function generateRecommendations(area) {
+  let html = `<h3>${profile}</h3><p>${profileText}</p>`;
+  html += `<p><strong>Viso balų:</strong> ${totalScore}</p>`;
+  html += '<hr><div class="small"><strong>Rekomendacijos:</strong>';
+  html += '<ul>';
+  for (const [key, val] of Object.entries(analysis)) {
+    if (val.weakness > val.strength) {
+      html += `<li><strong>${key}:</strong> ${val.summary}</li>`;
+      html += '<li>Atpažinti situacijas, kuriose ši kompetencija pasireiškia silpniau.</li>';
+      html += '<li>Pasikalbėti su komanda apie šios srities lūkesčius.</li>';
+      html += '<li>Skirti laiko refleksijai ir stebėti pokyčius.</li>';
+      html += '<li>Ieškoti mentoriaus ar kolegos, kuris stiprus šioje srityje, ir mokytis iš jo.</li>';
+    }
+  }
+  html += '</ul></div>';
+  area.hidden = false;
+  area.innerHTML = html;
+}
+</script>
+
 
     document.getElementById('resetBtn').addEventListener('click',()=>{
       document.getElementById('quiz').reset();
