@@ -1,295 +1,87 @@
-<!doctype html>
-
+<!DOCTYPE html>
 <html lang="lt">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Vadovavimo įtakos testas — gamybos vadovams</title>
-  <style>
-    :root{--bg:#f6f8fb;--card:#ffffff;--accent:#0b63d6;--muted:#6b7280}
-    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;line-height:1.5;background:var(--bg);color:#111;margin:0;padding:24px}
-    .container{max-width:900px;margin:0 auto}
-    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
-    h1{font-size:1.4rem;margin:0}
-    p.lead{margin:4px 0 0;color:var(--muted)}
-    .card{background:var(--card);border-radius:12px;padding:20px;box-shadow:0 6px 18px rgba(20,30,60,0.06)}
-    .question{padding:12px;border-radius:8px;margin-bottom:10px;background:linear-gradient(180deg,#fff, #fbfdff)}
-    .q-title{font-weight:600;margin-bottom:8px}
-    .radios{display:flex;gap:8px;flex-wrap:wrap}
-    label.choice{flex:1 1 72px;border:1px solid #e6eefc;padding:8px;border-radius:8px;text-align:center;cursor:pointer}
-    input[type=radio]{display:none}
-    input[type=radio]:checked + .choice{background:linear-gradient(90deg,var(--accent),#2b8df7);color:#fff;border-color:transparent}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-    button{cursor:pointer;border:0;padding:10px 14px;border-radius:8px;background:var(--accent);color:#fff;font-weight:600}
-    button.secondary{background:#fff;border:1px solid #dbeafe;color:#0b63d6}
-    .result{margin-top:16px;padding:14px;border-radius:10px;background:#fff}
-    .small{font-size:0.9rem;color:var(--muted)}
-    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:0.9rem}
-    @media (max-width:640px){.radios{gap:6px}}
-    .hint{background:#fff9db;border:1px solid #ffe9a8;padding:10px;border-radius:8px;color:#6a4a00}
-  </style>
+    <meta charset="UTF-8">
+    <title>Vadovavimo įtakos testas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f9f9f9; }
+        h1, h2 { color: #333; }
+        .question-block, .recommendation-block {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .recommendation-block h3 { color: #0055a5; }
+        ul { padding-left: 20px; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div>
-        <h1>Vadovavimo įtakos testas</h1>
-        <p class="lead">Įkvėpta „Multiplier vs Accidental Diminisher“ — pritaikyta gamybos vidurinės grandies vadovams</p>
-      </div>
-    </header><main class="card" role="main">
-  <section>
-    <p class="small">Instrukcija: pažymėkite kiekvieną teiginį skalėje nuo <strong>1</strong> (visiškai ne apie mane) iki <strong>5</strong> (labai apie mane). Testas turi 10 klausimų.</p>
-  </section>
-
-  <form id="quiz">
-
-    <!-- Questions -->
-    <div class="questions" id="questions">
-
-      <!-- 1 -->
-      <div class="question" data-q="1">
-        <div class="q-title">1. Greitas sprendimų priėmėjas</div>
-        <div class="q-text small">Kai kyla problema, mėgstu greitai nuspręsti, kad komanda neliktų be krypties.</div>
-        <div class="radios" role="radiogroup" aria-labelledby="q1">
-          <label><input type="radio" name="q1" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q1" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q1" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q1" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q1" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 2 -->
-      <div class="question" data-q="2">
-        <div class="q-title">2. „Aš geriau žinau" sindromas</div>
-        <div class="q-text small">Dažnai parodau, kaip reikia padaryti, kad darbas būtų atliktas teisingai ir kokybiškai.</div>
-        <div class="radios">
-          <label><input type="radio" name="q2" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q2" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q2" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q2" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q2" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 3 -->
-      <div class="question" data-q="3">
-        <div class="q-title">3. Apsaugantis vadovas</div>
-        <div class="q-text small">Stengiuosi savo žmones apsaugoti nuo vadovybės spaudimo ar „nereikalingų“ užduočių.</div>
-        <div class="radios">
-          <label><input type="radio" name="q3" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q3" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q3" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q3" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q3" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 4 -->
-      <div class="question" data-q="4">
-        <div class="q-title">4. Idėjų generatorius</div>
-        <div class="q-text small">Dažnai dalinuosi naujomis idėjomis, ką būtų galima patobulinti ar pakeisti procese.</div>
-        <div class="radios">
-          <label><input type="radio" name="q4" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q4" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q4" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q4" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q4" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 5 -->
-      <div class="question" data-q="5">
-        <div class="q-title">5. Perfekcionistas</div>
-        <div class="q-text small">Retai būnu visiškai patenkintas komandos darbo rezultatu – visada matau, ką dar galima padaryti geriau.</div>
-        <div class="radios">
-          <label><input type="radio" name="q5" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q5" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q5" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q5" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q5" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 6 -->
-      <div class="question" data-q="6">
-        <div class="q-title">6. „Aš viską sutvarkysiu“</div>
-        <div class="q-text small">Jei matau, kad kažkas nespėja ar daro klaidas, geriau pats perimu darbą, kad viskas būtų laiku.</div>
-        <div class="radios">
-          <label><input type="radio" name="q6" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q6" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q6" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q6" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q6" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 7 -->
-      <div class="question" data-q="7">
-        <div class="q-title">7. Greitis prieš diskusiją</div>
-        <div class="q-text small">Jei reikia priimti sprendimą, diskusijas laikau laiko švaistymu – svarbiau greitai judėti pirmyn.</div>
-        <div class="radios">
-          <label><input type="radio" name="q7" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q7" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q7" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q7" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q7" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 8 -->
-      <div class="question" data-q="8">
-        <div class="q-title">8. Vizijos perteikėjas</div>
-        <div class="q-text small">Mėgstu paaiškinti komandai, kaip aš matau idealų gamybos procesą ar galutinį rezultatą.</div>
-        <div class="radios">
-          <label><input type="radio" name="q8" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q8" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q8" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q8" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q8" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 9 -->
-      <div class="question" data-q="9">
-        <div class="q-title">9. Aktyvus susitikimuose</div>
-        <div class="q-text small">Per susirinkimus dažnai kalbu, dalinuosi savo nuomone, palaikau energiją ir kryptį.</div>
-        <div class="radios">
-          <label><input type="radio" name="q9" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q9" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q9" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q9" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q9" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
-      <!-- 10 -->
-      <div class="question" data-q="10">
-        <div class="q-title">10. Ribotas įgaliojimų perdavimas</div>
-        <div class="q-text small">Projektus ar papildomas užduotis dažniausiai patikiu tik tiems darbuotojams, kuriais labiausiai pasitikiu arba kurie turi ilgiausią stažą.</div>
-        <div class="radios">
-          <label><input type="radio" name="q10" value="1"><span class="choice">1</span></label>
-          <label><input type="radio" name="q10" value="2"><span class="choice">2</span></label>
-          <label><input type="radio" name="q10" value="3"><span class="choice">3</span></label>
-          <label><input type="radio" name="q10" value="4"><span class="choice">4</span></label>
-          <label><input type="radio" name="q10" value="5"><span class="choice">5</span></label>
-        </div>
-      </div>
-
+    <h1>Vadovavimo įtakos testas — gamybos vadovams</h1>
+    <div class="question-block">
+        <p>Instrukcija: pažymėkite kiekvieną teiginį skalėje nuo 1 (visiškai ne apie mane) iki 5 (labai apie mane).</p>
+        <form id="testForm">
+            <!-- Klausimai -->
+            <label>1. Klausimas 1:<br><input type="number" name="q1" min="1" max="5" required><br><br></label>
+            <label>2. Klausimas 2:<br><input type="number" name="q2" min="1" max="5" required><br><br></label>
+            <label>3. Klausimas 3:<br><input type="number" name="q3" min="1" max="5" required><br><br></label>
+            <label>4. Klausimas 4:<br><input type="number" name="q4" min="1" max="5" required><br><br></label>
+            <label>5. Klausimas 5:<br><input type="number" name="q5" min="1" max="5" required><br><br></label>
+            <label>6. Klausimas 6:<br><input type="number" name="q6" min="1" max="5" required><br><br></label>
+            <label>7. Klausimas 7:<br><input type="number" name="q7" min="1" max="5" required><br><br></label>
+            <label>8. Klausimas 8:<br><input type="number" name="q8" min="1" max="5" required><br><br></label>
+            <label>9. Klausimas 9:<br><input type="number" name="q9" min="1" max="5" required><br><br></label>
+            <label>10. Klausimas 10:<br><input type="number" name="q10" min="1" max="5" required><br><br></label>
+            <button type="submit">Apskaičiuoti rezultatą</button>
+        </form>
     </div>
 
-    <div class="actions">
-      <button type="button" id="scoreBtn">Apskaičiuoti rezultatą</button>
-      <button type="button" id="resetBtn" class="secondary">Išvalyti</button>
-      <button type="button" id="printBtn" class="secondary">Spausdinti / Eksportuoti PDF</button>
-      <button type="button" id="copyBtn" class="secondary">Kopijuoti rezultatą</button>
-    </div>
+    <div id="results" class="recommendation-block" style="display:none;"></div>
 
-    <div id="resultArea" class="result" hidden aria-live="polite"></div>
+    <script>
+    const analysis = {
+        "Kontrolė": {"strength": 0, "weakness": 1, "summary": "Jūsų tobulėjimo sritis – kontrolė. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių (1 iš 1 teiginių)."},
+        "Delegavimas": {"strength": 0, "weakness": 2, "summary": "Jūsų tobulėjimo sritis – delegavimas. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių (2 iš 2 teiginių)."},
+        "Emocinis intelektas": {"strength": 1, "weakness": 3, "summary": "Jūsų tobulėjimo sritis – emocinis intelektas. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių (3 iš 4 teiginių)."},
+        "Prieinamumas": {"strength": 1, "weakness": 2, "summary": "Jūsų tobulėjimo sritis – prieinamumas. Atsakymai rodo, kad šioje srityje yra daugiau silpnybių (2 iš 3 teiginių)."}
+    };
 
-  </form>
+    const totalScore = Object.values(analysis).reduce((sum, val) => sum + val.strength, 0);
+    let profile = "";
+    let profileText = "";
 
-  <section style="margin-top:14px" class="small">
-    <div class="hint"><strong>Pastaba:</strong> testas yra savirefleksijos įrankis. Atrankų metu naudokite kartu su interviu klausimais arba praktiniais užduotimis, kad patikrintumėte elgesį realiuose situacijose.</div>
-  </section>
-
-</main>
-
-<footer>
-  Sukūrė: AI pagalba · Versija 1.0 · Kalba: lietuvių
-</footer>
-
-  </div>  <script>
-    function getScore(){
-      let total = 0;
-      for(let i=1;i<=10;i++){
-        const v = document.querySelector('input[name=q'+i+']:checked');
-        if(!v) return {complete:false, missing:i};
-        total += parseInt(v.value,10);
-      }
-      return {complete:true, score:total};
+    if (totalScore <= 6) {
+        profile = "Diminisher";
+        profileText = "Jūsų elgesys dažnai riboja komandos potencialą. Rekomenduojame pradėti nuo savirefleksijos, stebėti komandą ir ieškoti būdų, kaip suteikti daugiau autonomijos.";
+    } else if (totalScore <= 9) {
+        profile = "Accidental Diminisher";
+        profileText = "Jūs turite gerų ketinimų, tačiau kartais nejučia ribojate kitus. Rekomenduojame atpažinti situacijas, kuriose per daug kontroliuojate, ir praktikuoti aktyvų klausymą bei delegavimą.";
+    } else {
+        profile = "Multiplier";
+        profileText = "Jūsų elgesys dažniau įgalina komandą. Tęskite patirtį dalinantis atsakomybėmis ir suteikiant erdvę klaidoms.";
     }
 
-    function interpret(score){
-      if(score>=10 && score<=20){
-        return {
-          title:'10–20: Įgalinantis vadovas',
-          desc:'Jūsų elgesys dažniau įgalina komandą. Tęskite patirtį dalinantis atsakomybėmis ir suteikiant erdvę klaidoms.'
-        };
-      } else if(score>=21 && score<=35){
-        return {
-          title:'21–35: Subalansuotas vadovas',
-          desc:'Jūs turite tiek multiplikatoriaus, tiek kai kurių ribojančių tendencijų. Naudinga dirbti su konkrečiomis situacijomis — pvz. delegavimu arba įsiklausymu.'
-        };
-      } else {
-        return {
-          title:'36–50: Galimas netyčinis ribotojas',
-          desc:'Jūsų veiksmai gali riboti komandos savarankiškumą. Rekomenduojama dėmesį skirti delegavimui, klaidų priėmimui ir erdvės kūrimui darbuotojų iniciatyvai.'
-        };
-      }
-    }
-
-    document.getElementById('scoreBtn').addEventListener('click',()=>{
-      const res = getScore();
-      const area = document.getElementById('resultArea');
-      if(!res.complete){
-        area.hidden=false; area.innerHTML = '<strong>Klaida:</strong> nepateiktas atsakymas į klausimą nr. '+res.missing+'.<br><span class="small">Prašome pažymėti visus klausimus.</span>';
-        return;
-      }
-      const interp = interpret(res.score);
-      const details = [];
-      // Quick tips based on specific high scores
-      for(let i=1;i<=10;i++){
-        const v = parseInt(document.querySelector('input[name=q'+i+']:checked').value,10);
-        if(v>=4){
-          details.push(i);
+    document.getElementById('testForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.style.display = 'block';
+        let html = `<h2>Profilis: ${profile}</h2><p>${profileText}</p><p><strong>Viso balų:</strong> ${totalScore}</p>`;
+        html += '<h2>AI rekomendacijos pagal kompetencijas</h2>';
+        for (const [key, val] of Object.entries(analysis)) {
+            if (val.weakness > val.strength) {
+                html += `<div><h3>${key}</h3><p>${val.summary}</p><ul>`;
+                html += '<li>Atpažinti situacijas, kuriose ši kompetencija pasireiškia silpniau.</li>';
+                html += '<li>Pasikalbėti su komanda apie šios srities lūkesčius.</li>';
+                html += '<li>Skirti laiko refleksijai ir stebėti pokyčius.</li>';
+                html += '<li>Ieškoti mentoriaus ar kolegos, kuris stiprus šioje srityje, ir mokytis iš jo.</li>';
+                html += '</ul></div>';
+            }
         }
-      }
-      let breakdown='';
-      if(details.length){
-        breakdown='<p class="small">Klausimai, kur jūsų įvertinimai yra aukšti (4–5): '+details.join(', ')+'</p>';
-      }
-
-      area.hidden=false;
-      area.innerHTML = '<h3>'+interp.title+'</h3><p>'+interp.desc+'</p>'+
-        '<p><strong>Viso balų:</strong> '+res.score+'</p>'+breakdown+
-        '<hr><div class="small"><strong>Rekomendacijos:</strong><ul>'+
-        '<li>Praktikuokite delegavimą: duokite 51% sprendimų galios užduočiai.</li>'+
-        '<li>Padarykite vietos klaidoms: aptarkite, ko išmokote po nesėkmės.</li>'+
-        '<li>Skatinkite komandą siūlyti sprendimus prieš siūlant savo.</li>'+
-        '</ul></div>';
+        resultsDiv.innerHTML = html;
     });
+    </script>
+</body>
 
-    document.getElementById('resetBtn').addEventListener('click',()=>{
-      document.getElementById('quiz').reset();
-      const a = document.getElementById('resultArea'); a.hidden=true; a.innerHTML='';
-    });
-
-    document.getElementById('printBtn').addEventListener('click',()=>{
-      window.print();
-    });
-
-    document.getElementById('copyBtn').addEventListener('click',()=>{
-      const res = getScore();
-      if(!res.complete){
-        alert('Prašome užpildyti visus klausimus prieš kopijuojant rezultatą.'); return;
-      }
-      const interp = interpret(res.score);
-      let text = 'Vadovavimo įtakos testas — rezultatas:\n';
-      text += interp.title + '\n' + interp.desc + '\nViso balų: ' + res.score + '\n';
-      navigator.clipboard.writeText(text).then(()=>{
-        alert('Rezultatas nukopijuotas į iškarpinę.');
-      },()=>alert('Klaida kopijuojant.'));
-    });
-
-    // Make clicking the visual choice check the radio
-    document.querySelectorAll('.choice').forEach(ch=>{
-      ch.addEventListener('click', (e)=>{
-        const inp = ch.parentElement.querySelector('input[type=radio]');
-        if(inp) inp.checked = true;
-      });
-    });
-  </script></body>
-</html>
-
-    
