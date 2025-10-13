@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Vadovavimo įtakos testas</title>
-  <meta name="description" content="Vadovavimo įtakos testas (Multiplier vs Accidental Diminisher) — skirta gamybos vidurinės grandies vadovams bet galima naudoti visiems kas vadovauja arba planuoja tapti vadovu." />
+  <title>Vadovavimo įtakos testas — gamybos vadovams</title>
+  <meta name="description" content="Vadovavimo įtakos testas (Multiplier vs Accidental Diminisher) — skirta gamybos vidurinės grandies vadovams." />
   <style>
     :root{
       --bg:#0f1221;--panel:#171a2b;--ink:#eef1ff;--muted:#b8c0ff;--line:#262a41;
@@ -72,8 +72,8 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Vadovavimo įtakos testas</h1>
-      <p class="subtitle">Įkvėpta „Multiplier vs Accidental Diminisher“ — skirta gamybos vidurinės grandies vadovams bet galima naudoti visiems kas vadovauja arba planuoja tapti vadovu.</p>
+      <h1>Vadovavimo įtakos testas — gamybos vadovams</h1>
+      <p class="subtitle">Įkvėpta „Multiplier vs Accidental Diminisher“ — pritaikyta gamybos vidurinės grandies vadovams.</p>
       <p class="note">Instrukcija: pažymėk kiekvieną teiginį skalėje nuo 1 <em>(visiškai ne apie mane)</em> iki 5 <em>(labai apie mane)</em>. Teste yra 10 teiginių.</p>
     </header>
 
@@ -213,7 +213,7 @@
 
     <footer>
       <div>Pastaba: testas yra savirefleksijos įrankis. Atrankose naudok kartu su interviu klausimais ar praktinėmis užduotimis (patikrinant elgesį realiose situacijose).</div>
-      <div style="margin-top:6px;">Sukūrė: AI pagalba · Versija 2.0 · Kalba: lietuvių</div>
+      <div style="margin-top:6px;">Sukūrė: AI pagalba · Versija 1.0 · Kalba: lietuvių</div>
     </footer>
   </div>
 
@@ -226,7 +226,11 @@
       const copyBtn    = document.getElementById('copyBtn');
       const calcBtn    = document.getElementById('calculateBtn');
 
-      // Klausimų -> archetipų žemėlapis (tavo logika)
+      // --- Konfigūracija: rekomendacijų ribos ---
+      const MIN_REC_VALUE = 3;  // rodyti rekomendacijas tik nuo 3 ir aukščiau
+      const MAX_REC_COUNT = 5;  // rodyti ne daugiau kaip 5 rekomendacijas (Top-5)
+
+      // --- Klausimų -> archetipų žemėlapis ---
       const archetypeMap = {
         q1: 'rapid_responder',
         q2: 'know_it_all',
@@ -253,6 +257,12 @@
         selective_delegator:  { label:'Selective Delegator / Micro',  tip:'Deleguok pagal potencialą, ne vien stažą; aiškūs rezultatai + sutarti patikros taškai.' }
       };
 
+      const valueAdvice = {
+        3: 'Sąmoningai pristabdyti: prieš veikdamas užduok komandai 2 klausimus ir palauk 30–60 s atsakymams.',
+        4: 'Eksperimentas (2 savaites): pasirink 1 situaciją per dieną, kur vietoj įprasto veiksmo pritaikysi alternatyvą. Apibrėžk sėkmės kriterijus.',
+        5: 'Keisti vadovavimo stilių (30–60 d.): susikurk pokyčio planą + paprašyk mentorystės arba reguliaraus atgalinio ryšio.'
+      };
+
       function getScore(){
         const names = Object.keys(archetypeMap);
         let complete = true, total = 0;
@@ -260,9 +270,9 @@
         for (const name of names){
           const checked = form?.querySelector(`input[name="${name}"]:checked`);
           if(!checked){ complete = false; break; }
-          let val = Number(checked.value || 0);
           const qEl = form?.querySelector(`.q[data-question="${name}"]`);
-          const isInverted = qEl?.dataset?.invert === 'true'; // nepanaudota, rezervuota ateičiai
+          const isInverted = qEl?.dataset?.invert === 'true'; // rezervuota ateičiai
+          let val = Number(checked.value || 0);
           if(isInverted){ val = 6 - val; }
           perItem[name] = val; total += val;
           const t = archetypeMap[name]; perType[t] = (perType[t] || 0) + val;
@@ -270,66 +280,109 @@
         return { complete, score: total, perItem, perType };
       }
 
-      function interpret(score, perType){
-        let level = { title:'', desc:'', tone:'ok', badge:'Multiplier' };
-        if (score <= 20){
-          level = { title:'Daugiau „Multiplier“ elgsenų',
-                    desc:'Retai perimi ar riboji komandos mąstymą. Toliau kurk erdvę diskusijai, sprendimams ir savarankiškumui.',
-                    tone:'ok', badge:'Multiplier' };
-        } else if (score <= 35){
-          level = { title:'„Accidental Diminisher“ tendencijos',
-                    desc:'Kai kuriose situacijose, dažniausiai iš gerų ketinimų (greitis, kokybė, apsauga), netyčia apriboji komandos balsą ar augimą.',
-                    tone:'warn', badge:'AD tendencijos' };
-        } else {
-          level = { title:'„Diminisher“ rizika',
-                    desc:'Dalis įpročių reguliariai mažina kitų indėlį. Kryptingai perkelk dėmesį nuo „aš atsakau“ prie „komanda atranda“.',
-                    tone:'danger', badge:'Diminisher rizika' };
-        }
-        const ranked = Object.entries(perType).sort((a,b)=>b[1]-a[1]).slice(0,2);
-        const highlights = ranked.map(([key,val])=>{
-          const info = archetypeInfo[key];
-          return `• <strong>${info.label}</strong> — aukštas balas (${val}). Pabandyk: ${info.tip}`;
-        }).join('<br>');
-        const html = `
+      function levelFromScore(score){
+        if (score <= 20) return {
+          key:'multiplier', title:'Daugiau „Multiplier“ elgsenų', tone:'ok', badge:'Multiplier',
+          desc:'Retai perimi ar riboji komandos mąstymą. Toliau kurk erdvę diskusijai, sprendimams ir savarankiškumui.'
+        };
+        if (score <= 35) return {
+          key:'ad', title:'„Accidental Diminisher“ tendencijos', tone:'warn', badge:'AD tendencijos',
+          desc:'Kai kuriose situacijose, dažniausiai iš gerų ketinimų (greitis, kokybė, apsauga), netyčia apriboji komandos balsą ar augimą.'
+        };
+        return {
+          key:'diminisher', title:'„Diminisher“ rizika', tone:'danger', badge:'Diminisher rizika',
+          desc:'Dalis įpročių reguliariai mažina kitų indėlį. Kryptingai perkelk dėmesį nuo „aš atsakau“ prie „komanda atranda“.'
+        };
+      }
+
+      function buildRecommendations(levelKey, perItem){
+        if (levelKey === 'multiplier') return [];
+        const recs = Object.entries(perItem)
+          .filter(([, val]) => val >= MIN_REC_VALUE) // tik nuo 3 iki 5
+          .map(([name, val]) => {
+            const type = archetypeMap[name];
+            const info = archetypeInfo[type];
+            const advice = valueAdvice[String(val)] || '';
+            return {
+              name, val,
+              label: info.label,
+              text: `${advice} Pabandyk: ${info.tip}`
+            };
+          })
+          .sort((a,b) => (b.val - a.val) || a.name.localeCompare(b.name))
+          .slice(0, MAX_REC_COUNT); // Top-5
+        return recs;
+      }
+
+      function render(level, score, recommendations){
+        let html = `
           <span class="kicker">Rezultatas</span>
           <h4>${level.title} <span class="badge ${level.tone}">${level.badge}</span></h4>
           <div>Viso balų: <strong>${score}</strong> (iš 50)</div>
           <p style="margin:8px 0 10px;">${level.desc}</p>
-          <div><strong>Stipriausios tendencijos:</strong><br>${highlights}</div>
         `;
-        return { level, html };
+        if (level.key !== 'multiplier') {
+          if (recommendations.length === 0) {
+            html += `<div><strong>Rekomendacijos:</strong> pagal pažymėtus atsakymus papildomų veiksmų nereikia.</div>`;
+          } else {
+            html += `<div><strong>Rekomendacijos (Top‑${MAX_REC_COUNT}, pagal pažymėtus atsakymus):</strong><br><ul style="margin:8px 0 0 18px">`;
+            recommendations.forEach(r => {
+              const badge =
+                r.val === 3 ? 'Pristabdyti' :
+                r.val === 4 ? 'Eksperimentas' : 'Keisti stilių'; // 5 -> Keisti stilių
+              const toneClass = (r.val >= 5) ? 'danger' : (r.val >= 4) ? 'warn' : 'ok';
+              html += `<li><strong>${r.label}</strong> — pasirinkai <strong>${r.val}</strong> <span class="badge ${toneClass}">${badge}</span>. ${r.text}</li>`;
+            });
+            html += `</ul></div>`;
+          }
+        } else {
+          html += `<div class="note">Palaikyk dabartines praktikas ir dalinkis pavyzdžiais komandoje.</div>`;
+        }
+        resultArea.hidden = false;
+        resultArea.innerHTML = html;
+        resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
 
-      function renderResult(html){
-        if(!resultArea) return;
-        resultArea.hidden = false; resultArea.innerHTML = html;
-        resultArea.scrollIntoView({ behavior:'smooth', block:'center' });
-      }
-
-      calcBtn?.addEventListener('click', (e)=>{
+      // --- Veiksmai ---
+      calcBtn?.addEventListener('click', (e) => {
         e.preventDefault();
         const res = getScore();
-        if(!res.complete){ alert('Prašome užpildyti visus klausimus.'); return; }
-        const view = interpret(res.score, res.perType);
-        renderResult(view.html);
+        if (!res.complete) { alert('Prašome užpildyti visus klausimus.'); return; }
+        const level = levelFromScore(res.score);
+        const recs  = buildRecommendations(level.key, res.perItem);
+        render(level, res.score, recs);
       });
 
-      copyBtn?.addEventListener('click', async (e)=>{
+      copyBtn?.addEventListener('click', async (e) => {
         e.preventDefault();
         const res = getScore();
-        if(!res.complete){ alert('Prašome užpildyti visus klausimus prieš kopijuojant rezultatą.'); return; }
-        const { level } = interpret(res.score, res.perType);
-        let lines = [];
+        if (!res.complete) { alert('Prašome užpildyti visus klausimus prieš kopijuojant rezultatą.'); return; }
+        const level = levelFromScore(res.score);
+        const recs  = buildRecommendations(level.key, res.perItem);
+
+        const lines = [];
         lines.push('Vadovavimo įtakos testas — rezultatas');
         lines.push(level.title);
         lines.push(level.desc);
         lines.push('');
         lines.push(`Viso balų: ${res.score} (iš 50)`);
-        const ranked = Object.entries(res.perType).sort((a,b)=>b[1]-a[1]).slice(0,2);
-        lines.push(''); lines.push('Stipriausios tendencijos:');
-        ranked.forEach(([key,val])=>lines.push(`- ${archetypeInfo[key].label} — ${val}. Pabandyk: ${archetypeInfo[key].tip}`));
-        try{ await navigator.clipboard.writeText(lines.join('\n')); alert('Rezultatas nukopijuotas į iškarpinę.'); }
-        catch(err){ alert('Nepavyko nukopijuoti. Atidaryk per HTTPS arba pažymėk tekstą rankiniu būdu.'); }
+        if (level.key !== 'multiplier') {
+          lines.push('');
+          lines.push(`Rekomendacijos (Top-${MAX_REC_COUNT}, pagal pažymėtus atsakymus):`);
+          recs.forEach(r => {
+            const badge =
+              r.val === 3 ? 'Pristabdyti' :
+              r.val === 4 ? 'Eksperimentas' : 'Keisti stilių';
+            lines.push(`- ${r.label} — ${r.val} (${badge}). ${r.text}`);
+          });
+        }
+
+        try {
+          await navigator.clipboard.writeText(lines.join('\n'));
+          alert('Rezultatas nukopijuotas į iškarpinę.');
+        } catch (err) {
+          alert('Nepavyko nukopijuoti. Atidaryk per HTTPS arba pažymėk tekstą rankiniu būdu.');
+        }
       });
 
       printBtn?.addEventListener('click', (e)=>{ e.preventDefault(); window.print(); });
