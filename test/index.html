@@ -5,201 +5,67 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Vadovavimo įtakos testas — gamybos vadovams</title>
   <meta name="description" content="Vadovavimo įtakos testas (Multiplier vs Accidental Diminisher) — skirta gamybos vidurinės grandies vadovams." />
-
   <style>
     :root{
-      --bg: #0f1221;
-      --panel: #171a2b;
-      --ink: #eef1ff;
-      --muted: #b8c0ff;
-      --accent: #6c8cff;
-      --accent-2: #46d3a2;
-      --danger: #ff6b6b;
-      --warn: #ffb347;
-      --ok: #46d3a2;
-      --line: #262a41;
-      --chip: #1f2440;
-      --chip-on: #293062;
-      --chip-border: #3a4174;
-      --shadow: 0 10px 24px rgba(0,0,0,.28);
-      --radius: 14px;
+      --bg:#0f1221;--panel:#171a2b;--ink:#eef1ff;--muted:#b8c0ff;--line:#262a41;
+      --chip:#1f2440;--chip-on:#293062;--chip-border:#3a4174;
+      --accent:#4c65ff;--ok:#46d3a2;--warn:#ffb347;--danger:#ff6b6b;
+      --radius:14px;--shadow:0 10px 24px rgba(0,0,0,.28);
     }
-
-    /* Reset */
     *,*::before,*::after{box-sizing:border-box}
     html,body{margin:0;padding:0}
     body{
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,Arial,"Noto Sans",sans-serif;
-      background: linear-gradient(160deg, #0b0e1a 0%, #101634 55%, #0b122b 100%);
-      color: var(--ink);
-      line-height: 1.5;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+      background:linear-gradient(160deg,#0b0e1a 0%,#101634 55%,#0b122b 100%);
+      color:var(--ink);line-height:1.5;
     }
-
-    .wrap{
-      max-width: 980px;
-      margin: 32px auto;
-      padding: 0 16px 48px;
-    }
-
-    header{
-      background: transparent;
-      padding: 8px 0 18px;
-    }
-    h1{
-      margin: 0 0 8px;
-      font-size: clamp(22px, 3.2vw, 34px);
-      letter-spacing: .2px;
-    }
-    .subtitle{
-      color: var(--muted);
-      margin: 0 0 18px;
-    }
-    .note{
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 8px;
-    }
-
-    .card{
-      background: rgba(23,26,43,.65);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: clip;
-    }
-
-    .panel{
-      padding: 18px clamp(16px, 3vw, 28px);
-    }
-
-    .q{
-      border-top: 1px solid var(--line);
-      padding: 18px 0;
-    }
-    .q:first-child{ border-top: none; }
-    .q h3{
-      margin: 0 0 8px;
-      font-size: 17px;
-    }
-    .q p{
-      margin: 0 0 12px;
-      color: var(--muted);
-    }
-
-    /* Likerto skalė (1–5) */
-    .scale{
-      display: grid;
-      grid-template-columns: repeat(5, minmax(48px, 1fr));
-      gap: 10px;
-      align-items: center;
-    }
+    .wrap{max-width:980px;margin:32px auto;padding:0 16px 48px}
+    header{padding:8px 0 18px}
+    h1{margin:0 0 8px;font-size:clamp(22px,3.2vw,34px)}
+    .subtitle{color:var(--muted);margin:0 0 18px}
+    .note{color:var(--muted);font-size:14px;margin-top:8px}
+    .card{background:rgba(23,26,43,.65);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:clip}
+    .panel{padding:18px clamp(16px,3vw,28px)}
+    .q{border-top:1px solid var(--line);padding:18px 0}
+    .q:first-child{border-top:none}
+    .q h3{margin:0 0 8px;font-size:17px}
+    .q p{margin:0 0 12px;color:var(--muted)}
+    .scale{display:grid;grid-template-columns:repeat(5,minmax(48px,1fr));gap:10px;align-items:center}
     .choice{
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 0;
-      border: 1px solid var(--chip-border);
-      border-radius: 10px;
-      background: var(--chip);
-      color: var(--ink);
-      user-select: none;
-      cursor: pointer;
-      transition: all .18s ease;
-      font-weight: 600;
+      display:inline-flex;align-items:center;justify-content:center;padding:12px 0;
+      border:1px solid var(--chip-border);border-radius:10px;background:var(--chip);
+      color:var(--ink);user-select:none;cursor:pointer;transition:all .18s ease;font-weight:600;
     }
-    .choice:hover{
-      transform: translateY(-1px);
-      background: var(--chip-on);
-      border-color: #5862a3;
-    }
-
-    /* Paslėpti radio, bet palikti prieinamumui */
-    .visually-hidden{
-      position: absolute !important;
-      opacity: 0 !important;
-      width: 1px; height: 1px;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    /* Pasirinkimo būsena (kai radio:checked) */
+    .choice:hover{transform:translateY(-1px);background:var(--chip-on);border-color:#5862a3}
+    .visually-hidden{position:absolute!important;opacity:0!important;width:1px;height:1px;overflow:hidden;pointer-events:none}
     input[type="radio"]:checked + label.choice{
-      background: linear-gradient(180deg, #3140a8 0%, #29337c 100%);
-      border-color: #6f87ff;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06), 0 6px 14px rgba(33,54,156,.35);
+      background:linear-gradient(180deg,#3140a8 0%,#29337c 100%);border-color:#6f87ff;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.06),0 6px 14px rgba(33,54,156,.35);
     }
-
-    /* Mygtukai */
-    .toolbar{
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
+    .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
     .btn{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid var(--chip-border);
-      background: var(--chip);
-      color: var(--ink);
-      cursor: pointer;
-      font-weight: 600;
-      transition: .18s ease;
+      display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;
+      border:1px solid var(--chip-border);background:var(--chip);color:var(--ink);
+      cursor:pointer;font-weight:600;transition:.18s ease;
     }
-    .btn:hover{ transform: translateY(-1px); background: var(--chip-on); border-color: #5862a3; }
-    .btn.primary{ background: linear-gradient(180deg, #4c65ff 0%, #3c50cc 100%); border-color: #6f87ff; }
-    .btn.primary:hover{ filter: brightness(1.05); }
-
-    .result{
-      margin-top: 18px;
-      padding: 14px;
-      border: 1px dashed #3e4a8f;
-      border-radius: 12px;
-      background: rgba(35,42,80,.35);
-    }
-    .result h4{ margin: 0 0 8px; }
-    .kicker{
-      display: inline-block;
-      padding: 2px 8px;
-      font-size: 12px;
-      border-radius: 999px;
-      border: 1px solid #3c4aa7;
-      color: #bfc6ff;
-      margin-bottom: 6px;
-    }
-
-    .badge{
-      display:inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      border: 1px solid transparent;
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-    .badge.ok{ background:#0f2a20; color:#b7f3db; border-color:#2a6c54; }
-    .badge.warn{ background:#2c220f; color:#ffe0ad; border-color:#7a5b20; }
-    .badge.danger{ background:#2f1416; color:#ffd0d3; border-color:#7a252b; }
-
-    footer{
-      margin-top: 24px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    /* Spausdinimas / PDF */
+    .btn:hover{transform:translateY(-1px);background:var(--chip-on);border-color:#5862a3}
+    .btn.primary{background:linear-gradient(180deg,#4c65ff 0%,#3c50cc 100%);border-color:#6f87ff}
+    .btn.primary:hover{filter:brightness(1.05)}
+    .result{margin-top:18px;padding:14px;border:1px dashed #3e4a8f;border-radius:12px;background:rgba(35,42,80,.35)}
+    .result h4{margin:0 0 8px}
+    .kicker{display:inline-block;padding:2px 8px;font-size:12px;border-radius:999px;border:1px solid #3c4aa7;color:#bfc6ff;margin-bottom:6px}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;border:1px solid transparent;margin-left:6px;vertical-align:middle}
+    .badge.ok{background:#0f2a20;color:#b7f3db;border-color:#2a6c54}
+    .badge.warn{background:#2c220f;color:#ffe0ad;border-color:#7a5b20}
+    .badge.danger{background:#2f1416;color:#ffd0d3;border-color:#7a252b}
+    footer{margin-top:24px;color:var(--muted);font-size:13px}
     @media print{
-      body{ background: #fff; color: #000; }
-      .card { box-shadow: none; border-color: #ddd; }
-      .toolbar, .no-print{ display: none !important; }
-      .choice{ border-color: #aaa; }
-      input[type="radio"]:checked + label.choice{
-        background: #e6ecff; border-color: #5a73ff; box-shadow: none;
-      }
-      a[href]:after{ content: ""; }
+      body{background:#fff;color:#000}
+      .card{box-shadow:none;border-color:#ddd}
+      .toolbar,.no-print{display:none!important}
+      .choice{border-color:#aaa}
+      input[type="radio"]:checked + label.choice{background:#e6ecff;border-color:#5a73ff;box-shadow:none}
+      a[href]:after{content:""}
     }
   </style>
 </head>
@@ -213,7 +79,7 @@
 
     <main class="card">
       <form id="quiz" class="panel" novalidate>
-        <!-- Klausimas 1 -->
+        <!-- 1 -->
         <div class="q" data-question="q1">
           <h3>1) Greitas sprendimų priėmėjas</h3>
           <p>Kai kyla problema, mėgstu greitai nuspręsti, kad komanda neliktų be krypties.</p>
@@ -225,8 +91,7 @@
             <input class="visually-hidden" type="radio" id="q1-5" name="q1" value="5"><label class="choice" for="q1-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 2 -->
+        <!-- 2 -->
         <div class="q" data-question="q2">
           <h3>2) „Aš geriau žinau“ sindromas</h3>
           <p>Dažnai parodau, kaip reikia padaryti, kad darbas būtų atliktas teisingai ir kokybiškai.</p>
@@ -238,8 +103,7 @@
             <input class="visually-hidden" type="radio" id="q2-5" name="q2" value="5"><label class="choice" for="q2-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 3 -->
+        <!-- 3 -->
         <div class="q" data-question="q3">
           <h3>3) Apsaugantis vadovas</h3>
           <p>Stengiuosi savo žmones apsaugoti nuo vadovybės spaudimo ar „nereikalingų“ užduočių.</p>
@@ -251,8 +115,7 @@
             <input class="visually-hidden" type="radio" id="q3-5" name="q3" value="5"><label class="choice" for="q3-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 4 -->
+        <!-- 4 -->
         <div class="q" data-question="q4">
           <h3>4) Idėjų generatorius</h3>
           <p>Dažnai dalinuosi naujomis idėjomis, ką būtų galima patobulinti ar pakeisti procese.</p>
@@ -264,8 +127,7 @@
             <input class="visually-hidden" type="radio" id="q4-5" name="q4" value="5"><label class="choice" for="q4-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 5 -->
+        <!-- 5 -->
         <div class="q" data-question="q5">
           <h3>5) Perfekcionistas</h3>
           <p>Retai būnu visiškai patenkintas komandos darbo rezultatu – visada matau, ką dar galima padaryti geriau.</p>
@@ -277,8 +139,7 @@
             <input class="visually-hidden" type="radio" id="q5-5" name="q5" value="5"><label class="choice" for="q5-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 6 -->
+        <!-- 6 -->
         <div class="q" data-question="q6">
           <h3>6) „Aš viską sutvarkysiu“</h3>
           <p>Jei matau, kad kažkas nespėja ar daro klaidas, geriau pats perimu darbą, kad viskas būtų laiku.</p>
@@ -290,8 +151,7 @@
             <input class="visually-hidden" type="radio" id="q6-5" name="q6" value="5"><label class="choice" for="q6-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 7 -->
+        <!-- 7 -->
         <div class="q" data-question="q7">
           <h3>7) Greitis prieš diskusiją</h3>
           <p>Jei reikia priimti sprendimą, diskusijas laikau laiko švaistymu – svarbiau greitai judėti pirmyn.</p>
@@ -303,8 +163,7 @@
             <input class="visually-hidden" type="radio" id="q7-5" name="q7" value="5"><label class="choice" for="q7-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 8 -->
+        <!-- 8 -->
         <div class="q" data-question="q8">
           <h3>8) Vizijos perteikėjas</h3>
           <p>Mėgstu paaiškinti komandai, kaip aš matau idealų gamybos procesą ar galutinį rezultatą.</p>
@@ -316,8 +175,7 @@
             <input class="visually-hidden" type="radio" id="q8-5" name="q8" value="5"><label class="choice" for="q8-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 9 -->
+        <!-- 9 -->
         <div class="q" data-question="q9">
           <h3>9) Aktyvus susitikimuose</h3>
           <p>Per susirinkimus dažnai kalbu, dalinuosi savo nuomone, palaikau energiją ir kryptį.</p>
@@ -329,8 +187,7 @@
             <input class="visually-hidden" type="radio" id="q9-5" name="q9" value="5"><label class="choice" for="q9-5">5</label>
           </div>
         </div>
-
-        <!-- Klausimas 10 -->
+        <!-- 10 -->
         <div class="q" data-question="q10">
           <h3>10) Ribotas įgaliojimų perdavimas</h3>
           <p>Projektus ar papildomas užduotis dažniausiai patikiu tik tiems darbuotojams, kuriais labiausiai pasitikiu arba kurie turi ilgiausią stažą.</p>
@@ -350,9 +207,7 @@
           <button type="button" id="resetBtn" class="btn">Išvalyti</button>
         </div>
 
-        <div id="resultArea" class="result" hidden>
-          <!-- čia sugeneruosime rezultatą -->
-        </div>
+        <div id="resultArea" class="result" hidden></div>
       </form>
     </main>
 
@@ -386,107 +241,55 @@
       };
 
       const archetypeInfo = {
-        rapid_responder: {
-          label: 'Rapid Responder / Pacesetter',
-          tip: 'Prieš sprendimą paprašyk 2–3 alternatyvų iš komandos ir trumpai jas pasverkite.'
-        },
-        know_it_all: {
-          label: 'Know‑It‑All',
-          tip: 'Vietoj atsakymo užduok klausimus: „Kokias alternatyvas svarstėt? Kodėl rinktumėtės būtent šią?“'
-        },
-        protector: {
-          label: 'Protector',
-          tip: 'Leisk komandai matyti dalį spaudimo ir kartu nusistatyti prioritetus (transparencija → atsakomybė).'
-        },
-        idea_guy: {
-          label: 'Idea Guy/Gal',
-          tip: 'Įvesk „idėjų langą“: 10 min tavo idėjoms, 20 min tik komandos idėjoms – tada sprendimas.'
-        },
-        perfectionist: {
-          label: 'Perfectionist',
-          tip: 'Apibrėžk „pakankamai gerai“ kriterijus ir dirbk iteracijomis (pirmas leidimas > tobulas vėliau).'
-        },
-        rescuer: {
-          label: 'Rescuer',
-          tip: 'Užuot perėmęs, suteik rėmą: Kas? Ką? Iki kada? Kokią pagalbą reikėtų? Patikra – per milestone’us.'
-        },
-        pacesetter: {
-          label: 'Pacesetter / Decisionist',
-          tip: 'Skirk „reikia greitai“ nuo „reikia sutarti“ – antrajam tipui duok laiko ir komandos balsą.'
-        },
-        visionary_as_answer: {
-          label: 'Visionary-as-Answer',
-          tip: 'Vietoj „štai vizija“ paklausk: „Kokiais 2 keliais ją pasiektume? Ką renkamės ir kodėl?“'
-        },
-        always_on: {
-          label: 'Always‑On',
-          tip: 'Taikyk 2:1 taisyklę per susitikimus – 2 klausimai už kiekvieną savo komentarą.'
-        },
-        selective_delegator: {
-          label: 'Selective Delegator / Micromanager',
-          tip: 'Deleguok pagal potencialą, ne vien stažą; aiškūs rezultatai + sutarimo patikros taškai.'
-        }
+        rapid_responder:      { label:'Rapid Responder / Pacesetter', tip:'Prieš sprendimą paprašyk 2–3 alternatyvų iš komandos ir trumpai jas įvertinkite.' },
+        know_it_all:          { label:'Know‑It‑All',                  tip:'Vietoj atsakymo – klausimai: „Kokias alternatyvas svarstėt? Kodėl rinktumėtės būtent šią?“' },
+        protector:            { label:'Protector',                    tip:'Leisk komandai matyti dalį spaudimo ir kartu nusistatyti prioritetus (transparencija → atsakomybė).' },
+        idea_guy:             { label:'Idea Guy/Gal',                 tip:'Įvesk „idėjų langą“: 10 min tavo idėjoms, 20 min tik komandos idėjoms – tada sprendimas.' },
+        perfectionist:        { label:'Perfectionist',                tip:'Apibrėžk „pakankamai gerai“ kriterijus ir dirbk iteracijomis (pirmas leidimas > tobulas vėliau).' },
+        rescuer:              { label:'Rescuer',                      tip:'Užuot perėmęs, suteik rėmą: Kas? Ką? Iki kada? Kokia pagalba reikalinga? Patikra per milestone’us.' },
+        pacesetter:           { label:'Pacesetter / Decisionist',     tip:'Skirk „reikia greitai“ nuo „reikia sutarti“ – antrajam tipui duok laiko ir komandos balsą.' },
+        visionary_as_answer:  { label:'Visionary-as-Answer',          tip:'Vietoj „štai vizija“ – „kokiais 2 keliais ją pasiektume? Ką renkamės ir kodėl?“' },
+        always_on:            { label:'Always‑On',                    tip:'Taikyk 2:1 taisyklę per susitikimus – 2 klausimai už kiekvieną savo komentarą.' },
+        selective_delegator:  { label:'Selective Delegator / Micro',  tip:'Deleguok pagal potencialą, ne vien stažą; aiškūs rezultatai + sutarti patikros taškai.' }
       };
 
-      // Pagalbinės
       function getScore(){
         const names = Object.keys(archetypeMap);
-        let complete = true;
-        let total = 0;
-        const perItem = {};
-        const perType = {};
-
+        let complete = true, total = 0;
+        const perItem = {}, perType = {};
         for (const name of names){
           const checked = form?.querySelector(`input[name="${name}"]:checked`);
           if(!checked){ complete = false; break; }
           let val = Number(checked.value || 0);
-          // Ateičiai: jei norėsi invertuotų klausimų, uždėk data-invert="true" ant .q
           const qEl = form?.querySelector(`.q[data-question="${name}"]`);
-          const isInverted = qEl?.dataset?.invert === 'true';
-          if(isInverted){ val = 6 - val; } // invert opcija (nėra naudojama šiame rinkinyje)
-
-          perItem[name] = val;
-          total += val;
-
-          const t = archetypeMap[name];
-          perType[t] = (perType[t] || 0) + val;
+          const isInverted = qEl?.dataset?.invert === 'true'; // nepanaudota, rezervuota ateičiai
+          if(isInverted){ val = 6 - val; }
+          perItem[name] = val; total += val;
+          const t = archetypeMap[name]; perType[t] = (perType[t] || 0) + val;
         }
         return { complete, score: total, perItem, perType };
       }
 
-      // Tavo interpretacijų slenksčiai: 10–20 / 21–35 / 36–50
       function interpret(score, perType){
-        let level = { title: '', desc: '', tone: 'ok', badge: 'Daugiau „Multiplier“' };
+        let level = { title:'', desc:'', tone:'ok', badge:'Multiplier' };
         if (score <= 20){
-          level = {
-            title: 'Daugiau „Multiplier“ elgsenų',
-            desc: 'Retai perimi ar riboji komandos mąstymą. Toliau kurk erdvę diskusijai, sprendimams ir savarankiškumui.',
-            tone: 'ok',
-            badge: 'Multiplier'
-          };
+          level = { title:'Daugiau „Multiplier“ elgsenų',
+                    desc:'Retai perimi ar riboji komandos mąstymą. Toliau kurk erdvę diskusijai, sprendimams ir savarankiškumui.',
+                    tone:'ok', badge:'Multiplier' };
         } else if (score <= 35){
-          level = {
-            title: '„Accidental Diminisher“ tendencijos',
-            desc: 'Kai kuriose situacijose, dažniausiai iš gerų ketinimų (greitis, kokybė, apsauga), netyčia apriboji komandos balsą ar augimą.',
-            tone: 'warn',
-            badge: 'AD tendencijos'
-          };
+          level = { title:'„Accidental Diminisher“ tendencijos',
+                    desc:'Kai kuriose situacijose, dažniausiai iš gerų ketinimų (greitis, kokybė, apsauga), netyčia apriboji komandos balsą ar augimą.',
+                    tone:'warn', badge:'AD tendencijos' };
         } else {
-          level = {
-            title: '„Diminisher“ rizika',
-            desc: 'Dalis įpročių reguliariai mažina kitų indėlį. Kryptingai perkelk dėmesį nuo „aš atsakau“ prie „komanda atranda“.',
-            tone: 'danger',
-            badge: 'Diminisher rizika'
-          };
+          level = { title:'„Diminisher“ rizika',
+                    desc:'Dalis įpročių reguliariai mažina kitų indėlį. Kryptingai perkelk dėmesį nuo „aš atsakau“ prie „komanda atranda“.',
+                    tone:'danger', badge:'Diminisher rizika' };
         }
-
-        // TOP-2 rizikos sritys iš perType
         const ranked = Object.entries(perType).sort((a,b)=>b[1]-a[1]).slice(0,2);
-        const highlights = ranked.map(([key, val])=>{
+        const highlights = ranked.map(([key,val])=>{
           const info = archetypeInfo[key];
           return `• <strong>${info.label}</strong> — aukštas balas (${val}). Pabandyk: ${info.tip}`;
         }).join('<br>');
-
         const html = `
           <span class="kicker">Rezultatas</span>
           <h4>${level.title} <span class="badge ${level.tone}">${level.badge}</span></h4>
@@ -499,19 +302,14 @@
 
       function renderResult(html){
         if(!resultArea) return;
-        resultArea.hidden = false;
-        resultArea.innerHTML = html;
-        resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        resultArea.hidden = false; resultArea.innerHTML = html;
+        resultArea.scrollIntoView({ behavior:'smooth', block:'center' });
       }
 
-      // Veiksmai
       calcBtn?.addEventListener('click', (e)=>{
         e.preventDefault();
         const res = getScore();
-        if(!res.complete){
-          alert('Prašome užpildyti visus klausimus.');
-          return;
-        }
+        if(!res.complete){ alert('Prašome užpildyti visus klausimus.'); return; }
         const view = interpret(res.score, res.perType);
         renderResult(view.html);
       });
@@ -519,34 +317,19 @@
       copyBtn?.addEventListener('click', async (e)=>{
         e.preventDefault();
         const res = getScore();
-        if(!res.complete){
-          alert('Prašome užpildyti visus klausimus prieš kopijuojant rezultatą.');
-          return;
-        }
+        if(!res.complete){ alert('Prašome užpildyti visus klausimus prieš kopijuojant rezultatą.'); return; }
         const { level } = interpret(res.score, res.perType);
-
-        // Tekstas į iškarpinę
         let lines = [];
         lines.push('Vadovavimo įtakos testas — rezultatas');
         lines.push(level.title);
         lines.push(level.desc);
         lines.push('');
         lines.push(`Viso balų: ${res.score} (iš 50)`);
-
-        // TOP-2
         const ranked = Object.entries(res.perType).sort((a,b)=>b[1]-a[1]).slice(0,2);
-        lines.push('');
-        lines.push('Stipriausios tendencijos:');
-        ranked.forEach(([key,val])=>{
-          lines.push(`- ${archetypeInfo[key].label} — ${val}. Pabandyk: ${archetypeInfo[key].tip}`);
-        });
-
-        try{
-          await navigator.clipboard.writeText(lines.join('\n'));
-          alert('Rezultatas nukopijuotas į iškarpinę.');
-        } catch(err){
-          alert('Nepavyko nukopijuoti. Atidaryk per HTTPS arba pažymėk tekstą rankiniu būdu.');
-        }
+        lines.push(''); lines.push('Stipriausios tendencijos:');
+        ranked.forEach(([key,val])=>lines.push(`- ${archetypeInfo[key].label} — ${val}. Pabandyk: ${archetypeInfo[key].tip}`));
+        try{ await navigator.clipboard.writeText(lines.join('\n')); alert('Rezultatas nukopijuotas į iškarpinę.'); }
+        catch(err){ alert('Nepavyko nukopijuoti. Atidaryk per HTTPS arba pažymėk tekstą rankiniu būdu.'); }
       });
 
       printBtn?.addEventListener('click', (e)=>{ e.preventDefault(); window.print(); });
@@ -554,9 +337,8 @@
       resetBtn?.addEventListener('click', (e)=>{
         e.preventDefault();
         if (form instanceof HTMLFormElement) form.reset();
-        resultArea.hidden = true;
-        resultArea.innerHTML = '';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        resultArea.hidden = true; resultArea.innerHTML = '';
+        window.scrollTo({ top:0, behavior:'smooth' });
       });
     });
   </script>
