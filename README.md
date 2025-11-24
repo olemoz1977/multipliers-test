@@ -10,11 +10,13 @@ Sveiki atvykę 👋
 
 ## 🧭 Kaip pradėti
 
-Pasiruošęs(-usi) testui?  
-Tiesiog spausk mygtuką žemiau 👇
+Pasiruošęs(-usi) testui? Greitas ar pilnas? 
+ Greitas -tiesiog spausk mygtuką žemiau 👇
 
 [🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/test)
 
+Pilnas -tiesiog spausk mygtuką žemiau 👇
+[🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/Pilnas)
 ---
 
 💡 Patarimas:
