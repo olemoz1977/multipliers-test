@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Greitas Multipliers Testas v2</title>
+<title>Greitas Multipliers Testas v3</title>
 <style>
 :root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--danger:#ef4444;--warn:#f59e0b}
 body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:var(--ink);margin:0}
@@ -20,12 +20,14 @@ button{background:#1f2937;color:var(--ink);border:1px solid #334155;border-radiu
 button.primary{background:var(--accent);color:#052e1b;border-color:#16a34a}
 .danger{color:var(--danger)}.warn{color:var(--warn)}.ok{color:var(--accent)}
 footer{padding:24px 16px;color:var(--muted);text-align:center}
+.tip{margin-top:8px;font-weight:bold;color:#22c55e}
+.explain{margin-top:6px;font-size:14px;color:var(--muted)}
 </style>
 </head>
 <body>
 <header>
-<h1>Greitas Multipliers Testas v2</h1>
-<p class="muted">Įvertink save pagal 10 teiginių. Skalė: 1 – visiškai ne apie mane … 5 – labai apie mane.</p>
+<h1>Greitas Multipliers Testas v3</h1>
+<p class="muted">Įvertink save pagal 10 teiginių. Skalė: 1 – visiškai ne apie mane … 5 – labai apie mane.<br><strong>Didesnis balas = daugiau rizikos (kontrolės elgsena).</strong></p>
 </header>
 <main>
 <section class="card">
@@ -43,7 +45,7 @@ footer{padding:24px 16px;color:var(--muted);text-align:center}
 <div id="output" style="margin-top:12px"></div>
 </section>
 </main>
-<footer>Sukūrė: Oleg Mozochin × AI · Patikslinta metodologija</footer>
+<footer>Sukūrė: Oleg × AI · Aiškus rezultatų blokas</footer>
 <script>
 const questions=[
 "Kai kyla problema, mėgstu greitai nuspręsti, kad komanda neliktų be krypties.",
@@ -60,8 +62,9 @@ const questions=[
 function mount(){const host=document.getElementById('questions');questions.forEach((t,idx)=>{const div=document.createElement('div');div.className='q';const h=document.createElement('div');h.innerHTML=`<strong>${idx+1})</strong> ${t}`;div.appendChild(h);const scale=document.createElement('div');scale.className='scale';for(let v=1;v<=5;v++){const lab=document.createElement('label');lab.innerHTML=`${v}<br>`;const input=document.createElement('input');input.type='radio';input.name='q'+idx;input.value=v;lab.appendChild(input);scale.appendChild(lab);}div.appendChild(scale);host.appendChild(div);});}
 function val(name){const el=document.querySelector(`input[name="${name}"]:checked`);return el?parseInt(el.value,10):null;}
 function score(){let sum=0;for(let i=0;i<questions.length;i++){const v=val('q'+i);if(v==null){alert('Užpildyk visus teiginius.');return;}sum+=v;}
-const max=questions.length*5;const pctRaw=(sum/max)*100;const invertPct=Math.round(100-((sum-10)/40)*100);let band,label,tip;if(invertPct<40){band='danger';label='Diminisher rizika';tip='Eksperimentas: deleguok sprendimą, ne tik užduotį.';}else if(invertPct<65){band='warn';label='Accidental Diminisher';tip='Eksperimentas: vietoje atsakymo – užduok klausimą.';}else{band='ok';label='Multiplier';tip='Eksperimentas: išlaikyk erdvę idėjoms ir diskusijoms.';}
-document.getElementById('output').innerHTML=`<div class='card'><div>Bendras balas: ${sum} iš ${max} (${pctRaw.toFixed(1)}%)</div><div>Invertuotas indeksas: <strong>${invertPct}%</strong> (aukštas = geriau)</div><div>Rizika: <strong class='${band}'>${label}</strong></div><div>${tip}</div></div>`;}
+const max=questions.length*5;const pctRaw=(sum/max)*100;const invertPct=Math.round(100-((sum-10)/40)*100);
+let band,label,tip,explain;if(invertPct<40){band='danger';label='Diminisher rizika';tip='Deleguok sprendimą, ne tik užduotį.';explain='Tai reiškia, kad tavo elgsena dažnai riboja kitų savarankiškumą ir idėjas.';}else if(invertPct<65){band='warn';label='Accidental Diminisher';tip='Vietoje atsakymo – užduok klausimą.';explain='Geri ketinimai kartais riboja kitų balsą. Saugokis perėmimo.';}else{band='ok';label='Multiplier';tip='Išlaikyk erdvę idėjoms ir diskusijoms.';explain='Tavo elgsena dažniausiai įgalina kitus kurti ir spręsti.';}
+document.getElementById('output').innerHTML=`<div class='card'><div><strong>Bendras balas:</strong> ${sum} iš ${max} (${pctRaw.toFixed(1)}%)</div><div><strong>Įgalinimo lygis:</strong> ${invertPct}% (aukštas = geriau)</div><div><strong class='${band}'>Rizika: ${label}</strong></div><div class='explain'>${explain}</div><div class='tip'>Patarimas: ${tip}</div></div>`;}
 function resetForm(){document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);document.getElementById('output').innerHTML='';}
 function copyText(){const txt=document.getElementById('output').innerText.trim();if(!txt){alert('Nėra rezultato.');return;}navigator.clipboard.writeText(txt).then(()=>alert('Santrauka nukopijuota.'));}
 mount();
