@@ -16,7 +16,7 @@ Greitas -tiesiog spausk mygtuką žemiau  👇
  [🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/test)
 
 Pilnas -tiesiog spausk mygtuką žemiau 👇
-[🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/Pilnas)
+[🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/pilnas)
 ---
 
 💡 Patarimas:
