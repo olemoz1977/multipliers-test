@@ -78,7 +78,40 @@ function setTheme(light){ document.body.classList.toggle('light', light); themeB
 setTheme(false); themeBtn.addEventListener('click', ()=>{ isLight=!isLight; setTheme(isLight); });
 
 // Klausimai
-const Q=[ /* čia klausimų masyvas kaip v9 */ ];
+const Q=[ // --- Klausimų sąrašas (ilgesnės formuluotės pagal 5 disciplinas) ---
+
+  // Talent Magnet (TM)
+  {t:'Kai prasideda naujas darbas/projektas, sąmoningai ieškau žmonių „native genius“ ir skiriu jiems vaidmenis, kur jų stiprybės atsiskleidžia.', w:'TM', ty:'pos'},
+  {t:'Reguliariai suteikiu žmonėms augimo galimybių (temp projektai, laikini vaidmenys, mentorystė), o ne tik „užduotis“.', w:'TM', ty:'pos'},
+  {t:'Linkęs laikyti resursus „pas save“ ir nenaudoti naujų žmonių, kai galima dirbti su sena komanda.', w:'TM', ty:'neg'},
+  {t:'Kai komandoje atsiranda „primadona“ ar blokatorius, aktyviai pašalinu kliūtį, kad talentas galėtų skleistis.', w:'TM', ty:'pos'},
+  // Liberator (LB)
+  {t:'Kuriu aiškias ribas ir saugią erdvę, kur žmonės gali klysti ir mokytis be baimės.', w:'LB', ty:'pos'},
+  {t:'Esu linkęs mikromanaguoti: dažnai tikrinu smulkmenas ir taisau kitų darbą.', w:'LB', ty:'neg'},
+  {t:'Kai projektas vėluoja, padedu komandai pašalinti kliūtis ir skatinu jų sprendimus, o ne diktuoju atsakymus.', w:'LB', ty:'pos'},
+  {t:'Net kai komanda turi idėjų, dažnai sprendžiu pats ir „uždarau“ diskusiją.', w:'LB', ty:'neg'},
+  // Challenger (CH)
+  {t:'Dažnai keliu komandai tikslus, kurie reikalauja naujų sprendimų ir mąstymo, o ne tik rutinos.', w:'CH', ty:'pos'},
+  {t:'Vengiu ambicingų tikslų, kad neperkraučiau komandos.', w:'CH', ty:'neg'},
+  {t:'Kai keičiasi kryptis, aiškiai suformuluoju „kodėl“ ir palieku komandai erdvę rasti kelią „kaip“.', w:'CH', ty:'pos'},
+  {t:'Dažnai renkuosi saugius, žinomus sprendimus, net jei prarandame augimo galimybę.', w:'CH', ty:'neg'},
+  // Debate Maker (DM)
+  {t:'Prieš sprendimą sąmoningai kviečiu skirtingas perspektyvas ir suformuluoju kriterijus, pagal kuriuos spręsime.', w:'DM', ty:'pos'},
+  {t:'Diskusijos dažnai baigiasi tuo, kad nusprendžiu vienas arba su siauru vidiniu ratu.', w:'DM', ty:'neg'},
+  {t:'Kai kyla konfliktas dėl idėjų, padedu atskirti „nuomonę“ nuo „įrodymų“ ir vesti iki sprendimo.', w:'DM', ty:'pos'},
+  {t:'Retai prašau duomenų/įrodymų prieš priimdamas sprendimą.', w:'DM', ty:'neg'},
+  // Investor (IN)
+  {t:'Deleguoju rezultatą (ką reikia pasiekti) ir suteikiu reikiamus resursus bei aiškias ribas.', w:'IN', ty:'pos'},
+  {t:'Linkęs „užbaigti pats“, net kai tai galėtų padaryti komanda.', w:'IN', ty:'neg'},
+  {t:'Po delegavimo prašau ataskaitos apie pasiektą rezultatą, o ne apie procesą.', w:'IN', ty:'pos'},
+  {t:'Dažnai paskirstau užduotis be konteksto ir aiškių laukiamų rezultatų.', w:'IN', ty:'neg'},
+  // SP kontrolė (5)
+  {t:'Atsakinėjant į apklausas linkęs rinktis kraštutines opcijas.', w:'SP', ty:'neutral'},
+  {t:'Kartais atsakau „kaip reikia“, o ne „kaip yra“.', w:'SP', ty:'neutral'},
+  {t:'Esu linkęs skubėti atsakydamas į klausimus.', w:'SP', ty:'neutral'},
+  {t:'Noriu palikti kuo geresnį įspūdį, net jei tai nėra tikslu.', w:'SP', ty:'neutral'},
+  {t:'Kartais sąmoningai neatsakau į kai kuriuos klausimus.', w:'SP', ty:'neutral'},
+]; 
 function shuffle(a){ return a.map(v=>({v, r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v); }
 const labels=['Labai nesutinku','Nesutinku','Neutralu','Sutinku','Labai sutinku'];
 function render(){ const c=document.getElementById('questions'); c.innerHTML=''; shuffle(Q).forEach((q,i)=>{ const d=document.createElement('div'); d.className='question'; d.dataset.weight=q.w; d.dataset.type=q.ty; d.dataset.idx=i+1; d.innerHTML=`<div class="qtext"><strong>${i+1}.</strong> ${q.t}</div>`; const lik=document.createElement('div'); lik.className='likert'; labels.forEach((L,j)=>{ const lab=document.createElement('label'); const inp=document.createElement('input'); inp.type='radio'; inp.name='q'+(i+1); inp.value=(j+1); lab.appendChild(inp); lab.appendChild(document.createTextNode(' '+L)); lik.appendChild(lab); }); d.appendChild(lik); c.appendChild(d); }); }
