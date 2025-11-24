@@ -43,11 +43,11 @@ Testas paremtas Liz Wiseman tyrimais ir knyga:
 - [Multipliers Book Summary](https://www.leadernavigation.com/multipliers-book-summary/)
 
 Liz Wiseman identifikavo 5 pagrindines dauginančio vadovo disciplinas:
-- Talent Magnet
-- Liberator
-- Challenger
-- Debate Maker
-- Investor
+- Talent Magnet – pritraukia ir išlaiko talentus, kuria reputaciją.
+- Liberator – kuria saugią erdvę, leidžia klysti ir augti.
+- Challenger – meta iššūkius, kelia ambicijas.
+- Debate Maker – skatina diskusijas ir įvairias perspektyvas.
+- Investor – deleguoja atsakomybę ir suteikia resursus.
 
 ## 👤 Autorius
 
