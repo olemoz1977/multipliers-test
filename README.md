@@ -23,7 +23,7 @@ Pilnas - tiesiog spausk "Pradėti pilną testą" nustatyk koks tavo kaip Auginan
 - Testas geriausiai veikia „Chrome“ ar „Safari“ naršyklėje.
 - Rezultatus matysi iškart pabaigus testą.
 
-## 🧪 Kaip veikia testas?
+## 🧪 Kaip veikia "Greitas" testas?
 
 Testą sudaro 10 teiginių, kuriuos vertinate skalėje nuo 1 iki 5:
 
@@ -32,6 +32,20 @@ Testą sudaro 10 teiginių, kuriuos vertinate skalėje nuo 1 iki 5:
 - **3** – Nei sutinku, nei nesutinku
 - **4** – Iš dalies sutinku
 - **5** – Visiškai sutinku
+- 
+## 🧪 Kaip veikia "Pilnas" testas?
+
+Klausimynas: 20 klausimų (4 per archetipą – 2 normatyvūs, 1 invertuotas, 1 dileminis).
+
+- **1** – Visiškai nesutinku
+- **2** – Iš dalies nesutinku
+- **3** – Nei sutinku, nei nesutinku
+- **4** – Iš dalies sutinku
+- **5** – Visiškai sutinku
+-Situaciniai klausimai (dilemos su pasirinkimais, ne tik Likert). 
+
+SP kontrolė (5 teiginiai) – koreguoja indeksą.
+Nelinijinis skoringas – mažina „lubų efektą“.
 
 
 ## 📚 Šaltiniai
