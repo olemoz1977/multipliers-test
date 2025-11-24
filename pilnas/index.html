@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Multipliers Archetipų Testas v10.4</title>
+<title>Multipliers Archetipų Testas v10.5</title>
 <style>
   :root { --bg:#0f172a; --text:#e2e8f0; --card:#1e293b; --accent:#60a5fa; --muted:#94a3b8; }
   .light { --bg:#ffffff; --text:#1f2937; --card:#f1f5f9; --accent:#2563eb; --muted:#6b7280; }
@@ -16,6 +16,7 @@
   button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-weight:600; cursor:pointer; }
   button.secondary { background:transparent; color:var(--text); border:1px solid var(--muted); }
   .badge { font-size:.85rem; padding:4px 8px; border-radius:999px; border:1px solid var(--muted); margin-left:8px; }
+
   main { max-width:1000px; margin:80px auto 24px; padding:0 16px; }
   .grid { display:grid; grid-template-columns:1fr; gap:12px; }
   @media(min-width:1024px){ .grid { grid-template-columns:1.2fr 0.8fr; } }
@@ -30,13 +31,19 @@
   .archetypes p { margin:6px 0; }
   .error { color:#ffb4b4; font-weight:600; margin:8px 0; }
   #resultsCard.highlight { outline: 2px solid var(--accent); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); transition: outline .2s; }
-  #libStatus { display:inline-block; }
+
+  /* PDF „renderis“ – kad fonai būtų švarūs */
+  .pdf-sheet { background:#fff; color:#111; padding:20px; font-family: Arial, sans-serif; }
+  .pdf-sheet h2 { margin:0 0 10px 0; }
+  .pdf-sheet .line { margin:6px 0; }
+  .pdf-sheet .small { color:#666; font-size:12px; }
+  .pdf-sheet .block { border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-top:10px; }
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
-    <div class="title">Multipliers Archetipų Testas v10.4</div>
+    <div class="title">Multipliers Archetipų Testas v10.5</div>
     <div class="toolbar">
       <button id="themeBtn" class="secondary">🌙 Tamsi</button>
       <button id="calcBtn">Apskaičiuoti</button>
@@ -72,17 +79,16 @@
         <p><strong>Investor</strong> – deleguoja rezultatą, suteikia resursus; pavyzdys: „Aiškiai apibrėžia ribas ir atsakomybę.“</p>
       </div>
       <p class="muted" style="margin-top:8px;">
-        Pastaba: „oficialūs“ Multipliers vertinimai yra licencijuoti per The Wiseman Group (Self‑Assessment ~75, 360 ~77 klausimai). Šis savitestis paremtas viešai aprašyta 5 disciplinų metodika
-        (pvz., savitikslių santraukos ir praktikų aprašymai). 
+        Pastaba: „oficialūs“ Multipliers vertinimai yra licencijuoti per The Wiseman Group; šis savitestis paremtas viešai aprašyta 5 disciplinų metodika.
       </p>
     </aside>
   </div>
 </main>
 
-<!-- CDN bibliotekos (BŪTINA su teisingomis žymomis): -->
-<script/cdn.jsdelivr.net/npm/chart.js@4.4.1</script>
+<!-- CDNJS (stabilu GitHub Pages aplinkoje) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1n.js</script>
 https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js</script>
-https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js</script>
+https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -178,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(v!=null){
         if(q.dataset.weight==='SP'){ SPsum+=v; SPn++; return; }
         let val=v; if(q.dataset.type==='neg') val=6-v;
-        if(val===5) val=5.6; if(val===1) val=1.1; // nelinijinis
+        if(val===5) val=5.6; if(val===1) val=1.1;
         G[q.dataset.weight]+=val; C[q.dataset.weight]++;
       }
     });
@@ -188,6 +194,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function label(k){ return ({TM:'Talent Magnet',LB:'Liberator',CH:'Challenger',DM:'Debate Maker',IN:'Investor'})[k]; }
+  function spBand(sp){
+    if(sp <= 2.2) return 'žema';
+    if(sp < 3.6) return 'vidutinė';
+    return 'aukšta';
+  }
   function recommend(G){
     const sorted=Object.entries(G).sort((a,b)=>b[1]-a[1]);
     const [topK,topV]=sorted[0]; const [lowK,lowV]=sorted[sorted.length-1];
@@ -205,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let radar;
   function drawRadar(G){
     const ctx=document.getElementById('radar'); if(!ctx) return;
-    if(!window.Chart){ // fallback jei Chart.js neįkeltas
+    if(!window.Chart){
       const sumDiv=document.getElementById('summary');
       sumDiv.innerHTML += '<br><em>Chart.js neįkeltas – rodoma tekstinė santrauka be grafiko.</em>';
       return;
@@ -226,11 +237,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const R=recommend(res.G);
     return `<strong>Bendras balas:</strong> ${sum.toFixed(1)} / 100<br>
             Dominuoja <strong>${label(R.top.k)}</strong> (≈${R.top.v.toFixed(1)}). Silpniausia – <strong>${label(R.low.k)}</strong> (≈${R.low.v.toFixed(1)}).<br>
-            <strong>SP indeksas:</strong> ${res.SP.toFixed(1)} (aukštesnis = didesnė šališkumo rizika)<br>
+            <strong>SP indeksas:</strong> ${res.SP.toFixed(1)} (${spBand(res.SP)})<br>
             <strong>Eksperimentas:</strong> ${R.exp}.<br>
             <strong>Rizikos mažinimas:</strong> ${R.risk}.`;
   }
-
   function showResults(res){
     drawRadar(res.G);
     document.getElementById('summary').innerHTML = formatSummary(res);
@@ -253,30 +263,89 @@ document.addEventListener('DOMContentLoaded', () => {
     if(radar) radar.destroy();
   });
 
+  // PDF (renderis) – tik rezultatų kortelė
   document.getElementById('pdfRenderBtn').addEventListener('click', ()=>{
     if(!validate()){ alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
     const res=compute(); showResults(res);
-    if(!window.html2pdf){ alert('PDF (renderis) biblioteka neįkelta. Patikrinkite CDN žymą.'); return; }
-    html2pdf().from(document.body).set({
-      margin:0.6, filename:'multipliers_v10_4.pdf',
-      image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2},
-      jsPDF:{unit:'cm',format:'a4',orientation:'portrait'}
-    }).save();
+    if(!window.html2pdf){ alert('PDF (renderis) biblioteka neįkelta. Patikrinkite CDN žymą (cdnjs).'); return; }
+
+    // Sukuriame švarią „PDF sheet“ iš rezultatų
+    const sheet = document.createElement('div');
+    sheet.className = 'pdf-sheet';
+    sheet.innerHTML = `
+      <h2>Multipliers ataskaita</h2>
+      <div class="line">${formatSummary(res).replace(/<br>/g,' ')}</div>
+      <div class="block">
+        <strong>Archetipų paaiškinimai</strong><br>
+        Talent Magnet – viešai pabrėžia stiprybes, suteikia sceną atsiskleisti.<br>
+        Liberator – pašalina kliūtis, skatina mokymąsi, neperima kontrolės.<br>
+        Challenger – meta iššūkį, kelia tikėjimą, kad įmanoma.<br>
+        Debate Maker – reikalauja įrodymų prieš sprendimą.<br>
+        Investor – aiškiai apibrėžia ribas ir atsakomybę.
+      </div>
+      <div class="small">Generuota: ${new Date().toLocaleString()}</div>
+    `;
+    // Įdedame laikinai į DOM, kad html2canvas galėtų nufotografuoti
+    document.body.appendChild(sheet);
+
+    // Jei turime radaro canvas – pridedame prie sheet
+    const canvas = document.getElementById('radar');
+    if(canvas && window.Chart){
+      const img = canvas.toDataURL('image/png', 1.0);
+      const imgEl = document.createElement('img');
+      imgEl.src = img; imgEl.style.width = '520px'; imgEl.style.display='block'; imgEl.style.marginTop='10px';
+      sheet.appendChild(imgEl);
+    }
+
+    html2pdf().from(sheet).set({
+      margin:0.6,
+      filename:'multipliers_ataskaita.pdf',
+      image:{ type:'jpeg', quality:0.98 },
+      html2canvas:{ scale:2 },
+      jsPDF:{ unit:'cm', format:'a4', orientation:'portrait' }
+    }).save().then(()=> {
+      sheet.remove(); // išvalome laikiną elementą
+    }).catch(e=>{
+      alert('Nepavyko sukurti PDF (renderis): '+e.message);
+      sheet.remove();
+    });
   });
 
+  // PDF (universalus) – jsPDF santrauka + radar
   document.getElementById('pdfUniversalBtn').addEventListener('click', ()=>{
     if(!validate()){ alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
     const res=compute(); showResults(res);
-    if(!window.jspdf){ alert('PDF (universalus) biblioteka neįkelta. Patikrinkite CDN žymą.'); return; }
+    if(!window.jspdf){ alert('PDF (universalus) biblioteka neįkelta. Patikrinkite CDN žymą (cdnjs).'); return; }
+
     const {jsPDF}=window.jspdf;
     const doc=new jsPDF({unit:'pt',format:'a4'});
     const plain=formatSummary(res).replace(/<br>/g,'\n').replace(/<[^>]+>/g,'');
     const lines=plain.split('\n');
+
     doc.setFont('helvetica','normal'); doc.setFontSize(12);
-    let y=40; lines.forEach(line=>{ doc.text(line,40,y); y+=18; });
-    const canvas=document.getElementById('radar'); 
-    if(canvas && window.Chart){ const img=canvas.toDataURL('image/png',1.0); doc.addImage(img,'PNG',40,y+10,500,360); }
-    doc.save('multipliers_v10_4.pdf');
+    doc.text('Multipliers ataskaita', 40, 40);
+    let y=66; lines.forEach(line=>{ doc.text(line,40,y); y+=18; });
+
+    // Archetipų paaiškinimai (trumpai)
+    const expl = [
+      'Talent Magnet – viešai pabrėžia stiprybes, suteikia sceną atsiskleisti.',
+      'Liberator – pašalina kliūtis, skatina mokymąsi, neperima kontrolės.',
+      'Challenger – meta iššūkį, kelia tikėjimą, kad įmanoma.',
+      'Debate Maker – reikalauja įrodymų prieš sprendimą.',
+      'Investor – aiškiai apibrėžia ribas ir atsakomybę.'
+    ];
+    doc.text('Archetipų paaiškinimai:', 40, y+8);
+    expl.forEach((l,i)=>{ doc.text('• '+l, 40, y+28 + i*16); });
+    y += 120;
+
+    // radar paveikslas
+    const canvas=document.getElementById('radar');
+    if(canvas && window.Chart){
+      const img=canvas.toDataURL('image/png',1.0);
+      doc.addImage(img,'PNG',40,y,500,360);
+    }
+
+    doc.save('multipliers_ataskaita.pdf');
   });
 });
 </script>
