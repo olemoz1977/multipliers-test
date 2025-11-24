@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Multipliers Archetipų Testas v10.3</title>
+<title>Multipliers Archetipų Testas v10.4</title>
 <style>
   :root { --bg:#0f172a; --text:#e2e8f0; --card:#1e293b; --accent:#60a5fa; --muted:#94a3b8; }
   .light { --bg:#ffffff; --text:#1f2937; --card:#f1f5f9; --accent:#2563eb; --muted:#6b7280; }
@@ -12,10 +12,10 @@
   body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); }
   header { position:fixed; top:0; left:0; right:0; background:var(--bg); border-bottom:1px solid var(--card); z-index:100; }
   .bar { max-width:1000px; margin:auto; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; }
-  .toolbar { display:flex; gap:8px; flex-wrap:wrap; }
+  .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
   button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-weight:600; cursor:pointer; }
   button.secondary { background:transparent; color:var(--text); border:1px solid var(--muted); }
-
+  .badge { font-size:.85rem; padding:4px 8px; border-radius:999px; border:1px solid var(--muted); margin-left:8px; }
   main { max-width:1000px; margin:80px auto 24px; padding:0 16px; }
   .grid { display:grid; grid-template-columns:1fr; gap:12px; }
   @media(min-width:1024px){ .grid { grid-template-columns:1.2fr 0.8fr; } }
@@ -25,26 +25,25 @@
   .qtext { margin-bottom:6px; }
   .likert { display:flex; flex-wrap:wrap; gap:8px; }
   .likert label { background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); padding:6px 8px; border-radius:8px; }
-
-  canvas { width:100% !important; height:auto !important; }
   .muted { color:var(--muted); font-size:0.9rem; }
   .archetypes { margin-top:12px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; }
   .archetypes p { margin:6px 0; }
-
-  #resultsCard.highlight { outline: 2px solid var(--accent); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); transition: outline .2s; }
   .error { color:#ffb4b4; font-weight:600; margin:8px 0; }
+  #resultsCard.highlight { outline: 2px solid var(--accent); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); transition: outline .2s; }
+  #libStatus { display:inline-block; }
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
-    <div class="title">Multipliers Archetipų Testas v10.3</div>
+    <div class="title">Multipliers Archetipų Testas v10.4</div>
     <div class="toolbar">
       <button id="themeBtn" class="secondary">🌙 Tamsi</button>
       <button id="calcBtn">Apskaičiuoti</button>
       <button id="resetBtn" class="secondary">Išvalyti</button>
       <button id="pdfRenderBtn" class="secondary">PDF (renderis)</button>
       <button id="pdfUniversalBtn" class="secondary">PDF (universalus)</button>
+      <span id="libStatus" class="badge">Bibliotekos: tikrinama…</span>
     </div>
   </div>
 </header>
@@ -73,25 +72,37 @@
         <p><strong>Investor</strong> – deleguoja rezultatą, suteikia resursus; pavyzdys: „Aiškiai apibrėžia ribas ir atsakomybę.“</p>
       </div>
       <p class="muted" style="margin-top:8px;">
-        Pastaba: „oficialūs“ Multipliers vertinimai yra licencijuoti per The Wiseman Group (Self‑Assessment ~75, 360 ~77 klausimai). Šis savitestis paremtas viešai aprašyta 5 disciplinų metodika.
+        Pastaba: „oficialūs“ Multipliers vertinimai yra licencijuoti per The Wiseman Group (Self‑Assessment ~75, 360 ~77 klausimai). Šis savitestis paremtas viešai aprašyta 5 disciplinų metodika
+        (pvz., savitikslių santraukos ir praktikų aprašymai). 
       </p>
     </aside>
   </div>
 </main>
 
-<!-- CDN: būtina, teisingos script žymos -->
-https://cdn.jsdelivr.net/npm/chart.js</script>
+<!-- CDN bibliotekos (BŪTINA su teisingomis žymomis): -->
+<script/cdn.jsdelivr.net/npm/chart.js@4.4.1</script>
 https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js</script>
 https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Tema
+  // ---- Tema ----
   let isLight=false; const themeBtn=document.getElementById('themeBtn');
   function setTheme(light){ document.body.classList.toggle('light', light); themeBtn.textContent = light? '☀️ Šviesi':'🌙 Tamsi'; }
   setTheme(false); themeBtn.addEventListener('click', ()=>{ isLight=!isLight; setTheme(isLight); });
 
-  // Klausimai
+  // ---- Bibliotekų statusas ----
+  function libStatus(){
+    const s=document.getElementById('libStatus');
+    const hasChart=!!window.Chart;
+    const hasH2P=!!window.html2pdf;
+    const hasJSPDF=!!window.jspdf;
+    s.textContent = `Bibliotekos: Chart.js ${hasChart?'✓':'✗'} · html2pdf ${hasH2P?'✓':'✗'} · jsPDF ${hasJSPDF?'✓':'✗'}`;
+    s.style.borderColor = hasChart && hasH2P && hasJSPDF ? 'limegreen' : '#ffb4b4';
+  }
+  libStatus();
+
+  // ---- Klausimai ----
   const Q=[
     {t:'Kai prasideda naujas darbas/projektas, sąmoningai ieškau žmonių „native genius“ ir skiriu jiems vaidmenis.', w:'TM', ty:'pos'},
     {t:'Reguliariai suteikiu žmonėms augimo galimybių (projektai, mentorystė).', w:'TM', ty:'pos'},
@@ -119,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
     {t:'Noriu palikti kuo geresnį įspūdį.', w:'SP', ty:'neutral'},
     {t:'Kartais sąmoningai neatsakau į kai kuriuos klausimus.', w:'SP', ty:'neutral'}
   ];
-
   const labels=['Labai nesutinku','Nesutinku','Neutralu','Sutinku','Labai sutinku'];
   function shuffle(a){ return a.map(v=>({v, r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v); }
 
@@ -141,29 +151,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   render();
 
-  // Skaitymo, validacijos, skaičiavimo funkcijos
+  // ---- Skaitymas, validacija, skaičiavimas ----
   function read(name){ const nodes=document.getElementsByName(name); for(const n of nodes){ if(n.checked) return parseInt(n.value,10);} return null; }
 
   function validate(){
     let firstMissing = null;
     for(let i=1;i<=Q.length;i++){
-      if(read('q'+i)===null){
-        firstMissing = i;
-        break;
-      }
+      if(read('q'+i)===null){ firstMissing = i; break; }
     }
     const box = document.getElementById('errorBox');
     if(firstMissing){
       box.style.display='block';
       box.textContent = `Atsakykite į visus klausimus (trūksta atsakymo klausime #${firstMissing}).`;
-      // scroll į pirmą neatsakytą
       const el = document.querySelector(`.question [name="q${firstMissing}"]`);
       if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
       return false;
     } else {
-      box.style.display='none';
-      box.textContent='';
-      return true;
+      box.style.display='none'; box.textContent=''; return true;
     }
   }
 
@@ -174,8 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(v!=null){
         if(q.dataset.weight==='SP'){ SPsum+=v; SPn++; return; }
         let val=v; if(q.dataset.type==='neg') val=6-v;
-        // nelinijinis kraštutinėms
-        if(val===5) val=5.6; if(val===1) val=1.1;
+        if(val===5) val=5.6; if(val===1) val=1.1; // nelinijinis
         G[q.dataset.weight]+=val; C[q.dataset.weight]++;
       }
     });
@@ -185,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function label(k){ return ({TM:'Talent Magnet',LB:'Liberator',CH:'Challenger',DM:'Debate Maker',IN:'Investor'})[k]; }
-
   function recommend(G){
     const sorted=Object.entries(G).sort((a,b)=>b[1]-a[1]);
     const [topK,topV]=sorted[0]; const [lowK,lowV]=sorted[sorted.length-1];
@@ -199,10 +201,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return {top:{k:topK,v:topV},low:{k:lowK,v:lowV},exp:tips[topK].exp,risk:tips[lowK].risk};
   }
 
-  // Radar
+  // ---- Radar + santrauka ----
   let radar;
   function drawRadar(G){
     const ctx=document.getElementById('radar'); if(!ctx) return;
+    if(!window.Chart){ // fallback jei Chart.js neįkeltas
+      const sumDiv=document.getElementById('summary');
+      sumDiv.innerHTML += '<br><em>Chart.js neįkeltas – rodoma tekstinė santrauka be grafiko.</em>';
+      return;
+    }
     if(radar) radar.destroy();
     radar=new Chart(ctx,{
       type:'radar',
@@ -214,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Santrauka
   function formatSummary(res){
     const sum=Object.values(res.G).reduce((a,b)=>a+b,0);
     const R=recommend(res.G);
@@ -227,14 +233,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showResults(res){
     drawRadar(res.G);
-    document.getElementById('summary').innerHTML=formatSummary(res);
+    document.getElementById('summary').innerHTML = formatSummary(res);
     const card=document.getElementById('resultsCard');
     card.classList.add('highlight');
     card.scrollIntoView({behavior:'smooth', block:'start'});
     setTimeout(()=>card.classList.remove('highlight'),1500);
   }
 
-  // Mygtukai
+  // ---- Mygtukai ----
   document.getElementById('calcBtn').addEventListener('click', ()=>{
     if(!validate()) return;
     const res=compute(); showResults(res);
@@ -247,34 +253,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if(radar) radar.destroy();
   });
 
-  // PDF (renderis)
   document.getElementById('pdfRenderBtn').addEventListener('click', ()=>{
-    if(!validate()) { alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
+    if(!validate()){ alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
     const res=compute(); showResults(res);
-    try{
-      html2pdf().from(document.body).set({
-        margin:0.6, filename:'multipliers_v10_3.pdf',
-        image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2},
-        jsPDF:{unit:'cm',format:'a4',orientation:'portrait'}
-      }).save();
-    }catch(e){ alert('Nepavyko sukurti PDF (renderis): '+e.message); }
+    if(!window.html2pdf){ alert('PDF (renderis) biblioteka neįkelta. Patikrinkite CDN žymą.'); return; }
+    html2pdf().from(document.body).set({
+      margin:0.6, filename:'multipliers_v10_4.pdf',
+      image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2},
+      jsPDF:{unit:'cm',format:'a4',orientation:'portrait'}
+    }).save();
   });
 
-  // PDF (universalus)
   document.getElementById('pdfUniversalBtn').addEventListener('click', ()=>{
-    if(!validate()) { alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
+    if(!validate()){ alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
     const res=compute(); showResults(res);
-    try{
-      const {jsPDF}=window.jspdf;
-      const doc=new jsPDF({unit:'pt',format:'a4'});
-      const plain=formatSummary(res).replace(/<br>/g,'\n').replace(/<[^>]+>/g,''); 
-      const lines=plain.split('\n');
-      doc.setFont('helvetica','normal'); doc.setFontSize(12);
-      let y=40; lines.forEach(line=>{ doc.text(line,40,y); y+=18; });
-      const canvas=document.getElementById('radar'); 
-      if(canvas){ const img=canvas.toDataURL('image/png',1.0); doc.addImage(img,'PNG',40,y+10,500,360); }
-      doc.save('multipliers_v10_3.pdf');
-    }catch(e){ alert('Nepavyko sukurti PDF (universalus): '+e.message); }
+    if(!window.jspdf){ alert('PDF (universalus) biblioteka neįkelta. Patikrinkite CDN žymą.'); return; }
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({unit:'pt',format:'a4'});
+    const plain=formatSummary(res).replace(/<br>/g,'\n').replace(/<[^>]+>/g,'');
+    const lines=plain.split('\n');
+    doc.setFont('helvetica','normal'); doc.setFontSize(12);
+    let y=40; lines.forEach(line=>{ doc.text(line,40,y); y+=18; });
+    const canvas=document.getElementById('radar'); 
+    if(canvas && window.Chart){ const img=canvas.toDataURL('image/png',1.0); doc.addImage(img,'PNG',40,y+10,500,360); }
+    doc.save('multipliers_v10_4.pdf');
   });
 });
 </script>
