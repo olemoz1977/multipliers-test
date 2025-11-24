@@ -3,373 +3,126 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Multipliers Archetipų Testas v7 (mobile)</title>
+<title>Multipliers Archetipų Testas v8</title>
 <style>
   :root {
-    --bg: #0f172a; /* dark */
+    --bg: #0f172a;
     --text: #e2e8f0;
     --card: #1e293b;
     --accent: #60a5fa;
     --muted: #94a3b8;
   }
   .light {
-    --bg: #ffffff; /* light */
+    --bg: #ffffff;
     --text: #1f2937;
     --card: #f1f5f9;
     --accent: #2563eb;
     --muted: #6b7280;
   }
-  html, body { height:100%; }
-  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: var(--bg); color: var(--text); }
-  header { position: sticky; top:0; background: var(--bg); border-bottom: 1px solid var(--card); z-index: 10; }
-  .bar { display:flex; align-items:center; justify-content:space-between; padding: 12px 16px; max-width: 960px; margin: 0 auto; }
-  .title { font-weight:700; letter-spacing:0.2px; }
-  .container { max-width: 960px; margin: 0 auto; padding: 16px; }
-  .card { background: var(--card); border-radius: 12px; padding: 12px; margin-bottom: 14px; }
-  .row { display:grid; grid-template-columns: 1fr; gap:12px; }
-  @media(min-width: 768px){ .row { grid-template-columns: 1fr 1fr; } }
-  .question { margin-top: 6px; }
-  .qtext { font-size: 0.98rem; margin-bottom: 6px; }
-  .likert { display:flex; flex-wrap:wrap; gap:8px; }
-  .likert label { background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12); padding:6px 8px; border-radius:8px; cursor:pointer; }
-  input[type="radio"] { margin-right:6px; }
-  .toolbar { display:flex; flex-wrap:wrap; gap:8px; }
-  button { background: var(--accent); color: white; border: none; border-radius: 8px; padding: 10px 12px; font-weight:600; cursor:pointer; }
-  button.secondary { background: transparent; color: var(--text); border:1px solid var(--muted); }
-  .muted { color: var(--muted); font-size:0.9rem; }
-  .grid2 { display:grid; grid-template-columns: 1fr; gap:12px; }
-  @media(min-width: 1024px){ .grid2 { grid-template-columns: 1.2fr 0.8fr; } }
-  canvas { width:100% !important; height:auto !important; }
-  .legend { display:flex; gap:8px; flex-wrap:wrap; }
-  .badge { padding:4px 8px; border-radius:999px; font-size:0.85rem; border:1px solid var(--muted); }
-  .tooltip { position:relative; display:inline-block; }
-  .tooltip .tip { visibility:hidden; opacity:0; position:absolute; left:0; top:110%; background: var(--card); color: var(--text); border:1px solid var(--muted); padding:8px; border-radius:8px; width:220px; transition:opacity .2s; }
+  body { margin:0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  header { position: fixed; top:0; width:100%; background: var(--bg); border-bottom:1px solid var(--card); z-index:100; }
+  .bar { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; max-width:960px; margin:auto; }
+  .toolbar button { margin-left:8px; }
+  button { background: var(--accent); color:#fff; border:none; border-radius:6px; padding:8px 12px; cursor:pointer; }
+  button.secondary { background:transparent; color:var(--text); border:1px solid var(--muted); }
+  main { margin-top:70px; max-width:960px; padding:16px; margin-left:auto; margin-right:auto; }
+  .card { background: var(--card); border-radius:8px; padding:12px; margin-bottom:12px; }
+  .question { margin-bottom:10px; }
+  .likert label { display:block; margin-bottom:4px; }
+  .tooltip .tip { visibility:hidden; opacity:0; position:absolute; left:110%; top:0; background:rgba(30,41,59,0.9); color:#fff; padding:8px; border-radius:8px; width:220px; transition:opacity .2s; }
   .tooltip:hover .tip { visibility:visible; opacity:1; }
 </style>
 </head>
-<body class="dark">
-  <header>
-    <div class="bar">
-      <div class="title">Multipliers Archetipų Testas v7</div>
-      <div class="toolbar">
-        <button id="themeBtn" class="secondary" aria-label="Perjungti temą">🌙 Tamsi</button>
-        <button id="calcBtn">Apskaičiuoti</button>
-        <button id="resetBtn" class="secondary">Išvalyti</button>
-        <button id="pdfBtn" class="secondary">PDF</button>
+<body>
+<header>
+  <div class="bar">
+    <div class="title">Multipliers Archetipų Testas v8</div>
+    <div class="toolbar">
+      <button id="themeBtn" class="secondary">🌙 Tamsi</button>
+      <button id="calcBtn">Apskaičiuoti</button>
+      <button id="resetBtn" class="secondary">Išvalyti</button>
+      <button id="pdfBtn" class="secondary">PDF</button>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="card" id="quiz">
+    <h3>Klausimynas</h3>
+    <div id="questions"></div>
+  </section>
+  <aside class="card">
+    <h3>Rezultatai</h3>
+    <div id="summary">Kol kas neapskaičiuota.</div>
+    <div class="tooltip" style="margin-top:8px;">
+      <span class="badge">Archetipų paaiškinimai</span>
+      <div class="tip">
+        Talent Magnet – pritraukia talentus.<br>
+        Liberator – suteikia laisvę.<br>
+        Challenger – kelia iššūkius.<br>
+        Debate Maker – skatina diskusijas.<br>
+        Investor – deleguoja atsakomybę.
       </div>
     </div>
-  </header>
-
-  <main class="container">
-    <div class="grid2">
-      <section class="card" id="quiz">
-        <h3>Klausimynas</h3>
-        <p class="muted">20 klausimų (4 per archetipą) + 5 SP kontrolės klausimai. Likerto skalė 1–5. Situaciniuose klausimuose žymės nerodomos.</p>
-        <div class="row">
-          <!-- Talent Magnet (TM): 2 Likert + 1 invertuotas + 1 situacinis -->
-          <div class="question card">
-            <div class="badge">Talent Magnet</div>
-            <div class="qtext">1. Dažnai pastebiu ir viešai pabrėžiu žmonių stiprybes komandoje.</div>
-            <div class="likert" data-weight="TM" data-type="pos" id="q1"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Talent Magnet</div>
-            <div class="qtext">2. Reguliariai suteikiu žmonėms progas augti (projektai, vaidmenys, mentorystė).</div>
-            <div class="likert" data-weight="TM" data-type="pos" id="q2"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Talent Magnet</div>
-            <div class="qtext">3. Retai įtraukiu naujus žmones, kai užtenka senos komandos (invertuotas).</div>
-            <div class="likert" data-weight="TM" data-type="neg" id="q3"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Talent Magnet</div>
-            <div class="qtext">4. Kai atsiranda naujas projektas, pirmiausia svarstau, kuris žmogus iš komandos galėtų „uždegti“ kitus savo energija.</div>
-            <div class="likert" data-weight="TM" data-type="pos" id="q4"></div>
-          </div>
-
-          <!-- Liberator (LB) -->
-          <div class="question card">
-            <div class="badge">Liberator</div>
-            <div class="qtext">5. Sukuriu aiškias ribas ir saugią erdvę, kur žmonės gali klysti ir mokytis.</div>
-            <div class="likert" data-weight="LB" data-type="pos" id="q5"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Liberator</div>
-            <div class="qtext">6. Esu linkęs mikromanaguoti (invertuotas).</div>
-            <div class="likert" data-weight="LB" data-type="neg" id="q6"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Liberator</div>
-            <div class="qtext">7. Kai projektas vėluoja, padedu komandai pašalinti kliūtis, o ne nurodau sprendimus.</div>
-            <div class="likert" data-weight="LB" data-type="pos" id="q7"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Liberator</div>
-            <div class="qtext">8. Dažnai pats priimu sprendimus, net jei komanda turi gerų idėjų (invertuotas).</div>
-            <div class="likert" data-weight="LB" data-type="neg" id="q8"></div>
-          </div>
-
-          <!-- Challenger (CH) -->
-          <div class="question card">
-            <div class="badge">Challenger</div>
-            <div class="qtext">9. Dažnai keliu komandai tikslus, kurie reikalauja naujų sprendimų, o ne tik rutinos.</div>
-            <div class="likert" data-weight="CH" data-type="pos" id="q9"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Challenger</div>
-            <div class="qtext">10. Vengiu kelti ambicingus tikslus, kad neperkraučiau komandos (invertuotas).</div>
-            <div class="likert" data-weight="CH" data-type="neg" id="q10"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Challenger</div>
-            <div class="qtext">11. Kai reikia pakeisti kryptį, aiškiai įvardiju „kodėl“ ir kviečiu komandą rasti geriausią kelią.</div>
-            <div class="likert" data-weight="CH" data-type="pos" id="q11"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Challenger</div>
-            <div class="qtext">12. Dažnai renkuosi saugius, žinomus sprendimus, net jei prarandame galimybę augti (invertuotas).</div>
-            <div class="likert" data-weight="CH" data-type="neg" id="q12"></div>
-          </div>
-
-          <!-- Debate Maker (DM) -->
-          <div class="question card">
-            <div class="badge">Debate Maker</div>
-            <div class="qtext">13. Prieš priimant sprendimus, sąmoningai kviečiu skirtingas perspektyvas ir diskusiją.</div>
-            <div class="likert" data-weight="DM" data-type="pos" id="q13"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Debate Maker</div>
-            <div class="qtext">14. Diskusijos dažnai baigiasi tuo, kad aš nusprendžiu vienas (invertuotas).</div>
-            <div class="likert" data-weight="DM" data-type="neg" id="q14"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Debate Maker</div>
-            <div class="qtext">15. Kai kyla konfliktas dėl idėjų, padedu nustatyti kriterijus ir priimti sprendimą remiantis faktais.</div>
-            <div class="likert" data-weight="DM" data-type="pos" id="q15"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Debate Maker</div>
-            <div class="qtext">16. Retai prašau įrodymų ar duomenų prieš priimdamas sprendimą (invertuotas).</div>
-            <div class="likert" data-weight="DM" data-type="neg" id="q16"></div>
-          </div>
-
-          <!-- Investor (IN) -->
-          <div class="question card">
-            <div class="badge">Investor</div>
-            <div class="qtext">17. Deleguoju atsakomybę su aiškiu rezultatu ir suteikiu reikiamus resursus.</div>
-            <div class="likert" data-weight="IN" data-type="pos" id="q17"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Investor</div>
-            <div class="qtext">18. Linkęs pats „užbaigti“, net kai tai galėtų padaryti komanda (invertuotas).</div>
-            <div class="likert" data-weight="IN" data-type="neg" id="q18"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Investor</div>
-            <div class="qtext">19. Kai žmogui deleguoju užduotį, vėliau prašau ataskaitos apie pasiektą rezultatą, o ne apie procesą.</div>
-            <div class="likert" data-weight="IN" data-type="pos" id="q19"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">Investor</div>
-            <div class="qtext">20. Dažnai suteikiu užduotis be konteksto ir aiškių ribų (invertuotas).</div>
-            <div class="likert" data-weight="IN" data-type="neg" id="q20"></div>
-          </div>
-
-          <!-- SP kontrolė: 5 klausimai -->
-          <div class="question card">
-            <div class="badge">SP Kontrolė</div>
-            <div class="qtext">SP1. Kartais sąmoningai neatsakau į klausimus, jei manau, kad jie yra asmeniški.</div>
-            <div class="likert" data-weight="SP" data-type="neutral" id="sp1"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">SP Kontrolė</div>
-            <div class="qtext">SP2. Atsakinėjant į apklausas linkęs rinktis kraštutines opcijas.</div>
-            <div class="likert" data-weight="SP" data-type="neutral" id="sp2"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">SP Kontrolė</div>
-            <div class="qtext">SP3. Atsakydamas noriu palikti kuo geresnį įspūdį, net jei tai nėra tikslu.</div>
-            <div class="likert" data-weight="SP" data-type="neutral" id="sp3"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">SP Kontrolė</div>
-            <div class="qtext">SP4. Esu linkęs skubėti atsakydamas į klausimus.</div>
-            <div class="likert" data-weight="SP" data-type="neutral" id="sp4"></div>
-          </div>
-          <div class="question card">
-            <div class="badge">SP Kontrolė</div>
-            <div class="qtext">SP5. Kartais atsakau „kaip reikia“, o ne „kaip yra“.</div>
-            <div class="likert" data-weight="SP" data-type="neutral" id="sp5"></div>
-          </div>
-        </div>
-      </section>
-
-      <aside class="card">
-        <h3>Rezultatai</h3>
-        <div id="summary" class="muted">Kol kas neapskaičiuota.</div>
-        <div class="legend" style="margin-top:8px;">
-          <div class="tooltip"><span class="badge">Talent Magnet</span><div class="tip">Pritraukia ir išlaiko talentus; mato stiprybes ir suteikia sceną joms atsiskleisti.</div></div>
-          <div class="tooltip"><span class="badge">Liberator</span><div class="tip">Sukuria saugią, bet griežtą erdvę rezultatams; pašalina kliūtis, neperima kontrolės.</div></div>
-          <div class="tooltip"><span class="badge">Challenger</span><div class="tip">Keliamas aiškus „kodėl“, ambicija ir iššūkis; skatina naujus sprendimus.</div></div>
-          <div class="tooltip"><span class="badge">Debate Maker</span><div class="tip">Skatina skirtingas perspektyvas; sprendimai per kriterijus ir įrodymus.</div></div>
-          <div class="tooltip"><span class="badge">Investor</span><div class="tip">Deleguoja atsakomybę su resursais ir laukiamu rezultatu; grįžtamasis ryšys.</div></div>
-        </div>
-        <div class="card" style="margin-top:12px;">
-          <canvas id="radar"></canvas>
-        </div>
-      </aside>
-    </div>
-  </main>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+    <canvas id="radar"></canvas>
+  </aside>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 <script>
-// --- UI: suformuojame Likert mygtukus mobiliai ---
-const scale = [
-  {v:1,t:'Labai nesutinku'},
-  {v:2,t:'Nesutinku'},
-  {v:3,t:'Neutralu'},
-  {v:4,t:'Sutinku'},
-  {v:5,t:'Labai sutinku'},
+const questionsData = [
+  {text:'Dažnai skatinu komandą dalintis idėjomis', weight:'TM', type:'pos'},
+  {text:'Reguliariai suteikiu žmonėms progas augti', weight:'TM', type:'pos'},
+  {text:'Retai įtraukiu naujus žmones (invertuotas)', weight:'TM', type:'neg'},
+  {text:'Kai atsiranda naujas projektas, svarstau kas uždegs kitus', weight:'TM', type:'pos'},
+  {text:'Sukuriu saugią erdvę klysti ir mokytis', weight:'LB', type:'pos'},
+  {text:'Esu linkęs mikromanaguoti', weight:'LB', type:'neg'},
+  {text:'Kai projektas vėluoja, padedu pašalinti kliūtis', weight:'LB', type:'pos'},
+  {text:'Dažnai pats priimu sprendimus', weight:'LB', type:'neg'},
+  {text:'Dažnai keliu komandai tikslus, kurie reikalauja naujų sprendimų', weight:'CH', type:'pos'},
+  {text:'Vengiu kelti ambicingus tikslus', weight:'CH', type:'neg'},
+  {text:'Kai reikia pakeisti kryptį, aiškiai įvardiju „kodėl“', weight:'CH', type:'pos'},
+  {text:'Dažnai renkuosi saugius sprendimus', weight:'CH', type:'neg'},
+  {text:'Prieš sprendimus kviečiu diskusiją', weight:'DM', type:'pos'},
+  {text:'Diskusijos baigiasi tuo, kad nusprendžiu vienas', weight:'DM', type:'neg'},
+  {text:'Kai kyla konfliktas, padedu nustatyti kriterijus', weight:'DM', type:'pos'},
+  {text:'Retai prašau įrodymų prieš sprendimą', weight:'DM', type:'neg'},
+  {text:'Deleguoju atsakomybę su aiškiu rezultatu', weight:'IN', type:'pos'},
+  {text:'Linkęs pats „užbaigti“', weight:'IN', type:'neg'},
+  {text:'Kai deleguoju, prašau ataskaitos apie rezultatą', weight:'IN', type:'pos'},
+  {text:'Dažnai suteikiu užduotis be konteksto', weight:'IN', type:'neg'},
+  {text:'Kartais sąmoningai neatsakau į klausimus', weight:'SP', type:'neutral'},
+  {text:'Linkęs rinktis kraštutines opcijas', weight:'SP', type:'neutral'},
+  {text:'Noriu palikti gerą įspūdį', weight:'SP', type:'neutral'},
+  {text:'Esu linkęs skubėti atsakydamas', weight:'SP', type:'neutral'},
+  {text:'Kartais atsakau „kaip reikia“', weight:'SP', type:'neutral'}
 ];
 
-function renderLikert(containerId){
-  const el = document.getElementById(containerId);
-  scale.forEach(s=>{
-    const lbl = document.createElement('label');
-    const input = document.createElement('input');
-    input.type = 'radio'; input.name = containerId; input.value = s.v;
-    lbl.appendChild(input); lbl.appendChild(document.createTextNode(' '+s.t));
-    el.appendChild(lbl);
+function shuffle(arr){ return arr.sort(()=>Math.random()-0.5); }
+function renderQuestions(){
+  const container = document.getElementById('questions');
+  container.innerHTML='';
+  shuffle(questionsData).forEach((q,i)=>{
+    const div=document.createElement('div'); div.className='question';
+    div.innerHTML=`<strong>${i+1}.</strong> ${q.text}<br>`;
+    ['Labai nesutinku','Nesutinku','Neutralu','Sutinku','Labai sutinku'].forEach((opt,j)=>{
+      div.innerHTML+=`<label><input type="radio" name="q${i}" value="${j+1}"> ${opt}</label>`;
+    });
+    div.dataset.weight=q.weight; div.dataset.type=q.type;
+    container.appendChild(div);
   });
 }
+renderQuestions();
 
-[...Array(20).keys()].forEach(i=>renderLikert('q'+(i+1)));
-['sp1','sp2','sp3','sp4','sp5'].forEach(renderLikert);
+let isLight=false; document.getElementById('themeBtn').onclick=()=>{isLight=!isLight;document.body.classList.toggle('light',isLight);document.getElementById('themeBtn').textContent=isLight?'☀️ Šviesi':'🌙 Tamsi';};
 
-// --- Tema: tamsi/šviesi ---
-const themeBtn = document.getElementById('themeBtn');
-let isLight = false;
-function setTheme(light){
-  document.body.classList.toggle('light', light);
-  themeBtn.textContent = light ? '☀️ Šviesi' : '🌙 Tamsi';
-}
-setTheme(false);
-themeBtn.addEventListener('click', ()=>{ isLight = !isLight; setTheme(isLight); });
+function readValue(name){const nodes=document.getElementsByName(name);for(const n of nodes){if(n.checked)return parseInt(n.value);}return null;}
+function score(){const g={TM:0,LB:0,CH:0,DM:0,IN:0};const c={TM:0,LB:0,CH:0,DM:0,IN:0};document.querySelectorAll('.question').forEach((q,i)=>{const v=readValue('q'+i);if(v!=null){let val=v;if(q.dataset.type==='neg')val=6-v;if(val===5)val=5.5;if(val===1)val=1.2;g[q.dataset.weight]=(g[q.dataset.weight]||0)+val;c[q.dataset.weight]=(c[q.dataset.weight]||0)+1;}});for(const k in g){if(c[k])g[k]=g[k]/c[k]*4;}return g;}
+function interpret(g){const arr=Object.entries(g).sort((a,b)=>b[1]-a[1]);const top=arr[0];const low=arr[arr.length-1];return `Dominuoja ${top[0]}, silpniausia ${low[0]}.`;}
+let radar;function drawRadar(g){const ctx=document.getElementById('radar');if(radar)radar.destroy();radar=new Chart(ctx,{type:'radar',data:{labels:['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'],datasets:[{label:'Profilis',data:[g.TM||0,g.LB||0,g.CH||0,g.DM||0,g.IN||0],borderColor:getComputedStyle(document.body).getPropertyValue('--accent').trim(),backgroundColor:'rgba(96,165,250,0.2)'}]},options:{scales:{r:{suggestedMin:0,suggestedMax:20}}}});}
 
-// --- Skaičiavimas ---
-const weights = ['TM','LB','CH','DM','IN'];
-function readValue(name){
-  const nodes = document.getElementsByName(name);
-  for(const n of nodes){ if(n.checked) return parseInt(n.value,10); }
-  return null;
-}
-function score(){
-  const groups = {TM:0,LB:0,CH:0,DM:0,IN:0};
-  const counts = {TM:0,LB:0,CH:0,DM:0,IN:0};
-  for(let i=1;i<=20;i++){
-    const v = readValue('q'+i);
-    const cont = document.getElementById('q'+i);
-    const w = cont.getAttribute('data-weight');
-    const type = cont.getAttribute('data-type');
-    if(v!=null){
-      let val = v;
-      if(type==='neg') val = 6 - v; // invertuotas
-      // nelinijinis skoringas: kraštutinės vertės šiek tiek sustiprinamos
-      const nl = (val===5?5.5:(val===1?1.2:val));
-      groups[w] += nl; counts[w] += 1;
-    }
-  }
-  // normalizuojame į 0–20 per archetipą
-  for(const k of weights){
-    if(counts[k]>0) groups[k] = groups[k] / counts[k] * 4; // 4 klausimai per archetipą
-  }
-  return groups;
-}
-
-// --- AI interpretacija taisyklių logika ---
-function interpret(g){
-  const order = Object.entries(g).sort((a,b)=>b[1]-a[1]);
-  const top = order[0];
-  const low = order[order.length-1];
-  let txt = '';
-  txt += `Dominuoja **${label(top[0])}** (≈ ${top[1].toFixed(1)}). `;
-  txt += `Silpniausia sritis – **${label(low[0])}** (≈ ${low[1].toFixed(1)}).`;
-  // Rizikos mažinimas + stiprybių eksperimentai
-  const tips = {
-    TM:['Skatink matomumą: „shadow presenter“ jaunam talentui','Rotuok „savaitės projekto šeimininką“'],
-    LB:['Pašalink kliūtis „dienos blokatorių“ stand-up’e','Sutark „klaidos bilietą“ be kaltų'],
-    CH:['Sukurk 30 dienų „ambicijos sprintą“','Naudok problemos „Kodėl“ medį prieš idėjas'],
-    DM:['Įvesk sprendimų kriterijų lentą','Duomenų patikra: prieš sprendimą – 2 įrodymai'],
-    IN:['Deleguok rezultatą, ne užduotį','Sutark „check-in“ ritmą, ne kontrolę']
-  };
-  const exp = tips[top[0]][0];
-  const risk = `Mažink riziką ${label(low[0])} srityje: ${tips[low[0]][1]}.`;
-  return `${txt}\n\n**Eksperimentas:** ${exp}.\n**Rizikos mažinimas:** ${risk}`;
-}
-function label(k){
-  return ({TM:'Talent Magnet',LB:'Liberator',CH:'Challenger',DM:'Debate Maker',IN:'Investor'})[k];
-}
-
-// --- Radar ---
-let radar;
-function drawRadar(g){
-  const data = [g.TM||0,g.LB||0,g.CH||0,g.DM||0,g.IN||0];
-  const ctx = document.getElementById('radar');
-  if(radar) radar.destroy();
-  radar = new Chart(ctx, {
-    type:'radar',
-    data:{
-      labels:['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'],
-      datasets:[{
-        label:'Profilis',
-        data,
-        borderColor:getComputedStyle(document.body).getPropertyValue('--accent').trim(),
-        backgroundColor:'rgba(96,165,250,0.2)'
-      }]
-    },
-    options:{ scales:{ r:{ suggestedMin:0, suggestedMax:20, grid:{color:getComputedStyle(document.body).getPropertyValue('--muted').trim()}, pointLabels:{color:getComputedStyle(document.body).getPropertyValue('--text').trim()} }}, plugins:{ legend:{labels:{color:getComputedStyle(document.body).getPropertyValue('--text').trim()}}} }
-  });
-}
-
-// --- SP kontrolė ---
-function spScore(){
-  let s = 0; let n = 0;
-  ['sp1','sp2','sp3','sp4','sp5'].forEach(id=>{ const v = readValue(id); if(v!=null){ s += v; n++; } });
-  return n? s/n : 0; // aukštesnė reikšmė – didesnė šališkumo rizika
-}
-
-// --- Veiksmai ---
-function calculate(){
-  const g = score();
-  drawRadar(g);
-  const sp = spScore();
-  const ai = interpret(g);
-  const sum = Object.values(g).reduce((a,b)=>a+b,0).toFixed(1);
-  let txt = `**Bendras balas:** ${sum} / 100`;
-  txt += `\n**SP indeksas:** ${sp.toFixed(1)} (\u2191 reikšmė = didesnė šališkumo rizika)`;
-  txt += `\n\n${ai}`;
-  document.getElementById('summary').innerHTML = marked(txt);
-}
-
-// paprastas Markdown renderer tik **bold**
-function marked(s){
-  return s.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-}
-
-document.getElementById('calcBtn').addEventListener('click', calculate);
-
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  document.querySelectorAll('input[type="radio"]').forEach(i=>i.checked=false);
-  document.getElementById('summary').textContent = 'Kol kas neapskaičiuota.';
-  if(radar) radar.destroy();
-});
-
-document.getElementById('pdfBtn').addEventListener('click', ()=>{
-  const opt = { margin: 0.5, filename: 'multipliers_v7.pdf', jsPDF: { unit: 'cm', format:'a4', orientation: 'portrait' } };
-  html2pdf().from(document.body).set(opt).save();
-});
+document.getElementById('calcBtn').onclick=()=>{const g=score();drawRadar(g);document.getElementById('summary').innerHTML=`<p><strong>Bendras balas:</strong> ${(Object.values(g).reduce((a,b)=>a+b,0)).toFixed(1)} / 100<br>${interpret(g)}</p>`;};
+document.getElementById('resetBtn').onclick=()=>{document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false);document.getElementById('summary').textContent='Kol kas neapskaičiuota.';if(radar)radar.destroy();};
+document.getElementById('pdfBtn').onclick=()=>{html2pdf().from(document.body).save();};
 </script>
 </body>
 </html>
