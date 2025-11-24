@@ -69,8 +69,8 @@
 </main>
 
 https://cdn.jsdelivr.net/npm/chart.js</script>
-https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js</script>
-<script src="https://cdn.jsdelivr.net/npmdist/jspdf.umd.min.js</script>
+<script/cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js</script>
+<script/cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js</script>
 <script>
 // Tema
 let isLight=false; const themeBtn=document.getElementById('themeBtn');
@@ -78,179 +78,59 @@ function setTheme(light){ document.body.classList.toggle('light', light); themeB
 setTheme(false); themeBtn.addEventListener('click', ()=>{ isLight=!isLight; setTheme(isLight); });
 
 // Klausimai
-const Q=[ // --- Klausimų sąrašas (ilgesnės formuluotės pagal 5 disciplinas) ---
-
-  // Talent Magnet (TM)
-  {t:'Kai prasideda naujas darbas/projektas, sąmoningai ieškau žmonių „native genius“ ir skiriu jiems vaidmenis, kur jų stiprybės atsiskleidžia.', w:'TM', ty:'pos'},
-  {t:'Reguliariai suteikiu žmonėms augimo galimybių (temp projektai, laikini vaidmenys, mentorystė), o ne tik „užduotis“.', w:'TM', ty:'pos'},
-  {t:'Linkęs laikyti resursus „pas save“ ir nenaudoti naujų žmonių, kai galima dirbti su sena komanda.', w:'TM', ty:'neg'},
-  {t:'Kai komandoje atsiranda „primadona“ ar blokatorius, aktyviai pašalinu kliūtį, kad talentas galėtų skleistis.', w:'TM', ty:'pos'},
-  // Liberator (LB)
-  {t:'Kuriu aiškias ribas ir saugią erdvę, kur žmonės gali klysti ir mokytis be baimės.', w:'LB', ty:'pos'},
-  {t:'Esu linkęs mikromanaguoti: dažnai tikrinu smulkmenas ir taisau kitų darbą.', w:'LB', ty:'neg'},
-  {t:'Kai projektas vėluoja, padedu komandai pašalinti kliūtis ir skatinu jų sprendimus, o ne diktuoju atsakymus.', w:'LB', ty:'pos'},
-  {t:'Net kai komanda turi idėjų, dažnai sprendžiu pats ir „uždarau“ diskusiją.', w:'LB', ty:'neg'},
-  // Challenger (CH)
-  {t:'Dažnai keliu komandai tikslus, kurie reikalauja naujų sprendimų ir mąstymo, o ne tik rutinos.', w:'CH', ty:'pos'},
+const Q=[
+  {t:'Kai prasideda naujas darbas/projektas, sąmoningai ieškau žmonių „native genius“ ir skiriu jiems vaidmenis.', w:'TM', ty:'pos'},
+  {t:'Reguliariai suteikiu žmonėms augimo galimybių (projektai, mentorystė).', w:'TM', ty:'pos'},
+  {t:'Linkęs laikyti resursus „pas save“ ir nenaudoti naujų žmonių.', w:'TM', ty:'neg'},
+  {t:'Kai komandoje atsiranda „primadona“, aktyviai pašalinu kliūtį.', w:'TM', ty:'pos'},
+  {t:'Kuriu aiškias ribas ir saugią erdvę, kur žmonės gali klysti.', w:'LB', ty:'pos'},
+  {t:'Esu linkęs mikromanaguoti.', w:'LB', ty:'neg'},
+  {t:'Kai projektas vėluoja, padedu pašalinti kliūtis, o ne diktuoju sprendimus.', w:'LB', ty:'pos'},
+  {t:'Net kai komanda turi idėjų, dažnai sprendžiu pats.', w:'LB', ty:'neg'},
+  {t:'Dažnai keliu komandai tikslus, kurie reikalauja naujų sprendimų.', w:'CH', ty:'pos'},
   {t:'Vengiu ambicingų tikslų, kad neperkraučiau komandos.', w:'CH', ty:'neg'},
-  {t:'Kai keičiasi kryptis, aiškiai suformuluoju „kodėl“ ir palieku komandai erdvę rasti kelią „kaip“.', w:'CH', ty:'pos'},
-  {t:'Dažnai renkuosi saugius, žinomus sprendimus, net jei prarandame augimo galimybę.', w:'CH', ty:'neg'},
-  // Debate Maker (DM)
-  {t:'Prieš sprendimą sąmoningai kviečiu skirtingas perspektyvas ir suformuluoju kriterijus, pagal kuriuos spręsime.', w:'DM', ty:'pos'},
-  {t:'Diskusijos dažnai baigiasi tuo, kad nusprendžiu vienas arba su siauru vidiniu ratu.', w:'DM', ty:'neg'},
-  {t:'Kai kyla konfliktas dėl idėjų, padedu atskirti „nuomonę“ nuo „įrodymų“ ir vesti iki sprendimo.', w:'DM', ty:'pos'},
-  {t:'Retai prašau duomenų/įrodymų prieš priimdamas sprendimą.', w:'DM', ty:'neg'},
-  // Investor (IN)
-  {t:'Deleguoju rezultatą (ką reikia pasiekti) ir suteikiu reikiamus resursus bei aiškias ribas.', w:'IN', ty:'pos'},
-  {t:'Linkęs „užbaigti pats“, net kai tai galėtų padaryti komanda.', w:'IN', ty:'neg'},
-  {t:'Po delegavimo prašau ataskaitos apie pasiektą rezultatą, o ne apie procesą.', w:'IN', ty:'pos'},
-  {t:'Dažnai paskirstau užduotis be konteksto ir aiškių laukiamų rezultatų.', w:'IN', ty:'neg'},
-  // SP kontrolė (5)
+  {t:'Kai keičiasi kryptis, aiškiai suformuluoju „kodėl“.', w:'CH', ty:'pos'},
+  {t:'Dažnai renkuosi saugius sprendimus.', w:'CH', ty:'neg'},
+  {t:'Prieš sprendimą kviečiu skirtingas perspektyvas.', w:'DM', ty:'pos'},
+  {t:'Diskusijos baigiasi tuo, kad nusprendžiu vienas.', w:'DM', ty:'neg'},
+  {t:'Kai kyla konfliktas, padedu atskirti „nuomonę“ nuo „įrodymų“.', w:'DM', ty:'pos'},
+  {t:'Retai prašau duomenų prieš sprendimą.', w:'DM', ty:'neg'},
+  {t:'Deleguoju rezultatą ir suteikiu resursus.', w:'IN', ty:'pos'},
+  {t:'Linkęs „užbaigti pats“.', w:'IN', ty:'neg'},
+  {t:'Po delegavimo prašau ataskaitos apie rezultatą.', w:'IN', ty:'pos'},
+  {t:'Dažnai paskirstau užduotis be konteksto.', w:'IN', ty:'neg'},
   {t:'Atsakinėjant į apklausas linkęs rinktis kraštutines opcijas.', w:'SP', ty:'neutral'},
   {t:'Kartais atsakau „kaip reikia“, o ne „kaip yra“.', w:'SP', ty:'neutral'},
-  {t:'Esu linkęs skubėti atsakydamas į klausimus.', w:'SP', ty:'neutral'},
-  {t:'Noriu palikti kuo geresnį įspūdį, net jei tai nėra tikslu.', w:'SP', ty:'neutral'},
-  {t:'Kartais sąmoningai neatsakau į kai kuriuos klausimus.', w:'SP', ty:'neutral'},
-]; 
+  {t:'Esu linkęs skubėti atsakydamas.', w:'SP', ty:'neutral'},
+  {t:'Noriu palikti kuo geresnį įspūdį.', w:'SP', ty:'neutral'},
+  {t:'Kartais sąmoningai neatsakau į kai kuriuos klausimus.', w:'SP', ty:'neutral'}
+];
 function shuffle(a){ return a.map(v=>({v, r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v); }
 const labels=['Labai nesutinku','Nesutinku','Neutralu','Sutinku','Labai sutinku'];
 function render(){ const c=document.getElementById('questions'); c.innerHTML=''; shuffle(Q).forEach((q,i)=>{ const d=document.createElement('div'); d.className='question'; d.dataset.weight=q.w; d.dataset.type=q.ty; d.dataset.idx=i+1; d.innerHTML=`<div class="qtext"><strong>${i+1}.</strong> ${q.t}</div>`; const lik=document.createElement('div'); lik.className='likert'; labels.forEach((L,j)=>{ const lab=document.createElement('label'); const inp=document.createElement('input'); inp.type='radio'; inp.name='q'+(i+1); inp.value=(j+1); lab.appendChild(inp); lab.appendChild(document.createTextNode(' '+L)); lik.appendChild(lab); }); d.appendChild(lik); c.appendChild(d); }); }
 render();
 
-// Skaičiavimas + radar + rekomendacijos (kaip v9)
-  // Shuffle ir render
-function shuffle(a){ return a.map(v=>({v, r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v); }
-const labels = ['Labai nesutinku','Nesutinku','Neutralu','Sutinku','Labai sutinku'];
-function render(){
-  const container=document.getElementById('questions');
-  container.innerHTML='';
-  const items = shuffle(Q);
-  items.forEach((q,i)=>{
-    const d=document.createElement('div'); d.className='question';
-    const idx=i+1; d.dataset.weight=q.w; d.dataset.type=q.ty; d.dataset.idx=idx;
-    d.innerHTML = `<div class="qtext"><strong>${idx}.</strong> ${q.t}</div>`;
-    const lik = document.createElement('div'); lik.className='likert';
-    labels.forEach((L,j)=>{
-      const lab=document.createElement('label'); const inp=document.createElement('input');
-      inp.type='radio'; inp.name='q'+idx; inp.value=(j+1);
-      lab.appendChild(inp); lab.appendChild(document.createTextNode(' '+L));
-      lik.appendChild(lab);
-    });
-    d.appendChild(lik); container.appendChild(d);
-  });
-}
-render();
-
-// Skaitymas
+// Skaičiavimas + radar + rekomendacijos
 function read(name){ const nodes=document.getElementsByName(name); for(const n of nodes){ if(n.checked) return parseInt(n.value,10);} return null; }
-function compute(){
-  const G={TM:0,LB:0,CH:0,DM:0,IN:0}; const C={TM:0,LB:0,CH:0,DM:0,IN:0}; let SPsum=0, SPn=0;
-  document.querySelectorAll('.question').forEach(q=>{
-    const v=read('q'+q.dataset.idx);
-    if(v!=null){
-      if(q.dataset.weight==='SP'){ SPsum+=v; SPn++; return; }
-      let val=v; if(q.dataset.type==='neg') val = 6 - v;
-      // nelinijinis: kraštutinės šiek tiek sustiprinamos
-      if(val===5) val=5.6; if(val===1) val=1.1;
-      G[q.dataset.weight]+=val; C[q.dataset.weight]++;
-    }
-  });
-  for(const k of Object.keys(G)){ if(C[k]>0) G[k] = G[k]/C[k]*4; }
-  const SP = SPn? (SPsum/SPn) : 0;
-  return {G, SP};
-}
-
+function compute(){ const G={TM:0,LB:0,CH:0,DM:0,IN:0}; const C={TM:0,LB:0,CH:0,DM:0,IN:0}; let SPsum=0, SPn=0;
+document.querySelectorAll('.question').forEach(q=>{ const v=read('q'+q.dataset.idx); if(v!=null){ if(q.dataset.weight==='SP'){ SPsum+=v; SPn++; return; } let val=v; if(q.dataset.type==='neg') val=6-v; if(val===5) val=5.6; if(val===1) val=1.1; G[q.dataset.weight]+=val; C[q.dataset.weight]++; }});
+for(const k in G){ if(C[k]>0) G[k]=G[k]/C[k]*4; } const SP=SPn?(SPsum/SPn):0; return {G,SP}; }
 function label(k){ return ({TM:'Talent Magnet',LB:'Liberator',CH:'Challenger',DM:'Debate Maker',IN:'Investor'})[k]; }
-
-function recommend(G){
-  const sorted = Object.entries(G).sort((a,b)=>b[1]-a[1]);
-  const [topK, topV] = sorted[0];
-  const [lowK, lowV] = sorted[sorted.length-1];
-  const tips = {
-    TM: {
-      exp: ['„Shadow presenter“ jaunam talentui per kitą statusą','Sukurk rotaciją: „savaitės problemos šeimininkas“','Prašyk komandos įvardinti 1 „native genius“ kiekviename stand-up’e'],
-      risk:['Pašalink blokatorius (įsk. tave) iš kritinių sprendimų','Sudaryk „talent map“ ir uždaryk spragas per 30 d.']
-    },
-    LB: {
-      exp: ['Įvesk „klaidos bilietą“ – be kaltų, su mokymosi taškais','Sumažink kalbėjimą 50%: užduok 3 klausimus prieš teiginius','Nustatyk aiškias ribas ir indikatorius „Done“'] ,
-      risk:['Nutrauk mikromanagemento ritualus (pvz., kasdienes smulkmenų apžiūras)','„Kliūčių lenta“: kasdien identifikuok ir nuimk 1 kliūtį']
-    },
-    CH: {
-      exp: ['„Ambicijos sprintas“ 30 dienų su aiškiu „kodėl“','Naudok „Kodėl medį“ prieš sprendimus','Sėklok 3 atvirus klausimus kiekviename planavime'],
-      risk:['Venk saugių sprendimų – įtrauk bent 1 naują alternatyvą','Skaičiuok „eksperimentų“ % per mėnesį']
-    },
-    DM: {
-      exp: ['Sukurk sprendimų kriterijų lentą prieš diskusiją','Skirk „advokato“ rolę opozicijai debatų metu','Reikalauk 2 įrodymų prieš tvirtinant sprendimą'],
-      risk:['Stabdyk solo sprendimus – įtrauk plačią komandą','Vesk „nuomonė vs įrodymas“ momentus']
-    },
-    IN: {
-      exp: ['Deleguok rezultatą + resursus + „check-in“ ritmą','Prašyk RO („result ownership“) ataskaitos','Skaidyk atsakomybę: kas, iki kada, kokį rezultatą'],
-      risk:['Nustok „užbaigti pats“ – perleisk paskutinį 10%','Apibrėžk kontekstą ir ribas, kad nebūtų priklausomybės']
-    }
-  };
-  const exp = tips[topK].exp[0];
-  const risk = tips[lowK].risk[0];
-  return { top:{k:topK,v:topV}, low:{k:lowK,v:lowV}, exp, risk };
-}
-
+function recommend(G){ const sorted=Object.entries(G).sort((a,b)=>b[1]-a[1]); const [topK,topV]=sorted[0]; const [lowK,lowV]=sorted[sorted.length-1];
+const tips={ TM:{exp:'„Shadow presenter“ jaunam talentui',risk:'Pašalink blokatorius iš sprendimų'}, LB:{exp:'Įvesk „klaidos bilietą“',risk:'Nutrauk mikromanagementą'}, CH:{exp:'„Ambicijos sprintas“ 30 d.',risk:'Venk saugių sprendimų'}, DM:{exp:'Sukurk sprendimų kriterijų lentą',risk:'Stabdyk solo sprendimus'}, IN:{exp:'Deleguok rezultatą + resursus',risk:'Nustok „užbaigti pats“'} };
+return {top:{k:topK,v:topV},low:{k:lowK,v:lowV},exp:tips[topK].exp,risk:tips[lowK].risk}; }
 let radar;
-function drawRadar(G){
-  const ctx=document.getElementById('radar');
-  if(radar) radar.destroy();
-  radar = new Chart(ctx, {
-    type:'radar',
-    data:{ labels:['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'], datasets:[{ label:'Profilis', data:[G.TM||0,G.LB||0,G.CH||0,G.DM||0,G.IN||0], borderColor:getComputedStyle(document.body).getPropertyValue('--accent').trim(), backgroundColor:'rgba(96,165,250,0.22)' }] },
-    options:{ scales:{ r:{ suggestedMin:0, suggestedMax:20, grid:{ color:getComputedStyle(document.body).getPropertyValue('--muted').trim() }, pointLabels:{ color:getComputedStyle(document.body).getPropertyValue('--text').trim() } } }, plugins:{ legend:{ labels:{ color:getComputedStyle(document.body).getPropertyValue('--text').trim() } } } }
-  });
-}
+function drawRadar(G){ const ctx=document.getElementById('radar'); if(radar) radar.destroy(); radar=new Chart(ctx,{type:'radar',data:{labels:['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'],datasets:[{label:'Profilis',data:[G.TM||0,G.LB||0,G.CH||0,G.DM||0,G.IN||0],borderColor:getComputedStyle(document.body).getPropertyValue('--accent').trim(),backgroundColor:'rgba(96,165,250,0.22)'}]},options:{scales:{r:{suggestedMin:0,suggestedMax:20}}}}); }
+function formatSummary(res){ const sum=Object.values(res.G).reduce((a,b)=>a+b,0); const R=recommend(res.G);
+return `<strong>Bendras balas:</strong> ${sum.toFixed(1)} / 100<br>Dominuoja <strong>${label(R.top.k)}</strong> (≈${R.top.v.toFixed(1)}). Silpniausia – <strong>${label(R.low.k)}</strong> (≈${R.low.v.toFixed(1)}).<br><strong>SP indeksas:</strong> ${res.SP.toFixed(1)}<br><strong>Eksperimentas:</strong> ${R.exp}.<br><strong>Rizikos mažinimas:</strong> ${R.risk}.`; }
+document.getElementById('calcBtn').onclick=()=>{ const res=compute(); drawRadar(res.G); document.getElementById('summary').innerHTML=formatSummary(res); };
+document.getElementById('resetBtn').onclick=()=>{ document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false); document.getElementById('summary').textContent='Kol kas neapskaičiuota.'; if(radar) radar.destroy(); };
 
-function formatSummary(res){
-  const sum = Object.values(res.G).reduce((a,b)=>a+b,0);
-  const R = recommend(res.G);
-  const txt = [
-    `<strong>Bendras balas:</strong> ${sum.toFixed(1)} / 100`,
-    `Dominuoja <strong>${label(R.top.k)}</strong> (≈ ${R.top.v.toFixed(1)}). Silpniausia – <strong>${label(R.low.k)}</strong> (≈ ${R.low.v.toFixed(1)}).`,
-    `<strong>SP indeksas:</strong> ${res.SP.toFixed(1)} (aukštesnis = didesnė šališkumo rizika).`,
-    `<strong>Eksperimentas:</strong> ${R.exp}.`,
-    `<strong>Rizikos mažinimas:</strong> ${R.risk}.`
-  ].join('<br>');
-  return txt;
-}
-
-// Veiksmai
-document.getElementById('calcBtn').addEventListener('click', ()=>{
-  const res = compute(); drawRadar(res.G);
-  document.getElementById('summary').innerHTML = formatSummary(res);
-});
-
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  document.querySelectorAll('input[type="radio"]').forEach(i=>i.checked=false);
-  document.getElementById('summary').textContent='Kol kas neapskaičiuota.';
-  if(radar) radar.destroy();
-});
-
-// PDF (renderis): html2pdf tiesioginis atsisiuntimas
-document.getElementById('pdfRenderBtn').addEventListener('click', ()=>{
-  const opt = { margin: 0.6, filename: 'multipliers_v9.pdf', image: { type: 'jpeg', quality: 0.95 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' } };
-  html2pdf().from(document.body).set(opt).save();
-});
-
-// PDF (universalus): jsPDF – sugeneruojame santrauką + radar paveikslą
-document.getElementById('pdfUniversalBtn').addEventListener('click', async ()=>{
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit:'pt', format:'a4' });
-  const res = compute();
-  const summaryHTML = formatSummary(res);
-  // įkeliam tekstą
-  const lines = summaryHTML.replace(/<br>/g,'\n').replace(/<strong>/g,'').replace(/<\/strong>/g,'').split('\n');
-  doc.setFont('helvetica','normal'); doc.setFontSize(12);
-  let y = 40; lines.forEach(line=>{ doc.text(line, 40, y); y += 18; });
-  // radar kaip paveikslas
-  const canvas = document.getElementById('radar');
-  if(canvas){ const img = canvas.toDataURL('image/png', 1.0); doc.addImage(img, 'PNG', 40, y+10, 500, 360); }
-  // pabaiga
-  doc.save('multipliers_v9.pdf');
-});
+// PDF
+document.getElementById('pdfRenderBtn').onclick=()=>{ html2pdf().from(document.body).set({margin:0.6,filename:'multipliers_v10.pdf'}).save(); };
+document.getElementById('pdfUniversalBtn').onclick=()=>{ const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'pt',format:'a4'}); const res=compute(); const lines=formatSummary(res).replace(/<br>/g,'\n').replace(/<[^>]+>/g,'').split('\n'); let y=40; lines.forEach(line=>{ doc.text(line,40,y); y+=18; }); const canvas=document.getElementById('radar'); if(canvas){ const img=canvas.toDataURL('image/png',1.0); doc.addImage(img,'PNG',40,y+10,500,360); } doc.save('multipliers_v10.pdf'); };
 </script>
 </body>
+</html>
+
 </html>
