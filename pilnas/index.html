@@ -4,35 +4,41 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Multipliers Archetipų Testas v10.2</title>
+<title>Multipliers Archetipų Testas v10.3</title>
 <style>
   :root { --bg:#0f172a; --text:#e2e8f0; --card:#1e293b; --accent:#60a5fa; --muted:#94a3b8; }
   .light { --bg:#ffffff; --text:#1f2937; --card:#f1f5f9; --accent:#2563eb; --muted:#6b7280; }
-  body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--text); }
+
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); }
   header { position:fixed; top:0; left:0; right:0; background:var(--bg); border-bottom:1px solid var(--card); z-index:100; }
   .bar { max-width:1000px; margin:auto; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; }
   .toolbar { display:flex; gap:8px; flex-wrap:wrap; }
   button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-weight:600; cursor:pointer; }
   button.secondary { background:transparent; color:var(--text); border:1px solid var(--muted); }
+
   main { max-width:1000px; margin:80px auto 24px; padding:0 16px; }
   .grid { display:grid; grid-template-columns:1fr; gap:12px; }
   @media(min-width:1024px){ .grid { grid-template-columns:1.2fr 0.8fr; } }
+
   .card { background:var(--card); border-radius:12px; padding:12px; }
   .question { margin-bottom:12px; }
   .qtext { margin-bottom:6px; }
   .likert { display:flex; flex-wrap:wrap; gap:8px; }
   .likert label { background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); padding:6px 8px; border-radius:8px; }
+
   canvas { width:100% !important; height:auto !important; }
   .muted { color:var(--muted); font-size:0.9rem; }
   .archetypes { margin-top:12px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; }
   .archetypes p { margin:6px 0; }
+
   #resultsCard.highlight { outline: 2px solid var(--accent); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); transition: outline .2s; }
+  .error { color:#ffb4b4; font-weight:600; margin:8px 0; }
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
-    <div class="title">Multipliers Archetipų Testas v10.2</div>
+    <div class="title">Multipliers Archetipų Testas v10.3</div>
     <div class="toolbar">
       <button id="themeBtn" class="secondary">🌙 Tamsi</button>
       <button id="calcBtn">Apskaičiuoti</button>
@@ -47,6 +53,7 @@
   <div class="grid">
     <section class="card" id="quiz">
       <h3>Klausimynas</h3>
+      <p id="errorBox" class="error" style="display:none;"></p>
       <p class="muted">25 klausimai (4×5 archetipai + 5 SP kontrolės). Likerto skalė 1–5. Klausimai sumaišomi kiekvieną kartą.</p>
       <div id="questions"></div>
     </section>
@@ -65,12 +72,16 @@
         <p><strong>Debate Maker</strong> – suformuoja problemą, kviečia skirtingas perspektyvas; pavyzdys: „Reikalauja įrodymų prieš sprendimą.“</p>
         <p><strong>Investor</strong> – deleguoja rezultatą, suteikia resursus; pavyzdys: „Aiškiai apibrėžia ribas ir atsakomybę.“</p>
       </div>
+      <p class="muted" style="margin-top:8px;">
+        Pastaba: „oficialūs“ Multipliers vertinimai yra licencijuoti per The Wiseman Group (Self‑Assessment ~75, 360 ~77 klausimai). Šis savitestis paremtas viešai aprašyta 5 disciplinų metodika.
+      </p>
     </aside>
   </div>
 </main>
 
-<script src.jsdelivr.net/npm/chart.js</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundlept>
+<!-- CDN: būtina, teisingos script žymos -->
+https://cdn.jsdelivr.net/npm/chart.js</script>
+https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js</script>
 https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js</script>
 
 <script>
@@ -111,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const labels=['Labai nesutinku','Nesutinku','Neutralu','Sutinku','Labai sutinku'];
   function shuffle(a){ return a.map(v=>({v, r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v); }
+
   function render(){
     const c=document.getElementById('questions'); c.innerHTML='';
     shuffle(Q).forEach((q,i)=>{
@@ -129,7 +141,32 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   render();
 
+  // Skaitymo, validacijos, skaičiavimo funkcijos
   function read(name){ const nodes=document.getElementsByName(name); for(const n of nodes){ if(n.checked) return parseInt(n.value,10);} return null; }
+
+  function validate(){
+    let firstMissing = null;
+    for(let i=1;i<=Q.length;i++){
+      if(read('q'+i)===null){
+        firstMissing = i;
+        break;
+      }
+    }
+    const box = document.getElementById('errorBox');
+    if(firstMissing){
+      box.style.display='block';
+      box.textContent = `Atsakykite į visus klausimus (trūksta atsakymo klausime #${firstMissing}).`;
+      // scroll į pirmą neatsakytą
+      const el = document.querySelector(`.question [name="q${firstMissing}"]`);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+      return false;
+    } else {
+      box.style.display='none';
+      box.textContent='';
+      return true;
+    }
+  }
+
   function compute(){
     const G={TM:0,LB:0,CH:0,DM:0,IN:0}; const C={TM:0,LB:0,CH:0,DM:0,IN:0}; let SPsum=0, SPn=0;
     document.querySelectorAll('.question').forEach(q=>{
@@ -137,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(v!=null){
         if(q.dataset.weight==='SP'){ SPsum+=v; SPn++; return; }
         let val=v; if(q.dataset.type==='neg') val=6-v;
+        // nelinijinis kraštutinėms
         if(val===5) val=5.6; if(val===1) val=1.1;
         G[q.dataset.weight]+=val; C[q.dataset.weight]++;
       }
@@ -145,9 +183,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const SP=SPn?(SPsum/SPn):0;
     return {G,SP};
   }
+
   function label(k){ return ({TM:'Talent Magnet',LB:'Liberator',CH:'Challenger',DM:'Debate Maker',IN:'Investor'})[k]; }
+
   function recommend(G){
-    const sorted=Object.entries(G).sort((a,b)=>b[1]-a[1]); const [topK,topV]=sorted[0]; const [lowK,lowV]=sorted[sorted.length-1];
+    const sorted=Object.entries(G).sort((a,b)=>b[1]-a[1]);
+    const [topK,topV]=sorted[0]; const [lowK,lowV]=sorted[sorted.length-1];
     const tips={
       TM:{exp:'„Shadow presenter“ jaunam talentui',risk:'Pašalink blokatorius iš sprendimų'},
       LB:{exp:'Įvesk „klaidos bilietą“',risk:'Nutrauk mikromanagementą'},
@@ -158,6 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return {top:{k:topK,v:topV},low:{k:lowK,v:lowV},exp:tips[topK].exp,risk:tips[lowK].risk};
   }
 
+  // Radar
   let radar;
   function drawRadar(G){
     const ctx=document.getElementById('radar'); if(!ctx) return;
@@ -172,30 +214,68 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Santrauka
   function formatSummary(res){
     const sum=Object.values(res.G).reduce((a,b)=>a+b,0);
     const R=recommend(res.G);
     return `<strong>Bendras balas:</strong> ${sum.toFixed(1)} / 100<br>
             Dominuoja <strong>${label(R.top.k)}</strong> (≈${R.top.v.toFixed(1)}). Silpniausia – <strong>${label(R.low.k)}</strong> (≈${R.low.v.toFixed(1)}).<br>
-            <strong>SP indeksas:</strong> ${res.SP.toFixed(1)}<br>
+            <strong>SP indeksas:</strong> ${res.SP.toFixed(1)} (aukštesnis = didesnė šališkumo rizika)<br>
             <strong>Eksperimentas:</strong> ${R.exp}.<br>
             <strong>Rizikos mažinimas:</strong> ${R.risk}.`;
   }
+
   function showResults(res){
     drawRadar(res.G);
-    const sumDiv=document.getElementById('summary');
-    sumDiv.innerHTML=formatSummary(res);
+    document.getElementById('summary').innerHTML=formatSummary(res);
     const card=document.getElementById('resultsCard');
     card.classList.add('highlight');
     card.scrollIntoView({behavior:'smooth', block:'start'});
-    setTimeout(()=>card.classList.remove('highlight'), 1500);
+    setTimeout(()=>card.classList.remove('highlight'),1500);
   }
 
-  document.getElementById('calcBtn').onclick=()=>{ const res=compute(); showResults(res); };
-  document.getElementById('resetBtn').onclick=()=>{ document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false); document.getElementById('summary').textContent='Kol kas neapskaičiuota.'; if(radar) radar.destroy(); };
+  // Mygtukai
+  document.getElementById('calcBtn').addEventListener('click', ()=>{
+    if(!validate()) return;
+    const res=compute(); showResults(res);
+  });
 
-  document.getElementById('pdfRenderBtn').onclick=()=>{ const res=compute(); showResults(res); html2pdf().from(document.body).set({margin:0.6,filename:'multipliers_v10_2.pdf'}).save(); };
-  document.getElementById('pdfUniversalBtn').onclick=()=>{ const res=compute(); showResults(res); const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'pt',format:'a4'}); const plain=formatSummary(res).replace(/<br>/g,'\n').replace(/<[^>]+>/g,''); const lines=plain.split('\n'); let y=40; lines.forEach(line=>{ doc.text(line,40,y); y+=18; }); const canvas=document.getElementById('radar'); if(canvas){ const img=canvas.toDataURL('image/png',1.0); doc.addImage(img,'PNG',40,y+10,500,360); } doc.save('multipliers_v10_2.pdf'); };
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false);
+    document.getElementById('summary').textContent='Kol kas neapskaičiuota.';
+    document.getElementById('errorBox').style.display='none';
+    if(radar) radar.destroy();
+  });
+
+  // PDF (renderis)
+  document.getElementById('pdfRenderBtn').addEventListener('click', ()=>{
+    if(!validate()) { alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
+    const res=compute(); showResults(res);
+    try{
+      html2pdf().from(document.body).set({
+        margin:0.6, filename:'multipliers_v10_3.pdf',
+        image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2},
+        jsPDF:{unit:'cm',format:'a4',orientation:'portrait'}
+      }).save();
+    }catch(e){ alert('Nepavyko sukurti PDF (renderis): '+e.message); }
+  });
+
+  // PDF (universalus)
+  document.getElementById('pdfUniversalBtn').addEventListener('click', ()=>{
+    if(!validate()) { alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
+    const res=compute(); showResults(res);
+    try{
+      const {jsPDF}=window.jspdf;
+      const doc=new jsPDF({unit:'pt',format:'a4'});
+      const plain=formatSummary(res).replace(/<br>/g,'\n').replace(/<[^>]+>/g,''); 
+      const lines=plain.split('\n');
+      doc.setFont('helvetica','normal'); doc.setFontSize(12);
+      let y=40; lines.forEach(line=>{ doc.text(line,40,y); y+=18; });
+      const canvas=document.getElementById('radar'); 
+      if(canvas){ const img=canvas.toDataURL('image/png',1.0); doc.addImage(img,'PNG',40,y+10,500,360); }
+      doc.save('multipliers_v10_3.pdf');
+    }catch(e){ alert('Nepavyko sukurti PDF (universalus): '+e.message); }
+  });
 });
 </script>
 </body>
