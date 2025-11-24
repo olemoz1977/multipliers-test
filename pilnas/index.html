@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Multipliers Archetipų Testas v2</title>
+<title>Multipliers Archetipų Testas v3</title>
 <style>
 :root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--danger:#ef4444;--warn:#f59e0b}
 body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:var(--ink);margin:0}
@@ -29,7 +29,7 @@ footer{padding:24px 16px;color:var(--muted);text-align:center}
 </head>
 <body>
 <header>
-<h1>Multipliers Archetipų Testas v2</h1>
+<h1>Multipliers Archetipų Testas v3</h1>
 <p class="muted">Įvertink save pagal 5 Multipliers archetipus. Skalė: 1 – visiškai ne apie mane … 5 – labai apie mane.</p>
 </header>
 <main>
@@ -47,9 +47,19 @@ footer{padding:24px 16px;color:var(--muted);text-align:center}
 </div>
 <div id="output"></div>
 <canvas id="radar" width="400" height="400"></canvas>
+<div id="descriptions" class="card" style="margin-top:16px">
+<h3>Archetipų aprašai</h3>
+<ul>
+<li><strong>Talent Magnet:</strong> Pritraukia ir išlaiko talentus, kuria reputaciją.</li>
+<li><strong>Liberator:</strong> Kuria saugią erdvę, leidžia klysti ir augti.</li>
+<li><strong>Challenger:</strong> Meta iššūkius, kelia ambicijas.</li>
+<li><strong>Debate Maker:</strong> Skatina diskusijas ir įvairias perspektyvas.</li>
+<li><strong>Investor:</strong> Deleguoja atsakomybę ir suteikia resursus.</li>
+</ul>
+</div>
 </section>
 </main>
-<footer>Sukūrė: Oleg × AI · Patobulinta interpretacija</footer>
+<footer>Sukūrė: Oleg × AI · Archetipų aprašai + mišri eksperimentų logika</footer>
 <script>
 const archetypes=['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'];
 const questions=[
@@ -88,7 +98,7 @@ const avg=Math.round(Object.values(data).reduce((a,b)=>a+b,0)/archetypes.length)
 let cls,label,explain;if(avg<40){cls='danger';label='Diminisher rizika';explain='Elgsena dažnai riboja kitų savarankiškumą ir idėjas.';}else if(avg<65){cls='warn';label='Accidental Diminisher rizika';explain='Geri ketinimai kartais riboja kitų balsą. Saugokis perėmimo.';}else{cls='ok';label='Multiplier';explain='Elgsena dažniausiai įgalina kitus kurti ir spręsti.';}
 const ordered=Object.entries(data).sort((a,b)=>b[1]-a[1]);const top2=ordered.slice(0,2);const bottom2=ordered.slice(-2);
 let interp='';if(avg<40){interp=`<strong>Potencialas:</strong> ${top2.map(x=>x[0]).join(', ')} – pradėk nuo jų.`;}else if(avg<65){interp=`<strong>Stiprybės (ribotos):</strong> ${top2.map(x=>x[0]).join(', ')}<br><strong>Rizikos mažinimas:</strong> Skirk dėmesio elgsenoms, kurios riboja kitus.`;}else{interp=`<strong>Stiprybės:</strong> ${top2.map(x=>x[0]).join(', ')} – naudok jas kaip pagrindą.`;}
-const tips=`<ul><li>${top2[0][0]}: Pripažink 3 žmonių indėlį per savaitę.</li><li>${top2[1][0]}: Užduok klausimą „Kas būtų, jei…?“ bent kartą per dieną.</li></ul>`;
+let tips='';if(avg<65){tips=`<ul><li>Rizikos mažinimas: Deleguok sprendimą, ne tik užduotį.</li><li>${top2[0][0]}: Pripažink 3 žmonių indėlį per savaitę.</li></ul>`;}else{tips=`<ul><li>${top2[0][0]}: Pripažink 3 žmonių indėlį per savaitę.</li><li>${top2[1][0]}: Užduok klausimą „Kas būtų, jei…?“ bent kartą per dieną.</li></ul>`;}
 const bars=ordered.map(([k,v])=>`<div><div style='display:flex;justify-content:space-between'><span>${k}</span><span>${v}</span></div><div style='height:10px;background:#1f2937;border-radius:6px;overflow:hidden'><span style='display:block;height:100%;background:linear-gradient(90deg,#22c55e,#10b981);width:${v}%'></span></div></div>`).join('');
 document.getElementById('output').innerHTML=`<div class='card'><div><strong>Multipliers indeksas:</strong> ${avg}% <span class='${cls}'>(${label})</span></div><div class='explain'>${explain}</div><div>${interp}</div><div><strong>Aklosios zonos:</strong> ${bottom2.map(x=>x[0]).join(', ')}</div><div class='tip'>Eksperimentai (14 d.): ${tips}</div></div><div class='card'><h3>Archetipų balai</h3>${bars}</div>`;
 renderRadar(data);
