@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Multipliers Archetipų Testas v3</title>
+<title>Multipliers Archetipų Testas v4</title>
 <style>
 :root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--danger:#ef4444;--warn:#f59e0b}
 body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:var(--ink);margin:0}
@@ -24,12 +24,14 @@ canvas{background:#fff;border-radius:8px;padding:8px;margin-top:12px}
 footer{padding:24px 16px;color:var(--muted);text-align:center}
 .tip{margin-top:8px;font-weight:bold;color:#22c55e}
 .explain{margin-top:6px;font-size:14px;color:var(--muted)}
+.bar-container{height:12px;background:#1f2937;border-radius:6px;overflow:hidden;margin-top:6px}
+.bar-fill{display:block;height:100%}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <header>
-<h1>Multipliers Archetipų Testas v3</h1>
+<h1>Multipliers Archetipų Testas v4</h1>
 <p class="muted">Įvertink save pagal 5 Multipliers archetipus. Skalė: 1 – visiškai ne apie mane … 5 – labai apie mane.</p>
 </header>
 <main>
@@ -59,7 +61,7 @@ footer{padding:24px 16px;color:var(--muted);text-align:center}
 </div>
 </section>
 </main>
-<footer>Sukūrė: Oleg × AI · Archetipų aprašai + mišri eksperimentų logika</footer>
+<footer>Sukūrė: Oleg Mozochin × AI</footer>
 <script>
 const archetypes=['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'];
 const questions=[
@@ -73,7 +75,7 @@ const questions=[
 {id:'L3',a:'Liberator',t:'Dažnai perimu kontrolę, kad išvengčiau klaidų.',inv:true},
 {id:'L4',a:'Liberator',t:'Skatinu atvirą grįžtamąjį ryšį.'},
 {id:'L5',a:'Liberator',t:'Mano komanda jaučiasi saugi išsakyti idėjas.'},
-{id:'C1',a:'Challenger',t:'Metu komanda iššūkius, kurie atrodo sunkiai pasiekiami.'},
+{id:'C1',a:'Challenger',t:'Metu komandai iššūkius, kurie atrodo sunkiai pasiekiami.'},
 {id:'C2',a:'Challenger',t:'Skatinu komandą galvoti plačiau nei įprasta.'},
 {id:'C3',a:'Challenger',t:'Retai keliu ambicingus tikslus.',inv:true},
 {id:'C4',a:'Challenger',t:'Padedu komandai matyti didesnį paveikslą.'},
@@ -95,12 +97,13 @@ function sum(ids){return ids.map(val).reduce((a,b)=>a+(b||0),0);}
 function score(){for(const item of questions){if(val(item.id)==null){alert('Užpildyk visus teiginius.');return;}}
 const data={};archetypes.forEach(a=>{const ids=questions.filter(q=>q.a===a).map(q=>q.id);data[a]=Math.round(sum(ids)*4);});
 const avg=Math.round(Object.values(data).reduce((a,b)=>a+b,0)/archetypes.length);
-let cls,label,explain;if(avg<40){cls='danger';label='Diminisher rizika';explain='Elgsena dažnai riboja kitų savarankiškumą ir idėjas.';}else if(avg<65){cls='warn';label='Accidental Diminisher rizika';explain='Geri ketinimai kartais riboja kitų balsą. Saugokis perėmimo.';}else{cls='ok';label='Multiplier';explain='Elgsena dažniausiai įgalina kitus kurti ir spręsti.';}
+let cls,label,explain,color;if(avg<40){cls='danger';label='Diminisher rizika';explain='Elgsena dažnai riboja kitų savarankiškumą ir idėjas.';color='var(--danger)';}else if(avg<65){cls='warn';label='Accidental Diminisher rizika';explain='Geri ketinimai kartais riboja kitų balsą. Saugokis perėmimo.';color='var(--warn)';}else{cls='ok';label='Multiplier';explain='Elgsena dažniausiai įgalina kitus kurti ir spręsti.';color='var(--accent)';}
 const ordered=Object.entries(data).sort((a,b)=>b[1]-a[1]);const top2=ordered.slice(0,2);const bottom2=ordered.slice(-2);
 let interp='';if(avg<40){interp=`<strong>Potencialas:</strong> ${top2.map(x=>x[0]).join(', ')} – pradėk nuo jų.`;}else if(avg<65){interp=`<strong>Stiprybės (ribotos):</strong> ${top2.map(x=>x[0]).join(', ')}<br><strong>Rizikos mažinimas:</strong> Skirk dėmesio elgsenoms, kurios riboja kitus.`;}else{interp=`<strong>Stiprybės:</strong> ${top2.map(x=>x[0]).join(', ')} – naudok jas kaip pagrindą.`;}
-let tips='';if(avg<65){tips=`<ul><li>Rizikos mažinimas: Deleguok sprendimą, ne tik užduotį.</li><li>${top2[0][0]}: Pripažink 3 žmonių indėlį per savaitę.</li></ul>`;}else{tips=`<ul><li>${top2[0][0]}: Pripažink 3 žmonių indėlį per savaitę.</li><li>${top2[1][0]}: Užduok klausimą „Kas būtų, jei…?“ bent kartą per dieną.</li></ul>`;}
-const bars=ordered.map(([k,v])=>`<div><div style='display:flex;justify-content:space-between'><span>${k}</span><span>${v}</span></div><div style='height:10px;background:#1f2937;border-radius:6px;overflow:hidden'><span style='display:block;height:100%;background:linear-gradient(90deg,#22c55e,#10b981);width:${v}%'></span></div></div>`).join('');
-document.getElementById('output').innerHTML=`<div class='card'><div><strong>Multipliers indeksas:</strong> ${avg}% <span class='${cls}'>(${label})</span></div><div class='explain'>${explain}</div><div>${interp}</div><div><strong>Aklosios zonos:</strong> ${bottom2.map(x=>x[0]).join(', ')}</div><div class='tip'>Eksperimentai (14 d.): ${tips}</div></div><div class='card'><h3>Archetipų balai</h3>${bars}</div>`;
+let tips='';if(avg<65){tips=`<ul><li><strong>Rizikos mažinimas:</strong> Deleguok sprendimą, ne tik užduotį.</li><li><strong>${top2[0][0]} (stiprybė – stiprink dar labiau):</strong> Pripažink 3 žmonių indėlį per savaitę.</li></ul>`;}else{tips=`<ul><li><strong>${top2[0][0]} (stiprybė – stiprink dar labiau):</strong> Pripažink 3 žmonių indėlį per savaitę.</li><li><strong>${top2[1][0]} (stiprybė – stiprink dar labiau):</strong> Užduok klausimą „Kas būtų, jei…?“ bent kartą per dieną.</li></ul>`;}
+const bars=ordered.map(([k,v])=>`<div><div style='display:flex;justify-content:space-between'><span>${k}</span><span>${v}</span></div><div class='bar-container'><span class='bar-fill' style='width:${v}%;background:linear-gradient(90deg,#22c55e,#10b981)'></span></div></div>`).join('');
+const progress=`<div style='margin-top:8px'><div style='font-weight:bold'>Bendras indeksas:</div><div class='bar-container'><span class='bar-fill' style='width:${avg}%;background:${color}'></span></div></div>`;
+document.getElementById('output').innerHTML=`<div class='card'><div><strong>Multipliers indeksas:</strong> ${avg}% <span class='${cls}'>(${label})</span></div>${progress}<div class='explain'>${explain}</div><div>${interp}</div><div><strong>Aklosios zonos:</strong> ${bottom2.map(x=>x[0]).join(', ')}</div><div class='tip'>Eksperimentai (14 d.): ${tips}</div></div><div class='card'><h3>Archetipų balai</h3>${bars}</div>`;
 renderRadar(data);
 }
 function renderRadar(data){const ctx=document.getElementById('radar');new Chart(ctx,{type:'radar',data:{labels:archetypes,datasets:[{label:'Balai',data:Object.values(data),fill:true,backgroundColor:'rgba(34,197,94,0.2)',borderColor:'#22c55e'}]},options:{scales:{r:{suggestedMin:0,suggestedMax:100}}}});}
