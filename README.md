@@ -12,10 +12,10 @@ Sveiki atvykę 👋
 
 Pasiruošęs(-usi) testui? Greitas ar pilnas? 
  
-Greitas -tiesiog spausk mygtuką žemiau ir nustatyk ar tavo elgesis turi rizikos dažnai riboti kitų savarankiškumą ir idėjas  👇 
+Greitas -tiesiog spausk "Pradėti testą" ir nustatyk ar tavo elgesis turi rizikos dažnai riboti kitų savarankiškumą ir idėjas   
  [🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/test)
 
-Pilnas - tiesiog spausk mygtuką žemiau nustatyk koks tavo kaip Auginančio/Įgalinnačio arba Atsitiktinai ribojančio vadovo elgesis reikalauja pokyčių 👇
+Pilnas - tiesiog spausk "Pradėti testą" nustatyk koks tavo kaip Auginančio/Įgalinnačio arba Atsitiktinai ribojančio vadovo elgesis reikalauja pokyčių 
 [🚀 Pradėti testą](https://olemoz1977.github.io/multipliers-test/pilnas)
 ---
 
