@@ -51,5 +51,5 @@ Liz Wiseman identifikavo 5 pagrindines dauginančio vadovo disciplinas:
 
 ## 👤 Autorius
 
-Sukūrė: **Oleg Mozochin**
+Testą sukūrė: **Oleg Mozochin + AI**
 
