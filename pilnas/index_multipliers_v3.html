@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="lt">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Multipliers Archetipų Testas v3</title>
+<style>
+:root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#9ca3af;--accent:#22c55e;--danger:#ef4444;--warn:#f59e0b}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:var(--ink);margin:0}
+header{padding:24px 16px;border-bottom:1px solid #1f2937}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1,h2{margin:0 0 8px 0}
+.card{background:var(--card);border:1px solid #1f2937;border-radius:12px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.q{padding:10px 12px;border:1px solid #1f2937;border-radius:10px;margin:10px 0}
+.scale{display:flex;gap:6px;margin-top:8px}
+.scale label{flex:1;text-align:center;font-size:13px}
+.scale input{accent-color:#22c55e}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+button{background:#1f2937;color:var(--ink);border:1px solid #334155;border-radius:8px;padding:10px 14px;cursor:pointer}
+button.primary{background:var(--accent);color:#052e1b;border-color:#16a34a}
+canvas{background:#fff;border-radius:8px;padding:8px;margin-top:12px}
+.danger{color:var(--danger)}.warn{color:var(--warn)}.ok{color:var(--accent)}
+footer{padding:24px 16px;color:var(--muted);text-align:center}
+.tip{margin-top:8px;font-weight:bold;color:#22c55e}
+.explain{margin-top:6px;font-size:14px;color:var(--muted)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>
+<h1>Multipliers Archetipų Testas v3</h1>
+<p class="muted">Įvertink save pagal 5 Multipliers archetipus. Skalė: 1 – visiškai ne apie mane … 5 – labai apie mane.</p>
+</header>
+<main>
+<section class="card">
+<h2>Klausimai</h2>
+<div id="questions"></div>
+</section>
+<section class="card">
+<h2>Rezultatas</h2>
+<div class="actions">
+<button class="primary" onclick="score()">Apskaičiuoti rezultatą</button>
+<button onclick="resetForm()">Išvalyti</button>
+<button onclick="copyText()">Kopijuoti santrauką</button>
+<button onclick="print()">Spausdinti / PDF</button>
+</div>
+<div id="output"></div>
+<canvas id="radar" width="400" height="400"></canvas>
+<div id="descriptions" class="card" style="margin-top:16px">
+<h3>Archetipų aprašai</h3>
+<ul>
+<li><strong>Talent Magnet:</strong> Pritraukia ir išlaiko talentus, kuria reputaciją.</li>
+<li><strong>Liberator:</strong> Kuria saugią erdvę, leidžia klysti ir augti.</li>
+<li><strong>Challenger:</strong> Meta iššūkius, kelia ambicijas.</li>
+<li><strong>Debate Maker:</strong> Skatina diskusijas ir įvairias perspektyvas.</li>
+<li><strong>Investor:</strong> Deleguoja atsakomybę ir suteikia resursus.</li>
+</ul>
+</div>
+</section>
+</main>
+<footer>Sukūrė: Oleg × AI · Archetipų aprašai + mišri eksperimentų logika</footer>
+<script>
+const archetypes=['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'];
+const questions=[
+{id:'TM1',a:'Talent Magnet',t:'Mano komandoje žmonės jaučiasi vertinami ir nori likti ilgiau.'},
+{id:'TM2',a:'Talent Magnet',t:'Aktyviai pastebiu ir pripažįstu kitų stiprybes.'},
+{id:'TM3',a:'Talent Magnet',t:'Retai skiriu laiko talentų ugdymui.',inv:true},
+{id:'TM4',a:'Talent Magnet',t:'Padedu žmonėms matyti savo karjeros galimybes.'},
+{id:'TM5',a:'Talent Magnet',t:'Mano komanda žinoma kaip vieta, kur galima augti.'},
+{id:'L1',a:'Liberator',t:'Sukuriu aplinką, kur žmonės drąsiai išbando naujus sprendimus.'},
+{id:'L2',a:'Liberator',t:'Leidžiu klysti be baimės dėl pasekmių.'},
+{id:'L3',a:'Liberator',t:'Dažnai perimu kontrolę, kad išvengčiau klaidų.',inv:true},
+{id:'L4',a:'Liberator',t:'Skatinu atvirą grįžtamąjį ryšį.'},
+{id:'L5',a:'Liberator',t:'Mano komanda jaučiasi saugi išsakyti idėjas.'},
+{id:'C1',a:'Challenger',t:'Meta iššūkius, kurie atrodo sunkiai pasiekiami.'},
+{id:'C2',a:'Challenger',t:'Skatinu komandą galvoti plačiau nei įprasta.'},
+{id:'C3',a:'Challenger',t:'Retai keliu ambicingus tikslus.',inv:true},
+{id:'C4',a:'Challenger',t:'Padedu komandai matyti didesnį paveikslą.'},
+{id:'C5',a:'Challenger',t:'Dažnai klausiu: „Kas būtų, jei…?“'},
+{id:'D1',a:'Debate Maker',t:'Skatinu diskusijas net kai nuomonės išsiskiria.'},
+{id:'D2',a:'Debate Maker',t:'Vertinu skirtingas perspektyvas prieš priimant sprendimą.'},
+{id:'D3',a:'Debate Maker',t:'Diskusijas laikau laiko švaistymu.',inv:true},
+{id:'D4',a:'Debate Maker',t:'Dažnai klausiu argumentų „už“ ir „prieš“.'},
+{id:'D5',a:'Debate Maker',t:'Mano komanda jaučiasi išgirsta sprendimų priėmime.'},
+{id:'I1',a:'Investor',t:'Deleguodamas suteikiu sprendimų galią, ne tik užduotį.'},
+{id:'I2',a:'Investor',t:'Skiriu resursus, kad žmonės galėtų įgyvendinti idėjas.'},
+{id:'I3',a:'Investor',t:'Dažnai pats nusprendžiu už kitus.',inv:true},
+{id:'I4',a:'Investor',t:'Aiškiai apibrėžiu atsakomybę ir palieku erdvės sprendimams.'},
+{id:'I5',a:'Investor',t:'Mano komanda jaučiasi savininkais savo darbo.'}
+];
+function mount(){const host=document.getElementById('questions');const wrap=document.createElement('div');wrap.className='grid';questions.forEach((item,idx)=>{const div=document.createElement('div');div.className='q';const h=document.createElement('div');h.innerHTML=`<strong>${idx+1})</strong> ${item.t}`;div.appendChild(h);const scale=document.createElement('div');scale.className='scale';for(let v=1;v<=5;v++){const lab=document.createElement('label');lab.innerHTML=`${v}<br>`;const input=document.createElement('input');input.type='radio';input.name=item.id;input.value=v;lab.appendChild(input);scale.appendChild(lab);}div.appendChild(scale);wrap.appendChild(div);});host.appendChild(wrap);}
+function val(id){const el=document.querySelector(`input[name="${id}"]:checked`);if(!el)return null;const v=parseInt(el.value,10);const item=questions.find(x=>x.id===id);return item&&item.inv?(6-v):v;}
+function sum(ids){return ids.map(val).reduce((a,b)=>a+(b||0),0);}
+function score(){for(const item of questions){if(val(item.id)==null){alert('Užpildyk visus teiginius.');return;}}
+const data={};archetypes.forEach(a=>{const ids=questions.filter(q=>q.a===a).map(q=>q.id);data[a]=Math.round(sum(ids)*4);});
+const avg=Math.round(Object.values(data).reduce((a,b)=>a+b,0)/archetypes.length);
+let cls,label,explain;if(avg<40){cls='danger';label='Diminisher rizika';explain='Elgsena dažnai riboja kitų savarankiškumą ir idėjas.';}else if(avg<65){cls='warn';label='Accidental Diminisher rizika';explain='Geri ketinimai kartais riboja kitų balsą. Saugokis perėmimo.';}else{cls='ok';label='Multiplier';explain='Elgsena dažniausiai įgalina kitus kurti ir spręsti.';}
+const ordered=Object.entries(data).sort((a,b)=>b[1]-a[1]);const top2=ordered.slice(0,2);const bottom2=ordered.slice(-2);
+let interp='';if(avg<40){interp=`<strong>Potencialas:</strong> ${top2.map(x=>x[0]).join(', ')} – pradėk nuo jų.`;}else if(avg<65){interp=`<strong>Stiprybės (ribotos):</strong> ${top2.map(x=>x[0]).join(', ')}<br><strong>Rizikos mažinimas:</strong> Skirk dėmesio elgsenoms, kurios riboja kitus.`;}else{interp=`<strong>Stiprybės:</strong> ${top2.map(x=>x[0]).join(', ')} – naudok jas kaip pagrindą.`;}
+let tips='';if(avg<65){tips=`<ul><li>Rizikos mažinimas: Deleguok sprendimą, ne tik užduotį.</li><li>${top2[0][0]}: Pripažink 3 žmonių indėlį per savaitę.</li></ul>`;}else{tips=`<ul><li>${top2[0][0]}: Pripažink 3 žmonių indėlį per savaitę.</li><li>${top2[1][0]}: Užduok klausimą „Kas būtų, jei…?“ bent kartą per dieną.</li></ul>`;}
+const bars=ordered.map(([k,v])=>`<div><div style='display:flex;justify-content:space-between'><span>${k}</span><span>${v}</span></div><div style='height:10px;background:#1f2937;border-radius:6px;overflow:hidden'><span style='display:block;height:100%;background:linear-gradient(90deg,#22c55e,#10b981);width:${v}%'></span></div></div>`).join('');
+document.getElementById('output').innerHTML=`<div class='card'><div><strong>Multipliers indeksas:</strong> ${avg}% <span class='${cls}'>(${label})</span></div><div class='explain'>${explain}</div><div>${interp}</div><div><strong>Aklosios zonos:</strong> ${bottom2.map(x=>x[0]).join(', ')}</div><div class='tip'>Eksperimentai (14 d.): ${tips}</div></div><div class='card'><h3>Archetipų balai</h3>${bars}</div>`;
+renderRadar(data);
+}
+function renderRadar(data){const ctx=document.getElementById('radar');new Chart(ctx,{type:'radar',data:{labels:archetypes,datasets:[{label:'Balai',data:Object.values(data),fill:true,backgroundColor:'rgba(34,197,94,0.2)',borderColor:'#22c55e'}]},options:{scales:{r:{suggestedMin:0,suggestedMax:100}}}});}
+function resetForm(){document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);document.getElementById('output').innerHTML='';document.getElementById('radar').replaceWith(document.createElement('canvas'));document.querySelector('canvas').id='radar';}
+function copyText(){const txt=document.getElementById('output').innerText.trim();if(!txt){alert('Nėra rezultato.');return;}navigator.clipboard.writeText(txt).then(()=>alert('Santrauka nukopijuota.'));}
+mount();
+</script>
+</body>
+</html>
