@@ -85,260 +85,176 @@
   </div>
 </main>
 
-<!-- Chart.js radarui -->
-https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js</script>
+
 
 <script>
-/* ====== Tema ====== */
-let isLight=false, radar=null;
-function toggleTheme(){
-  isLight = !isLight;
-  document.body.classList.toggle('light', isLight);
-  document.getElementById('themeBtn').textContent = isLight ? '☀️ Šviesi' : '🌙 Tamsi';
-  document.getElementById('libStatus').textContent = `Bibliotekos: Chart.js ${window.Chart?'✓':'✗'}`;
-}
 
-/* ====== Klausimai ====== */
-const Q=[
-  {t:'Kai prasideda naujas darbas/projektas, sąmoningai ieškau žmonių „native genius“ ir skiriu jiems vaidmenis.', w:'TM', ty:'pos'},
-  {t:'Reguliariai suteikiu žmonėms augimo galimybių (projektai, mentorystė).', w:'TM', ty:'pos'},
-  {t:'Linkęs laikyti resursus „pas save“ ir nenaudoti naujų žmonių.', w:'TM', ty:'neg'},
-  {t:'Kai komandoje atsiranda „primadona“, aktyviai pašalinu kliūtį.', w:'TM', ty:'pos'},
-  {t:'Kuriu aiškias ribas ir saugią erdvę, kur žmonės gali klysti.', w:'LB', ty:'pos'},
-  {t:'Esu linkęs mikromanaguoti.', w:'LB', ty:'neg'},
-  {t:'Kai projektas vėluoja, padedu pašalinti kliūtis, o ne diktuoju sprendimus.', w:'LB', ty:'pos'},
-  {t:'Net kai komanda turi idėjų, dažnai sprendžiu pats.', w:'LB', ty:'neg'},
-  {t:'Dažnai keliu komandai tikslus, kurie reikalauja naujų sprendimų.', w:'CH', ty:'pos'},
-  {t:'Vengiu ambicingų tikslų, kad neperkraučiau komandos.', w:'CH', ty:'neg'},
-  {t:'Kai keičiasi kryptis, aiškiai suformuluoju „kodėl“.', w:'CH', ty:'pos'},
-  {t:'Dažnai renkuosi saugius sprendimus.', w:'CH', ty:'neg'},
-  {t:'Prieš sprendimą kviečiu skirtingas perspektyvas.', w:'DM', ty:'pos'},
-  {t:'Diskusijos baigiasi tuo, kad nusprendžiu vienas.', w:'DM', ty:'neg'},
-  {t:'Kai kyla konfliktas, padedu atskirti „nuomonę“ nuo „įrodymų“.', w:'DM', ty:'pos'},
-  {t:'Retai prašau duomenų prieš sprendimą.', w:'DM', ty:'neg'},
-  {t:'Deleguoju rezultatą ir suteikiu resursus.', w:'IN', ty:'pos'},
-  {t:'Linkęs „užbaigti pats“.', w:'IN', ty:'neg'},
-  {t:'Po delegavimo prašau ataskaitos apie rezultatą.', w:'IN', ty:'pos'},
-  {t:'Dažnai paskirstau užduotis be konteksto.', w:'IN', ty:'neg'},
-  {t:'Atsakinėjant į apklausas linkęs rinktis kraštutines opcijas.', w:'SP', ty:'neutral'},
-  {t:'Kartais atsakau „kaip reikia“, o ne „kaip yra“.', w:'SP', ty:'neutral'},
-  {t:'Esu linkęs skubėti atsakydamas.', w:'SP', ty:'neutral'},
-  {t:'Noriu palikti kuo geresnį įspūdį.', w:'SP', ty:'neutral'},
-  {t:'Kartais sąmoningai neatsakau į kai kuriuos klausimus.', w:'SP', ty:'neutral'}
+const ARCH = [
+  {key:'TM', name:'Talent Magnet', color:'#66a6ff'},
+  {key:'LB', name:'Liberator',     color:'#59c173'},
+  {key:'CH', name:'Challenger',    color:'#f6c453'},
+  {key:'DM', name:'Debate Maker',  color:'#c792ea'},
+  {key:'IN', name:'Investor',      color:'#ff6b6b'}
 ];
-const labels=['Visiškai nesutinku','Iš dalies nesutinku','Neutralu','Iš dalies sutinku','Visiškai sutinku'];
-function shuffle(a){ return a.map(v=>({v, r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v); }
-function render(){
-  const c=document.getElementById('questions'); c.innerHTML='';
-  shuffle(Q).forEach((q,i)=>{
-    const d=document.createElement('div'); d.className='question';
-    d.dataset.weight=q.w; d.dataset.type=q.ty; d.dataset.idx=i+1;
-    d.innerHTML=`<div class="qtext"><strong>${i+1}.</strong> ${q.t}</div>`;
-    const lik=document.createElement('div'); lik.className='likert';
-    labels.forEach((L,j)=>{
-      const lab=document.createElement('label'); const inp=document.createElement('input');
-      inp.type='radio'; inp.name='q'+(i+1); inp.value=(j+1);
-      lab.appendChild(inp); lab.appendChild(document.createTextNode(' '+L));
-      lik.appendChild(lab);
-    });
-    d.appendChild(lik); c.appendChild(d);
-  });
-}
 
-/* ====== Validacija/Skaičiavimas ====== */
-function read(name){ const nodes=document.getElementsByName(name); for(const n of nodes){ if(n.checked) return parseInt(n.value,10);} return null; }
-function validate(){
-  let firstMissing = null;
-  for(let i=1;i<=Q.length;i++){ if(read('q'+i)===null){ firstMissing = i; break; } }
-  const box = document.getElementById('errorBox');
-  if(firstMissing){
-    box.style.display='block';
-    box.textContent = `Atsakykite į visus klausimus (trūksta atsakymo klausime #${firstMissing}).`;
-    const el = document.querySelector(`.question [name="q${firstMissing}"]`);
-    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
-    return false;
-  } else { box.style.display='none'; box.textContent=''; return true; }
-}
-function compute(){
-  const G={TM:0,LB:0,CH:0,DM:0,IN:0}; const C={TM:0,LB:0,CH:0,DM:0,IN:0}; let SPsum=0, SPn=0;
-  document.querySelectorAll('.question').forEach(q=>{
-    const v=read('q'+q.dataset.idx);
-    if(v!=null){
-      if(q.dataset.weight==='SP'){ SPsum+=v; SPn++; return; }
-      let val=v; if(q.dataset.type==='neg') val=6-v;
-      if(val===5) val=5.6; if(val===1) val=1.1;
-      G[q.dataset.weight]+=val; C[q.dataset.weight]++;
+const QUESTIONS = [
+  {a:'TM', t:'Aš pastebiu žmonių stiprybes ir kviečiu jas panaudoti darbe.'},
+  {a:'TM', t:'Skiriu laiką talentui atpažinti ir parinkti tinkamas užduotis.'},
+  {a:'TM', t:'Padedu žmonėms atsiskleisti suteikdamas erdvę ir grįžtamąjį ryšį.'},
+  {a:'TM', t:'Reguliariai kviečiu naujus žmones prisidėti prie svarbių temų.'},
+
+  {a:'LB', t:'Aiškiai susitariame dėl standartų, bet leidžiu klysti mokantis.'},
+  {a:'LB', t:'Kuriu saugią aplinką kalbėti apie problemas be kaltinimų.'},
+  {a:'LB', t:'Skatinu komandoje drausmę laikytis susitarimų.'},
+  {a:'LB', t:'Greitai reaguoju į nusižengimus, bet teisingai ir pagarbiai.'},
+
+  {a:'CH', t:'Formuluoju ambiciją su aiškiu „kodėl“.'},
+  {a:'CH', t:'Klausiu „kaip padarysime?“ vietoje „ar tai įmanoma?“'},
+  {a:'CH', t:'Padedu komandai matyti didesnį paveikslą ir kryptį.'},
+  {a:'CH', t:'Iššūkius paverčiu mokymosi galimybėmis.'},
+
+  {a:'DM', t:'Prieš sprendimą kviečiu skirtingas perspektyvas ir faktus.'},
+  {a:'DM', t:'Moku vesti konstruktyvias diskusijas be asmeniškumų.'},
+  {a:'DM', t:'Skiriu laiko argumentų „už“ ir „prieš“ įvertinimui.'},
+  {a:'DM', t:'Priimdamas sprendimą apibendrinu išgirstus požiūrius.'},
+
+  {a:'IN', t:'Deleguoju rezultatą, o ne tik užduotis.'},
+  {a:'IN', t:'Suteikiu reikiamus resursus ir pašalinu kliūtis.'},
+  {a:'IN', t:'Sutariu dėl patikros taškų ir atsakomybės.'},
+  {a:'IN', t:'Po delegavimo išlaikau pasitikėjimą ir palaikymą.'},
+
+  {a:'SP', t:'Dažnai jaučiu stresą darbe (invertuotas).', inv:true},
+  {a:'SP', t:'Vengiu neapibrėžtumo ir rizikos (invertuotas).', inv:true},
+  {a:'SP', t:'Konfliktuose linkęs gintis, o ne ieškoti sprendimų (invertuotas).', inv:true},
+  {a:'SP', t:'Retai prašau grįžtamojo ryšio (invertuotas).', inv:true},
+  {a:'SP', t:'Dažnai atidėlioju svarbius pokalbius (invertuotas).', inv:true}
+];
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function renderQuestions(){
+  const container = document.getElementById('questions');
+  container.innerHTML = '';
+  let idx = 0;
+  for(const q of shuffle([...QUESTIONS])){
+    const row = document.createElement('div');
+    row.className = 'q';
+    const label = document.createElement('label');
+    label.innerHTML = `<strong>${(++idx).toString().padStart(2,'0')}.</strong> ${q.t}`;
+    const scale = document.createElement('div');
+    scale.className = 'scale';
+    for(let v=1; v<=5; v++){
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'q_'+idx;   // unikalus name kiekvienai grupei
+      input.value = v;
+      input.required = true;
+      scale.appendChild(input);
     }
+    row.appendChild(label);
+    row.appendChild(scale);
+    row.dataset.arch = q.a;
+    row.dataset.inv  = q.inv ? '1' : '0';
+    container.appendChild(row);
+  }
+}
+
+function collect(){
+  const rows = [...document.querySelectorAll('.q')];
+  const scores = {TM:0, LB:0, CH:0, DM:0, IN:0};
+  const counts = {TM:0, LB:0, CH:0, DM:0, IN:0};
+  let missing = 0;
+  for(const r of rows){
+    const chosen = r.querySelector('input[type=radio]:checked');
+    if(!chosen){ missing++; continue; }
+    let v = Number(chosen.value);
+    if(r.dataset.inv === '1') v = 6 - v; // invert SP
+    const a = r.dataset.arch;
+    if(a in scores){ scores[a] += v; counts[a] += 1; }
+  }
+  return {scores, counts, missing};
+}
+
+function normalize(sum, cnt){ return cnt ? (sum/cnt) : 0; }
+
+function drawRadar(vals){
+  const svg = document.getElementById('radar');
+  svg.innerHTML = '';
+  const R = 200, levels = 5;
+
+  // foniniai poligonai
+  for(let lvl=1; lvl<=levels; lvl++){
+    const r = (lvl/levels)*R, pts = [];
+    for(let i=0;i<ARCH.length;i++){
+      const ang = (-90 + i*360/ARCH.length) * Math.PI/180;
+      pts.push(`${(r*Math.cos(ang)).toFixed(1)},${(r*Math.sin(ang)).toFixed(1)}`);
+    }
+    const grid = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    grid.setAttribute('points', pts.join(' '));
+    grid.setAttribute('fill','none');
+    grid.setAttribute('stroke','#2a2e39');
+    svg.appendChild(grid);
+  }
+
+  // ašių etiketės
+  for(let i=0;i<ARCH.length;i++){
+    const ang = (-90 + i*360/ARCH.length) * Math.PI/180;
+    const x = (220*Math.cos(ang)).toFixed(1);
+    const y = (220*Math.sin(ang)).toFixed(1);
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y);
+    text.setAttribute('text-anchor','middle');
+    text.setAttribute('dominant-baseline','middle');
+    text.setAttribute('fill', '#aab4c0');
+    text.textContent = ARCH[i].name;
+    svg.appendChild(text);
+  }
+
+  // duomenų poligonas
+  const pts = ARCH.map((_,i)=>{
+    const ang = (-90 + i*360/ARCH.length) * Math.PI/180;
+    const r = (vals[i]/5)*R;
+    return `${(r*Math.cos(ang)).toFixed(1)},${(r*Math.sin(ang)).toFixed(1)}`;
   });
-  for(const k in G){ if(C[k]>0) G[k]=G[k]/C[k]*4; }
-  const SP=SPn?(SPsum/SPn):0;
-  return {G,SP};
-}
-function label(k){ return ({TM:'Talent Magnet',LB:'Liberator',CH:'Challenger',DM:'Debate Maker',IN:'Investor'})[k]; }
-function spBand(sp){ if(sp <= 2.2) return 'žema'; if(sp < 3.6) return 'vidutinė'; return 'aukšta'; }
-
-/* ====== Paprastos rekomendacijos (be terminų) ====== */
-const SIMPLE = {
-  TM: [
-    'Viešai pagirk žmogų už konkretų indėlį.',
-    'Pakviesk komandos narį pristatyti idėją susirinkime.',
-    'Skirk užduotį, kur žmogus galėtų parodyti savo stiprybes.'
-  ],
-  LB: [
-    'Pasakyk, kad klaidos yra mokymosi dalis, bet susitarkite dėl standartų.',
-    'Užduok 2–3 klausimus prieš siūlydamas sprendimą.',
-    'Kasdien paklausk: „Kuo galiu padėti nuimti kliūtis?“'
-  ],
-  CH: [
-    'Iškelk aiškų tikslą ir paklausk „kaip padarysime?“',
-    'Paprašyk komandos pasiūlyti bent 2 naujus sprendimus.',
-    'Sutark mažą „ambicijos“ eksperimentą 2 savaitėms.'
-  ],
-  DM: [
-    'Prieš sprendimą paprašyk 2 faktų / įrodymų.',
-    'Paprašyk skirtingų nuomonių ir užrašyk „už“/„prieš“.',
-    'Susitarkite dėl sprendimo kriterijų prieš diskusiją.'
-  ],
-  IN: [
-    'Deleguodamas pasakyk: „Svarbiausias rezultatas yra…“',
-    'Duok reikiamus resursus ir terminą.',
-    'Susitark dėl trumpo patikrinimo (pvz., trečiadienį 10 min.).'
-  ]
-};
-function recommendSimple(G){
-  const sorted=Object.entries(G).sort((a,b)=>b[1]-a[1]);
-  const [topK,topV] = sorted[0];
-  const [lowK,lowV] = sorted[sorted.length-1];
-  return {
-    top: {k: topK, v: topV, rec: SIMPLE[topK]},
-    low: {k: lowK, v: lowV, rec: SIMPLE[lowK]}
-  };
+  const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points', pts.join(' '));
+  poly.setAttribute('fill','rgba(102,166,255,0.25)');
+  poly.setAttribute('stroke','#66a6ff');
+  poly.setAttribute('stroke-width','2');
+  svg.appendChild(poly);
 }
 
-
-// ---- Radar piešimas: saugi patikra + uždelstas kvietimas ----
-let radar = null;
-
-function drawRadarSafe(G) {
-  const canvas = document.getElementById('radar');
-  if (!canvas) {
-    console.warn('Radar canvas nerastas.');
+function calc(){
+  const {scores, counts, missing} = collect();
+  if(missing>0){
+    document.getElementById('status').innerHTML = `Liko neatsakytų: <span class="bad">${missing}</span>`;
     return;
   }
-  // Chart.js patikra
-  if (!window.Chart) {
-    const sumDiv = document.getElementById('summary');
-    sumDiv.innerHTML += '<br><em>Chart.js neįkeltas – rodoma tekstinė santrauka be grafiko.</em>';
-    return;
-  }
-  // sunaikinti seną chartą
-  if (radar) radar.destroy();
-
-  // piešti
-  radar = new Chart(canvas, {
-    type: 'radar',
-    data: {
-      labels: ['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'],
-      datasets: [{
-        label: 'Profilis',
-        data: [G.TM||0, G.LB||0, G.CH||0, G.DM||0, G.IN||0],
-        borderColor: getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#60a5fa',
-        backgroundColor: 'rgba(96,165,250,0.22)'
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,   // canvas prisitaikys konteineriui
-      scales: { r: { suggestedMin: 0, suggestedMax: 20 } }
-    }
-  });
+  const vals = ARCH.map(a => normalize(scores[a.key], counts[a.key]));
+  drawRadar(vals);
+  const maxIdx = vals.indexOf(Math.max(...vals));
+  const best = ARCH[maxIdx];
+  document.getElementById('summary').innerHTML =
+    `Dominuojantis archetipas: <strong>${best.name}</strong>. ` +
+    ARCH.map((a,i)=>`${a.name}: ${vals[i].toFixed(2)}`).join(' | ');
+  document.getElementById('status').textContent = '✅ Apskaičiuota.';
 }
 
-// ---- Inicializacija tik po DOMContentLoaded ----
-document.addEventListener('DOMContentLoaded', () => {
-  // 1) užkrauname klausimus
-  render();
-
-  // 2) statuso ženkliukas (jei turi)
-  const badge = document.getElementById('libStatus');
-  if (badge) badge.textContent = `Bibliotekos: Chart.js ${window.Chart ? '✓' : '✗'}`;
-
-  // 3) užtikrinti, kad canvas blokas turi aukštį
-  const radarCard = document.getElementById('radar').parentElement;
-  radarCard.style.minHeight = '320px';
-});
-
-// ---- Apskaičiuoti: pirma validacija, tada rezultatai + radar ----
-function calculate() {
-  if (!validate()) return;
-  const res = compute();
-  showResults(res);            // atnaujina tekstinę santrauką
-  drawRadarSafe(res.G);        // piešia radarą saugiai
+function reset(){
+  document.querySelectorAll('.q input[type=radio]:checked').forEach(i=>i.checked=false);
+  document.getElementById('summary').textContent = 'Kol kas neapskaičiuota.';
+  document.getElementById('status').textContent = '';
+  drawRadar([0,0,0,0,0]);
 }
 
-function formatSummary(res){
-  const sum=Object.values(res.G).reduce((a,b)=>a+b,0);
-  const bands = sum>=70 ? 'labai įtraukiantis elgesys' : sum>=50 ? 'dalis elgesio yra Multipliers, yra kur tobulėti' : 'mažai įtraukimo – verta stiprinti komandos įgalinimą';
-  const R=recommendSimple(res.G);
-  return `<strong>Bendras balas:</strong> ${sum.toFixed(1)} / 100 — ${bands}<br>
-          <strong>Stipriausia:</strong> ${label(R.top.k)} (≈${R.top.v.toFixed(1)}); <strong>Silpniausia:</strong> ${label(R.low.k)} (≈${R.low.v.toFixed(1)}).<br>
-          <strong>SP indeksas:</strong> ${res.SP.toFixed(1)} (${spBand(res.SP)})<br>
-          <strong>3 žingsniai stiprybei (${label(R.top.k)}):</strong> ${R.top.rec.join('; ')}.<br>
-          <strong>3 žingsniai rizikai (${label(R.low.k)}):</strong> ${R.low.rec.join('; ')}.`;
+function initApp(){
+  renderQuestions();
+  reset();
+  document.getElementById('calc').addEventListener('click', calc);
+  document.getElementById('reset').addEventListener('click', ()=>{ renderQuestions(); reset(); });
 }
-function showResults(res){
-  drawRadar(res.G);
-  document.getElementById('summary').innerHTML = formatSummary(res);
-  const card=document.getElementById('resultsCard');
-  card.classList.add('highlight');
-  card.scrollIntoView({behavior:'smooth', block:'start'});
-  setTimeout(()=>card.classList.remove('highlight'),1500);
-}
-
-/* ====== Mygtukai ====== */
-function calculate(){ if(!validate()) return; const res=compute(); showResults(res); }
-function resetAll(){
-  document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false);
-  document.getElementById('summary').textContent='Kol kas neapskaičiuota.';
-  document.getElementById('errorBox').style.display='none';
-  if(radar) radar.destroy();
-}
-
-/* ====== PDF (naršyklės) ====== */
-function pdfNative(){
-  if(!validate()){ alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
-  const res=compute(); showResults(res);
-
-  let sheet = document.getElementById('pdfSheet');
-  if(!sheet){ sheet = document.createElement('div'); sheet.id = 'pdfSheet'; sheet.className = 'pdf-sheet'; document.body.appendChild(sheet); }
-  sheet.innerHTML = `
-    <h2>Multipliers ataskaita</h2>
-    <div class="line">${formatSummary(res).replace(/<br>/g,' ')}</div>
-    <div class="block">
-      <strong>Archetipų paaiškinimai (paprasta kalba)</strong><br>
-      Talent Magnet — pastebėk ir pakviesk žmones atsiskleisti.<br>
-      Liberator — leisk klysti, susitarkite dėl standartų.<br>
-      Challenger — iškelk „kodėl“, kviesk rasti „kaip“.<br>
-      Debate Maker — prieš sprendimą prašyk faktų ir nuomonių.<br>
-      Investor — pasakyk rezultatą, duok resursus, susitark dėl patikros.
-    </div>
-    <div class="small">Generuota: ${new Date().toLocaleString()}</div>
-  `;
-  const canvas = document.getElementById('radar');
-  if(canvas && window.Chart){
-    const img = canvas.toDataURL('image/png', 1.0);
-    const imgEl = document.createElement('img');
-    imgEl.src = img; imgEl.style.width = '520px'; imgEl.style.display='block'; imgEl.style.marginTop='10px';
-    sheet.appendChild(imgEl);
-  }
-  window.print();
-}
-
-/* ====== Inicializacija ====== */
-(function init(){
-  render();
-  document.getElementById('libStatus').textContent = `Bibliotekos: Chart.js ${window.Chart?'✓':'✗'}`;
-})();
+window.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
