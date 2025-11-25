@@ -126,7 +126,7 @@ const Q=[
   {t:'Noriu palikti kuo geresnį įspūdį.', w:'SP', ty:'neutral'},
   {t:'Kartais sąmoningai neatsakau į kai kuriuos klausimus.', w:'SP', ty:'neutral'}
 ];
-const labels=['Labai nesutinku','Nesutinku','Neutralu','Sutinku','Labai sutinku'];
+const labels=['Visiškai nesutinku','Iš dalies nesutinku','Neutralu','Iš dalies sutinku','Visiškai sutinku'];
 function shuffle(a){ return a.map(v=>({v, r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v); }
 function render(){
   const c=document.getElementById('questions'); c.innerHTML='';
@@ -215,24 +215,67 @@ function recommendSimple(G){
   };
 }
 
-/* ====== Radar + santrauka ====== */
-function drawRadar(G){
-  const ctx=document.getElementById('radar'); if(!ctx) return;
-  if(!window.Chart){
-    const sumDiv=document.getElementById('summary');
+
+// ---- Radar piešimas: saugi patikra + uždelstas kvietimas ----
+let radar = null;
+
+function drawRadarSafe(G) {
+  const canvas = document.getElementById('radar');
+  if (!canvas) {
+    console.warn('Radar canvas nerastas.');
+    return;
+  }
+  // Chart.js patikra
+  if (!window.Chart) {
+    const sumDiv = document.getElementById('summary');
     sumDiv.innerHTML += '<br><em>Chart.js neįkeltas – rodoma tekstinė santrauka be grafiko.</em>';
     return;
   }
-  if(radar) radar.destroy();
-  radar=new Chart(ctx,{
-    type:'radar',
-    data:{labels:['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'],
-      datasets:[{label:'Profilis',data:[G.TM||0,G.LB||0,G.CH||0,G.DM||0,G.IN||0],
-                 borderColor:getComputedStyle(document.body).getPropertyValue('--accent').trim(),
-                 backgroundColor:'rgba(96,165,250,0.22)'}]},
-    options:{scales:{r:{suggestedMin:0,suggestedMax:20}}}
+  // sunaikinti seną chartą
+  if (radar) radar.destroy();
+
+  // piešti
+  radar = new Chart(canvas, {
+    type: 'radar',
+    data: {
+      labels: ['Talent Magnet','Liberator','Challenger','Debate Maker','Investor'],
+      datasets: [{
+        label: 'Profilis',
+        data: [G.TM||0, G.LB||0, G.CH||0, G.DM||0, G.IN||0],
+        borderColor: getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#60a5fa',
+        backgroundColor: 'rgba(96,165,250,0.22)'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,   // canvas prisitaikys konteineriui
+      scales: { r: { suggestedMin: 0, suggestedMax: 20 } }
+    }
   });
 }
+
+// ---- Inicializacija tik po DOMContentLoaded ----
+document.addEventListener('DOMContentLoaded', () => {
+  // 1) užkrauname klausimus
+  render();
+
+  // 2) statuso ženkliukas (jei turi)
+  const badge = document.getElementById('libStatus');
+  if (badge) badge.textContent = `Bibliotekos: Chart.js ${window.Chart ? '✓' : '✗'}`;
+
+  // 3) užtikrinti, kad canvas blokas turi aukštį
+  const radarCard = document.getElementById('radar').parentElement;
+  radarCard.style.minHeight = '320px';
+});
+
+// ---- Apskaičiuoti: pirma validacija, tada rezultatai + radar ----
+function calculate() {
+  if (!validate()) return;
+  const res = compute();
+  showResults(res);            // atnaujina tekstinę santrauką
+  drawRadarSafe(res.G);        // piešia radarą saugiai
+}
+
 function formatSummary(res){
   const sum=Object.values(res.G).reduce((a,b)=>a+b,0);
   const bands = sum>=70 ? 'labai įtraukiantis elgesys' : sum>=50 ? 'dalis elgesio yra Multipliers, yra kur tobulėti' : 'mažai įtraukimo – verta stiprinti komandos įgalinimą';
