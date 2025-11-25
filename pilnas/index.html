@@ -42,7 +42,7 @@
 </head>
 <body>
   <header>
-    <h1>Multipliers Archetipų Testas v10.9</h1>
+    <h1>Multipliers Archetipų Testas v10.9.1</h1>
     <button id="theme" class="btn flat">Tema: Tamsi/Šviesi</button>
     <button id="shuffle" class="btn flat">Permaišyti</button>
     <button id="labels" class="btn flat">Rodyti archetipų etiketes: Išjungta</button>
@@ -72,7 +72,7 @@
   </main>
 
   <footer>
-    v10.9 · Vieno failo versija (be CDN) · Atsitiktinis maišymas (klausimai + atsakymai)
+    v10.9.1 Sukute Oleg Mozochin * AI 2025.11
   </footer>
 
 <script>
@@ -167,7 +167,7 @@ const SCENARIOS = [
     {a:'DM', d:'Klausiu „už/prieš“ kiekvieno pasiūlymo, fiksuoju faktus.'},
     {a:'IN', d:'Skiriu atsakomybes įgyvendinti pasirinktą variantą.'}
   ]},
-  {target:'DM', t:'Sprendimas spaudžia laikas, rizika neaiški.', opts:[
+  {target:'DM', t:'Sprendimą spaudžia laikas, rizika neaiški.', opts:[
     {a:'TM', d:'Įtraukiu žmogų, kuris greitai pastebi esmines detales.'},
     {a:'LB', d:'Sutariu, kad klaidas fiksuosim be kaltinimų.'},
     {a:'CH', d:'Laikau kryptį, bet ieškau „kaip“ sutrumpinti kelią.'},
@@ -178,9 +178,9 @@ const SCENARIOS = [
   {target:'IN', t:'Turi įgyvendinti rezultatą per 2 savaites.', opts:[
     {a:'TM', d:'Parenku geriausiai tinkantį žmogų ir motyvuoju dalyvauti.'},
     {a:'LB', d:'Nubrėžiu standartus ir saugą, kad komanda nebijotų rizikos.'},
-    {a:'CH', d:'Suformuoju ambiciją ir „kodėl“ šis rezultatas svarbus.'},
+    {a:'CH', d:'Suformuoju komandai ambiciją ir „kodėl“ šis rezultatas svarbus.'},
     {a:'DM', d:'Surenku „už/prieš“ faktus prieš paskirstydamas darbus.'},
-    {a:'IN', d:'Deleguoju rezultatą, skiriu resursus ir patikros taškus.'}
+    {a:'IN', d:'Deleguoju  komandai rezultatą, skiriu resursus ir patikros taškus.'}
   ]},
   {target:'IN', t:'Naujas žmogus perima atsakomybę už procesą.', opts:[
     {a:'TM', d:'Pabrėžiu jo stiprybes ir skiriu mentorystę.'},
@@ -286,7 +286,7 @@ function buildDescriptions(norm){
 
   // Bendras įvertinimas (be rekomendacijų)
   const multAvg = (norm.TM + norm.LB + norm.CH + norm.DM + norm.IN) / 5; // 1..5
-  const cls = (multAvg>=3.8? 'Multiplier' : multAvg<3.2? 'Diminisher' : 'Accidental Diminisher');
+  const cls = (multAvg>=3.8? 'Multiplier' : multAvg<2.2? 'Diminisher' : 'Accidental Diminisher');
   document.getElementById('summary').innerHTML =
     `Bendra: <strong>${cls}</strong>. ` +
     ARCH.map(a=>`${a.name}: ${norm[a.key].toFixed(2)}`).join(' | ');
