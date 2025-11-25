@@ -1,1 +1,37 @@
+:root{
+  --bg:#0e0f13; --panel:#171922; --text:#e8ecf1; --muted:#aab4c0;
+  --accent:#59c173; --accent2:#66a6ff; --grid:#2a2e39; --border:#222636
+}
+[data-theme="light"]{
+  --bg:#f7f9fc; --panel:#ffffff; --text:#11161c; --muted:#576270;
+  --accent:#167e56; --accent2:#2b6fff; --grid:#dfe5ef; --border:#d6dde8
+}
+html,body{height:100%}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;background:var(--bg);background:linear-gradient(135deg,var(--bg),#141823 70%);color:var(--text);margin:0}
+header{padding:14px 20px;background:color-mix(in oklab,var(--panel) 92%, black 8%);position:sticky;top:0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;z-index:10}
+h1{margin:0;font-size:18px;flex:1}
+.btn{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff;padding:8px 12px;border-radius:8px;font-weight:600;cursor:pointer}
+.btn.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn.flat{background:color-mix(in oklab,var(--panel) 85%, black 15%); color:var(--text);border:1px solid var(--border)}
+main{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;padding:20px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.card h2{margin:0;padding:12px 16px;border-bottom:1px solid var(--border);font-size:16px}
+.content{padding:12px 16px}
+.legend{color:var(--muted);font-size:12px}
+.grid-note{color:var(--muted);font-size:12px;padding:0 16px 12px}
+.q{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px;padding:8px;border-bottom:1px dashed var(--grid)}
+.q:last-child{border-bottom:none}
+.scale{display:flex;gap:6px}
+.scale input{accent-color:var(--accent)}
+.bad{color:#ff6b6b}
+#radarSvg, #radarCanvas{width:100%;height:420px;display:block}
+.summary{background:color-mix(in oklab,var(--panel) 92%, black 8%);border:1px solid var(--border);border-radius:8px;padding:10px}
+footer{padding:14px 20px;color:var(--muted)}
 
+/* Print (PDF naršyklėje) */
+@media print{
+  header, .actions, .grid-note{display:none!important}
+  main{grid-template-columns:1fr}
+  .card{page-break-inside:avoid}
+  #radarSvg, #radarCanvas{height:520px}
+}
