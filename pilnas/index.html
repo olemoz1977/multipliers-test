@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Multipliers Archetipų Testas v10.6</title>
+<title>Multipliers Archetipų Testas v10.6‑native</title>
 <style>
   :root { --bg:#0f172a; --text:#e2e8f0; --card:#1e293b; --accent:#60a5fa; --muted:#94a3b8; }
   .light { --bg:#ffffff; --text:#1f2937; --card:#f1f5f9; --accent:#2563eb; --muted:#6b7280; }
@@ -32,25 +32,34 @@
   .error { color:#ffb4b4; font-weight:600; margin:8px 0; }
   #resultsCard.highlight { outline: 2px solid var(--accent); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); transition: outline .2s; }
 
-  /* PDF „renderis“ – švarus lapas */
-  .pdf-sheet { background:#fff; color:#111; padding:20px; font-family: Arial, sans-serif; }
+  /* Print-only ataskaitos lapas */
+  .pdf-sheet { display:none; background:#fff; color:#111; padding:20px; font-family: Arial, sans-serif; }
   .pdf-sheet h2 { margin:0 0 10px 0; }
   .pdf-sheet .line { margin:6px 0; }
   .pdf-sheet .small { color:#666; font-size:12px; }
   .pdf-sheet .block { border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-top:10px; }
+
+  @media print {
+    /* spalvų išsaugojimui */
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    header, #quiz, .toolbar { display:none !important; }
+    #resultsCard { display:none !important; } /* spausdiname „pdf-sheet“, o ne gyvą kortelę */
+    .pdf-sheet { display:block !important; }
+    /* pilnas baltas fonas */
+    html, body { background:#fff !important; color:#111 !important; }
+  }
 </style>
 </head>
 <body>
 <header>
   <div class="bar">
-    <div class="title">Multipliers Archetipų Testas v10.6</div>
+    <div class="title">Multipliers Archetipų Testas v10.6‑native</div>
     <div class="toolbar">
       <button id="themeBtn" class="secondary" onclick="toggleTheme()">🌙 Tamsi</button>
       <button id="calcBtn" onclick="calculate()">Apskaičiuoti</button>
       <button id="resetBtn" class="secondary" onclick="resetAll()">Išvalyti</button>
-      <button id="pdfRenderBtn" class="secondary" onclick="pdfRender()">PDF (renderis)</button>
-      <button id="pdfUniversalBtn" class="secondary" onclick="pdfUniversal()">PDF (universalus)</button>
-      <span id="libStatus" class="badge">Bibliotekos: tikrinama…</span>
+      <button id="pdfNativeBtn" class="secondary" onclick="pdfNative()">PDF (naršyklės)</button>
+      <span id="libStatus" class="badge">Bibliotekos: tik Chart.js</span>
     </div>
   </div>
 </header>
@@ -78,20 +87,15 @@
         <p><strong>Debate Maker</strong> – suformuoja problemą, kviečia skirtingas perspektyvas; pavyzdys: „Reikalauja įrodymų prieš sprendimą.“</p>
         <p><strong>Investor</strong> – deleguoja rezultatą, suteikia resursus; pavyzdys: „Aiškiai apibrėžia ribas ir atsakomybę.“</p>
       </div>
-      <p class="muted" style="margin-top:8px;">
-        Pastaba: „oficialūs“ Multipliers vertinimai yra licencijuoti per The Wiseman Group; šis savitestis paremtas viešai aprašyta 5 disciplinų metodika.
-      </p>
     </aside>
   </div>
 </main>
 
-<!-- CDNJS (stabilu GitHub Pages) -->
+<!-- Tik Chart.js – radarui; jei ir jis blokuojamas, vis tiek turėsi tekstinę santrauką -->
 https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js</script>
-<script/cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js</script>
-https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js</script>
 
 <script>
-/* ======== Globalūs kintamieji ======== */
+/* ======== Globalūs ======== */
 let isLight=false, radar=null;
 
 /* ======== Tema ======== */
@@ -99,16 +103,6 @@ function toggleTheme(){
   isLight = !isLight;
   document.body.classList.toggle('light', isLight);
   document.getElementById('themeBtn').textContent = isLight ? '☀️ Šviesi' : '🌙 Tamsi';
-}
-
-/* ======== Bibliotekų statusas ======== */
-function libStatus(){
-  const s=document.getElementById('libStatus');
-  const hasChart=!!window.Chart;
-  const hasH2P=!!window.html2pdf;
-  const hasJSPDF=!!window.jspdf;
-  s.textContent = `Bibliotekos: Chart.js ${hasChart?'✓':'✗'} · html2pdf ${hasH2P?'✓':'✗'} · jsPDF ${hasJSPDF?'✓':'✗'}`;
-  s.style.borderColor = hasChart && hasH2P && hasJSPDF ? 'limegreen' : '#ffb4b4';
 }
 
 /* ======== Klausimai ======== */
@@ -141,7 +135,6 @@ const Q=[
 ];
 const labels=['Labai nesutinku','Nesutinku','Neutralu','Sutinku','Labai sutinku'];
 function shuffle(a){ return a.map(v=>({v, r:Math.random()})).sort((x,y)=>x.r-y.r).map(x=>x.v); }
-
 function render(){
   const c=document.getElementById('questions'); c.innerHTML='';
   shuffle(Q).forEach((q,i)=>{
@@ -239,7 +232,7 @@ function showResults(res){
   setTimeout(()=>card.classList.remove('highlight'),1500);
 }
 
-/* ======== Mygtukai (inline onclick) ======== */
+/* ======== Mygtukai ======== */
 function calculate(){ if(!validate()) return; const res=compute(); showResults(res); }
 function resetAll(){
   document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false);
@@ -248,15 +241,19 @@ function resetAll(){
   if(radar) radar.destroy();
 }
 
-/* ======== PDF ======== */
-// Renderis: tik rezultatų turinys
-function pdfRender(){
+/* ======== PDF (naršyklės) ======== */
+function pdfNative(){
   if(!validate()){ alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
   const res=compute(); showResults(res);
-  if(!window.html2pdf){ alert('PDF (renderis) biblioteka neįkelta. Patikrinkite CDN žymą (cdnjs).'); return; }
 
-  const sheet = document.createElement('div');
-  sheet.className = 'pdf-sheet';
+  // Sukuriame „pdf-sheet“ (print-only)
+  let sheet = document.getElementById('pdfSheet');
+  if(!sheet){
+    sheet = document.createElement('div');
+    sheet.id = 'pdfSheet';
+    sheet.className = 'pdf-sheet';
+    document.body.appendChild(sheet);
+  }
   sheet.innerHTML = `
     <h2>Multipliers ataskaita</h2>
     <div class="line">${formatSummary(res).replace(/<br>/g,' ')}</div>
@@ -270,8 +267,8 @@ function pdfRender(){
     </div>
     <div class="small">Generuota: ${new Date().toLocaleString()}</div>
   `;
-  document.body.appendChild(sheet);
 
+  // Pridedame radaro paveikslą (jei yra)
   const canvas = document.getElementById('radar');
   if(canvas && window.Chart){
     const img = canvas.toDataURL('image/png', 1.0);
@@ -280,53 +277,15 @@ function pdfRender(){
     sheet.appendChild(imgEl);
   }
 
-  html2pdf().from(sheet).set({
-    margin:0.6, filename:'multipliers_ataskaita.pdf',
-    image:{ type:'jpeg', quality:0.98 }, html2canvas:{ scale:2 },
-    jsPDF:{ unit:'cm', format:'a4', orientation:'portrait' }
-  }).save().then(()=> sheet.remove()).catch(e=>{ alert('Nepavyko sukurti PDF (renderis): '+e.message); sheet.remove(); });
-}
-
-// Universalus: jsPDF
-function pdfUniversal(){
-  if(!validate()){ alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
-  const res=compute(); showResults(res);
-  if(!window.jspdf){ alert('PDF (universalus) biblioteka neįkelta. Patikrinkite CDN žymą (cdnjs).'); return; }
-
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF({unit:'pt',format:'a4'});
-  const plain=formatSummary(res).replace(/<br>/g,'\n').replace(/<[^>]+>/g,'');
-  const lines=plain.split('\n');
-
-  doc.setFont('helvetica','normal'); doc.setFontSize(12);
-  doc.text('Multipliers ataskaita', 40, 40);
-  let y=66; lines.forEach(line=>{ doc.text(line,40,y); y+=18; });
-
-  doc.text('Archetipų paaiškinimai:', 40, y+8);
-  const expl = [
-    'Talent Magnet – viešai pabrėžia stiprybes, suteikia sceną atsiskleisti.',
-    'Liberator – pašalina kliūtis, skatina mokymąsi, neperima kontrolės.',
-    'Challenger – meta iššūkį, kelia tikėjimą, kad įmanoma.',
-    'Debate Maker – reikalauja įrodymų prieš sprendimą.',
-    'Investor – aiškiai apibrėžia ribas ir atsakomybę.'
-  ];
-  expl.forEach((l,i)=>{ doc.text('• '+l, 40, y+28 + i*16); });
-  y += 120;
-
-  const canvas=document.getElementById('radar');
-  if(canvas && window.Chart){
-    const img=canvas.toDataURL('image/png',1.0);
-    doc.addImage(img,'PNG',40,y,500,360);
-  }
-
-  doc.save('multipliers_ataskaita.pdf');
+  // Natūralus PDF per naršyklės print
+  window.print();
 }
 
 /* ======== Inicializacija ======== */
 (function init(){
   render();
-  libStatus();
+  document.getElementById('libStatus').textContent = `Bibliotekos: Chart.js ${window.Chart?'✓':'✗'}`;
 })();
 </script>
 </body>
-</html
+</html>
