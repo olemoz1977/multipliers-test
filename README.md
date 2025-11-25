@@ -35,17 +35,8 @@ Testą sudaro 10 teiginių, kuriuos vertinate skalėje nuo 1 iki 5:
 - 
 ## 🧪 Kaip veikia "Pilnas" testas?
 
-Klausimynas: 20 klausimų (4 per archetipą) kuriuos vertinate skalėje nuo 1 iki 5:
+nesakysiu :-P
 
-- **1** – Visiškai nesutinku
-- **2** – Iš dalies nesutinku
-- **3** – Nei sutinku, nei nesutinku
-- **4** – Iš dalies sutinku
-- **5** – Visiškai sutinku
-
-
-SP kontrolė (5 teiginiai) – koreguoja indeksą.
-Nelinijinis skoringas – mažina „lubų efektą“.
 
 
 ## 📚 Šaltiniai
@@ -65,5 +56,5 @@ Liz Wiseman identifikavo 5 pagrindines dauginančio vadovo disciplinas:
 
 ## 👤 Autorius
 
-Testą sukūrė: **Oleg Mozochin + AI**
+Testą sukūrė: **Oleg Mozochin + AI** skirta tik pramogai, bet atskleis beiskartojanti elgesį...
 
