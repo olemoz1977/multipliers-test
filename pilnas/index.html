@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="lt">
 <head>
@@ -25,7 +26,6 @@
     .opts{display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px}
     .opt{display:flex;gap:8px;align-items:flex-start;background:var(--chip);border:1px solid var(--border);padding:8px;border-radius:8px}
     .opt input{margin-top:2px;accent-color:var(--accent)}
-    .muted{color:var(--muted)}
     .bad{color:#ff6b6b}
     #radarSvg{width:100%;height:360px;display:block}
     .summary{background:var(--chip);border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px}
@@ -83,6 +83,7 @@ const ARCH = [
 ];
 
 const SCENARIOS = [
+  // TM (1–3)
   {target:'TM', t:'Komandoje atsiranda naujas žmogus su stipria analitika. Kaip elgiesi pirmą savaitę?', opts:[
     {a:'TM', d:'Pastebiu stiprybes, parenku realią užduotį ir paskiriu mentorystę.'},
     {a:'LB', d:'Aiškiai paaiškinu taisykles ir saugias bandymų ribas.'},
@@ -105,6 +106,7 @@ const SCENARIOS = [
     {a:'IN', d:'Deleguoju rezultatą esamam žmogui, pridedu resursų.'}
   ]},
 
+  // LB (4–6)
   {target:'LB', t:'Komanda dažnai klysta naujoje procedūroje.', opts:[
     {a:'TM', d:'Ieškau, kas turi natūralias stiprybes ir kviečiu vesti.'},
     {a:'LB', d:'Aiškiai sutariam standartus ir „saugų bandymų lauką“ be kaltinimų.'},
@@ -127,6 +129,7 @@ const SCENARIOS = [
     {a:'IN', d:'Skiriu resursus taisymui ir patikros taškus.'}
   ]},
 
+  // CH (7–9)
   {target:'CH', t:'Gamyba vėluoja. Kaip mobilizuoji komandą?', opts:[
     {a:'TM', d:'Sujungiu talentus, kad greičiau išspręstų siaurą vietą.'},
     {a:'LB', d:'Nustatau tvarką ir ritmą, kad būtų saugu dirbti greičiau.'},
@@ -149,6 +152,7 @@ const SCENARIOS = [
     {a:'IN', d:'Perdeleguoju rezultatą su naujais resursais.'}
   ]},
 
+  // DM (10–12)
   {target:'DM', t:'Prieš svarbų sprendimą gauni dvi priešingas nuomones.', opts:[
     {a:'TM', d:'Įtraukiu žmogų, kurio stiprybė – analitika.'},
     {a:'LB', d:'Sukuriu saugią erdvę argumentams be asmeniškumų.'},
@@ -171,6 +175,7 @@ const SCENARIOS = [
     {a:'IN', d:'Deleguoju sprendimą su minimaliais resursais ir patikra.'}
   ]},
 
+  // IN (13–15)
   {target:'IN', t:'Turi įgyvendinti rezultatą per 2 savaites.', opts:[
     {a:'TM', d:'Parenku geriausiai tinkantį žmogų ir motyvuoju dalyvauti.'},
     {a:'LB', d:'Nubrėžiu standartus ir saugą, kad komanda nebijotų rizikos.'},
@@ -194,16 +199,14 @@ const SCENARIOS = [
   ]}
 ];
 
-let SHOW_LABELS = false; // archetipų etikečių rodymas ant pasirinkimų
-let CURRENT_ORDER = [];   // paskutinis klausimų ir atsakymų maišymas
+let SHOW_LABELS = false;  // archetipų etikečių rodymas ant pasirinkimų
+let CURRENT_ORDER = [];    // paskutinė sumaišyta tvarka
 
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
 
 function buildOrder(){
-  // Klausimai: pilnai sumaišyti
-  const qs = shuffle([...SCENARIOS]);
-  // Atsakymų tvarka: sumaišom KIEKVIENAME klausime atskirai
-  const withOpts = qs.map(q=>({ ...q, opts: shuffle([...q.opts]) }));
+  const qs = shuffle([...SCENARIOS]);                 // klausimai
+  const withOpts = qs.map(q=>({ ...q, opts: shuffle([...q.opts]) })); // atsakymai
   return withOpts;
 }
 
@@ -212,9 +215,9 @@ function render(){
   const box = document.getElementById('questions'); box.innerHTML='';
   CURRENT_ORDER.forEach((q, i)=>{
     const div = document.createElement('div'); div.className='q';
-    const title = document.createElement('div'); title.innerHTML = `<strong>${(i+1).toString().padStart(2,'0)}.</strong> ${q.t}`;
+    const title = document.createElement('div'); title.innerHTML = `<strong>${(i+1).toString().padStart(2,'0')}.</strong> ${q.t}`;
     const opts = document.createElement('div'); opts.className='opts';
-    q.opts.forEach((op, j)=>{
+    q.opts.forEach((op)=>{
       const row = document.createElement('label'); row.className='opt';
       const input = document.createElement('input'); input.type='radio'; input.name='q_'+i; input.value=op.a; input.required=true;
       const text = document.createElement('div');
@@ -245,8 +248,8 @@ function normalizeForRadar(points){
   const norm = {TM:0,LB:0,CH:0,DM:0,IN:0};
   for(const k of Object.keys(points)){
     const p = points[k];
-    const clamped = Math.max(3, Math.min(9, p));
-    norm[k] = 1 + (clamped-3)/6*4; // 3..9 → 1..5
+    const clamped = Math.max(3, Math.min(9, p)); // per 3 target klausimus
+    norm[k] = 1 + (clamped-3)/6*4;               // 3..9 → 1..5
   }
   return norm;
 }
@@ -257,16 +260,19 @@ function drawRadar(vals){
   const labelColor=getComputedStyle(document.body).getPropertyValue('--muted').trim();
   for(let lvl=1; lvl<=levels; lvl++){
     const r=(lvl/levels)*R; const pts=[];
-    for(let i=0;i<ARCH.length;i++){ const ang=(-90+i*360/ARCH.length)*Math.PI/180; pts.push(`${(r*Math.cos(ang)).toFixed(1)},${(r*Math.sin(ang)).toFixed(1)}`);} 
-    const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon'); poly.setAttribute('points', pts.join(' ')); poly.setAttribute('fill','none'); poly.setAttribute('stroke',gridColor); svg.appendChild(poly);
+    for(let i=0;i<ARCH.length;i++){ const ang=(-90+i*360/ARCH.length)*Math.PI/180; pts.push(`${(r*Math.cos(ang)).toFixed(1)},${(r*Math.sin(ang)).toFixed(1)}`); }
+    const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('points', pts.join(' ')); poly.setAttribute('fill','none'); poly.setAttribute('stroke',gridColor); svg.appendChild(poly);
   }
   for(let i=0;i<ARCH.length;i++){
     const ang=(-90+i*360/ARCH.length)*Math.PI/180; const x=(220*Math.cos(ang)).toFixed(1); const y=(220*Math.sin(ang)).toFixed(1);
-    const text=document.createElementNS('http://www.w3.org/2000/svg','text'); text.setAttribute('x',x); text.setAttribute('y',y); text.setAttribute('text-anchor','middle'); text.setAttribute('dominant-baseline','middle'); text.setAttribute('fill',labelColor); text.textContent=ARCH[i].name; svg.appendChild(text);
+    const text=document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x',x); text.setAttribute('y',y); text.setAttribute('text-anchor','middle'); text.setAttribute('dominant-baseline','middle'); text.setAttribute('fill',labelColor); text.textContent=ARCH[i].name; svg.appendChild(text);
   }
   const arr = ARCH.map(a=>vals[a.key]);
   const pts = ARCH.map((a,i)=>{ const ang=(-90+i*360/ARCH.length)*Math.PI/180; const r=(arr[i]/5)*R; return `${(r*Math.cos(ang)).toFixed(1)},${(r*Math.sin(ang)).toFixed(1)}`; });
-  const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon'); poly.setAttribute('points', pts.join(' ')); poly.setAttribute('fill','rgba(102,166,255,0.25)'); poly.setAttribute('stroke','#66a6ff'); poly.setAttribute('stroke-width','2'); svg.appendChild(poly);
+  const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points', pts.join(' ')); poly.setAttribute('fill','rgba(102,166,255,0.25)'); poly.setAttribute('stroke','#66a6ff'); poly.setAttribute('stroke-width','2'); svg.appendChild(poly);
 }
 
 function buildInsights(points, countsAll){
@@ -333,10 +339,8 @@ function toggleTheme(){
 function toggleLabels(){
   SHOW_LABELS = !SHOW_LABELS;
   document.getElementById('labels').textContent = 'Rodyti archetipų etiketes: ' + (SHOW_LABELS? 'Įjungta' : 'Išjungta');
-  // Persikraunam klausimus su nauju rodymu
   const pos = window.scrollY; render(); window.scrollTo(0,pos);
 }
-
 function reshuffle(){
   const pos = window.scrollY; render(); reset(); window.scrollTo(0,pos);
 }
