@@ -4,11 +4,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Multipliers Archetipų Testas v10.6‑native</title>
+<title>Multipliers Archetipų Testas v10.7</title>
 <style>
   :root { --bg:#0f172a; --text:#e2e8f0; --card:#1e293b; --accent:#60a5fa; --muted:#94a3b8; }
   .light { --bg:#ffffff; --text:#1f2937; --card:#f1f5f9; --accent:#2563eb; --muted:#6b7280; }
-
   body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); }
   header { position:fixed; top:0; left:0; right:0; background:var(--bg); border-bottom:1px solid var(--card); z-index:100; }
   .bar { max-width:1000px; margin:auto; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; }
@@ -16,11 +15,9 @@
   button { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:8px 12px; font-weight:600; cursor:pointer; }
   button.secondary { background:transparent; color:var(--text); border:1px solid var(--muted); }
   .badge { font-size:.85rem; padding:4px 8px; border-radius:999px; border:1px solid var(--muted); margin-left:8px; }
-
   main { max-width:1000px; margin:80px auto 24px; padding:0 16px; }
   .grid { display:grid; grid-template-columns:1fr; gap:12px; }
   @media(min-width:1024px){ .grid { grid-template-columns:1.2fr 0.8fr; } }
-
   .card { background:var(--card); border-radius:12px; padding:12px; }
   .question { margin-bottom:12px; }
   .qtext { margin-bottom:6px; }
@@ -31,21 +28,17 @@
   .archetypes p { margin:6px 0; }
   .error { color:#ffb4b4; font-weight:600; margin:8px 0; }
   #resultsCard.highlight { outline: 2px solid var(--accent); box-shadow: 0 0 0 4px rgba(96,165,250,0.25); transition: outline .2s; }
-
-  /* Print-only ataskaitos lapas */
+  /* Print lapas */
   .pdf-sheet { display:none; background:#fff; color:#111; padding:20px; font-family: Arial, sans-serif; }
   .pdf-sheet h2 { margin:0 0 10px 0; }
   .pdf-sheet .line { margin:6px 0; }
   .pdf-sheet .small { color:#666; font-size:12px; }
   .pdf-sheet .block { border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-top:10px; }
-
   @media print {
-    /* spalvų išsaugojimui */
     body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     header, #quiz, .toolbar { display:none !important; }
-    #resultsCard { display:none !important; } /* spausdiname „pdf-sheet“, o ne gyvą kortelę */
+    #resultsCard { display:none !important; }
     .pdf-sheet { display:block !important; }
-    /* pilnas baltas fonas */
     html, body { background:#fff !important; color:#111 !important; }
   }
 </style>
@@ -53,7 +46,7 @@
 <body>
 <header>
   <div class="bar">
-    <div class="title">Multipliers Archetipų Testas v10.6‑native</div>
+    <div class="title">Multipliers Archetipų Testas v10.7</div>
     <div class="toolbar">
       <button id="themeBtn" class="secondary" onclick="toggleTheme()">🌙 Tamsi</button>
       <button id="calcBtn" onclick="calculate()">Apskaičiuoti</button>
@@ -79,33 +72,33 @@
       <div class="card" style="margin-top:12px;">
         <canvas id="radar"></canvas>
       </div>
+
       <div class="archetypes">
         <h4>Archetipų paaiškinimai</h4>
-        <p><strong>Talent Magnet</strong> – pritraukia ir optimizuoja talentą; pavyzdys: „Viešai pabrėžia stiprybes, suteikia sceną atsiskleisti.“</p>
-        <p><strong>Liberator</strong> – kuria saugią, bet reikalaujančią erdvę; pavyzdys: „Pašalina kliūtis, skatina mokymąsi, neperima kontrolės.“</p>
-        <p><strong>Challenger</strong> – formuluoja ambiciją ir „kodėl“; pavyzdys: „Meta iššūkį, kelia tikėjimą, kad įmanoma.“</p>
-        <p><strong>Debate Maker</strong> – suformuoja problemą, kviečia skirtingas perspektyvas; pavyzdys: „Reikalauja įrodymų prieš sprendimą.“</p>
-        <p><strong>Investor</strong> – deleguoja rezultatą, suteikia resursus; pavyzdys: „Aiškiai apibrėžia ribas ir atsakomybę.“</p>
+        <p><strong>Talent Magnet</strong> – pritraukia ir optimizuoja talentą; paprasta: **pastebėk ir pakviesk žmones atsiskleisti**.</p>
+        <p><strong>Liberator</strong> – kuria saugią, bet reikalaujančią erdvę; paprasta: **leisk klysti, bet aiškiai susitark dėl standartų**.</p>
+        <p><strong>Challenger</strong> – formuluoja ambiciją ir „kodėl“; paprasta: **iškeli tikslą ir klausi „kaip padarysime?“**.</p>
+        <p><strong>Debate Maker</strong> – kviečia skirtingas perspektyvas; paprasta: **prieš sprendimą prašyk faktų ir nuomonių**.</p>
+        <p><strong>Investor</strong> – deleguoja rezultatą ir suteikia resursus; paprasta: **pasakyk rezultatą, duok resursus, susitark dėl patikros**.</p>
       </div>
     </aside>
   </div>
 </main>
 
-<!-- Tik Chart.js – radarui; jei ir jis blokuojamas, vis tiek turėsi tekstinę santrauką -->
+<!-- Chart.js radarui -->
 https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js</script>
 
 <script>
-/* ======== Globalūs ======== */
+/* ====== Tema ====== */
 let isLight=false, radar=null;
-
-/* ======== Tema ======== */
 function toggleTheme(){
   isLight = !isLight;
   document.body.classList.toggle('light', isLight);
   document.getElementById('themeBtn').textContent = isLight ? '☀️ Šviesi' : '🌙 Tamsi';
+  document.getElementById('libStatus').textContent = `Bibliotekos: Chart.js ${window.Chart?'✓':'✗'}`;
 }
 
-/* ======== Klausimai ======== */
+/* ====== Klausimai ====== */
 const Q=[
   {t:'Kai prasideda naujas darbas/projektas, sąmoningai ieškau žmonių „native genius“ ir skiriu jiems vaidmenis.', w:'TM', ty:'pos'},
   {t:'Reguliariai suteikiu žmonėms augimo galimybių (projektai, mentorystė).', w:'TM', ty:'pos'},
@@ -152,7 +145,7 @@ function render(){
   });
 }
 
-/* ======== Skaitymas/validacija/skaičiavimas ======== */
+/* ====== Validacija/Skaičiavimas ====== */
 function read(name){ const nodes=document.getElementsByName(name); for(const n of nodes){ if(n.checked) return parseInt(n.value,10);} return null; }
 function validate(){
   let firstMissing = null;
@@ -183,20 +176,46 @@ function compute(){
 }
 function label(k){ return ({TM:'Talent Magnet',LB:'Liberator',CH:'Challenger',DM:'Debate Maker',IN:'Investor'})[k]; }
 function spBand(sp){ if(sp <= 2.2) return 'žema'; if(sp < 3.6) return 'vidutinė'; return 'aukšta'; }
-function recommend(G){
+
+/* ====== Paprastos rekomendacijos (be terminų) ====== */
+const SIMPLE = {
+  TM: [
+    'Viešai pagirk žmogų už konkretų indėlį.',
+    'Pakviesk komandos narį pristatyti idėją susirinkime.',
+    'Skirk užduotį, kur žmogus galėtų parodyti savo stiprybes.'
+  ],
+  LB: [
+    'Pasakyk, kad klaidos yra mokymosi dalis, bet susitarkite dėl standartų.',
+    'Užduok 2–3 klausimus prieš siūlydamas sprendimą.',
+    'Kasdien paklausk: „Kuo galiu padėti nuimti kliūtis?“'
+  ],
+  CH: [
+    'Iškelk aiškų tikslą ir paklausk „kaip padarysime?“',
+    'Paprašyk komandos pasiūlyti bent 2 naujus sprendimus.',
+    'Sutark mažą „ambicijos“ eksperimentą 2 savaitėms.'
+  ],
+  DM: [
+    'Prieš sprendimą paprašyk 2 faktų / įrodymų.',
+    'Paprašyk skirtingų nuomonių ir užrašyk „už“/„prieš“.',
+    'Susitarkite dėl sprendimo kriterijų prieš diskusiją.'
+  ],
+  IN: [
+    'Deleguodamas pasakyk: „Svarbiausias rezultatas yra…“',
+    'Duok reikiamus resursus ir terminą.',
+    'Susitark dėl trumpo patikrinimo (pvz., trečiadienį 10 min.).'
+  ]
+};
+function recommendSimple(G){
   const sorted=Object.entries(G).sort((a,b)=>b[1]-a[1]);
-  const [topK,topV]=sorted[0]; const [lowK,lowV]=sorted[sorted.length-1];
-  const tips={
-    TM:{exp:'„Shadow presenter“ jaunam talentui',risk:'Pašalink blokatorius iš sprendimų'},
-    LB:{exp:'Įvesk „klaidos bilietą“',risk:'Nutrauk mikromanagementą'},
-    CH:{exp:'„Ambicijos sprintas“ 30 d.',risk:'Venk saugių sprendimų'},
-    DM:{exp:'Sukurk sprendimų kriterijų lentą',risk:'Stabdyk solo sprendimus'},
-    IN:{exp:'Deleguok rezultatą + resursus',risk:'Nustok „užbaigti pats“'}
+  const [topK,topV] = sorted[0];
+  const [lowK,lowV] = sorted[sorted.length-1];
+  return {
+    top: {k: topK, v: topV, rec: SIMPLE[topK]},
+    low: {k: lowK, v: lowV, rec: SIMPLE[lowK]}
   };
-  return {top:{k:topK,v:topV},low:{k:lowK,v:lowV},exp:tips[topK].exp,risk:tips[lowK].risk};
 }
 
-/* ======== Radar + santrauka ======== */
+/* ====== Radar + santrauka ====== */
 function drawRadar(G){
   const ctx=document.getElementById('radar'); if(!ctx) return;
   if(!window.Chart){
@@ -216,12 +235,13 @@ function drawRadar(G){
 }
 function formatSummary(res){
   const sum=Object.values(res.G).reduce((a,b)=>a+b,0);
-  const R=recommend(res.G);
-  return `<strong>Bendras balas:</strong> ${sum.toFixed(1)} / 100<br>
-          Dominuoja <strong>${label(R.top.k)}</strong> (≈${R.top.v.toFixed(1)}). Silpniausia – <strong>${label(R.low.k)}</strong> (≈${R.low.v.toFixed(1)}).<br>
+  const bands = sum>=70 ? 'labai įtraukiantis elgesys' : sum>=50 ? 'dalis elgesio yra Multipliers, yra kur tobulėti' : 'mažai įtraukimo – verta stiprinti komandos įgalinimą';
+  const R=recommendSimple(res.G);
+  return `<strong>Bendras balas:</strong> ${sum.toFixed(1)} / 100 — ${bands}<br>
+          <strong>Stipriausia:</strong> ${label(R.top.k)} (≈${R.top.v.toFixed(1)}); <strong>Silpniausia:</strong> ${label(R.low.k)} (≈${R.low.v.toFixed(1)}).<br>
           <strong>SP indeksas:</strong> ${res.SP.toFixed(1)} (${spBand(res.SP)})<br>
-          <strong>Eksperimentas:</strong> ${R.exp}.<br>
-          <strong>Rizikos mažinimas:</strong> ${R.risk}.`;
+          <strong>3 žingsniai stiprybei (${label(R.top.k)}):</strong> ${R.top.rec.join('; ')}.<br>
+          <strong>3 žingsniai rizikai (${label(R.low.k)}):</strong> ${R.low.rec.join('; ')}.`;
 }
 function showResults(res){
   drawRadar(res.G);
@@ -232,7 +252,7 @@ function showResults(res){
   setTimeout(()=>card.classList.remove('highlight'),1500);
 }
 
-/* ======== Mygtukai ======== */
+/* ====== Mygtukai ====== */
 function calculate(){ if(!validate()) return; const res=compute(); showResults(res); }
 function resetAll(){
   document.querySelectorAll('input[type=radio]').forEach(i=>i.checked=false);
@@ -241,34 +261,26 @@ function resetAll(){
   if(radar) radar.destroy();
 }
 
-/* ======== PDF (naršyklės) ======== */
+/* ====== PDF (naršyklės) ====== */
 function pdfNative(){
   if(!validate()){ alert('Atsakykite į visus klausimus prieš generuodami PDF.'); return; }
   const res=compute(); showResults(res);
 
-  // Sukuriame „pdf-sheet“ (print-only)
   let sheet = document.getElementById('pdfSheet');
-  if(!sheet){
-    sheet = document.createElement('div');
-    sheet.id = 'pdfSheet';
-    sheet.className = 'pdf-sheet';
-    document.body.appendChild(sheet);
-  }
+  if(!sheet){ sheet = document.createElement('div'); sheet.id = 'pdfSheet'; sheet.className = 'pdf-sheet'; document.body.appendChild(sheet); }
   sheet.innerHTML = `
     <h2>Multipliers ataskaita</h2>
     <div class="line">${formatSummary(res).replace(/<br>/g,' ')}</div>
     <div class="block">
-      <strong>Archetipų paaiškinimai</strong><br>
-      Talent Magnet – viešai pabrėžia stiprybes, suteikia sceną atsiskleisti.<br>
-      Liberator – pašalina kliūtis, skatina mokymąsi, neperima kontrolės.<br>
-      Challenger – meta iššūkį, kelia tikėjimą, kad įmanoma.<br>
-      Debate Maker – reikalauja įrodymų prieš sprendimą.<br>
-      Investor – aiškiai apibrėžia ribas ir atsakomybę.
+      <strong>Archetipų paaiškinimai (paprasta kalba)</strong><br>
+      Talent Magnet — pastebėk ir pakviesk žmones atsiskleisti.<br>
+      Liberator — leisk klysti, susitarkite dėl standartų.<br>
+      Challenger — iškelk „kodėl“, kviesk rasti „kaip“.<br>
+      Debate Maker — prieš sprendimą prašyk faktų ir nuomonių.<br>
+      Investor — pasakyk rezultatą, duok resursus, susitark dėl patikros.
     </div>
     <div class="small">Generuota: ${new Date().toLocaleString()}</div>
   `;
-
-  // Pridedame radaro paveikslą (jei yra)
   const canvas = document.getElementById('radar');
   if(canvas && window.Chart){
     const img = canvas.toDataURL('image/png', 1.0);
@@ -276,12 +288,10 @@ function pdfNative(){
     imgEl.src = img; imgEl.style.width = '520px'; imgEl.style.display='block'; imgEl.style.marginTop='10px';
     sheet.appendChild(imgEl);
   }
-
-  // Natūralus PDF per naršyklės print
   window.print();
 }
 
-/* ======== Inicializacija ======== */
+/* ====== Inicializacija ====== */
 (function init(){
   render();
   document.getElementById('libStatus').textContent = `Bibliotekos: Chart.js ${window.Chart?'✓':'✗'}`;
