@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Multipliers Archetipų Testas v10.9 — 15 klausimų (5 pasirinkimai)</title>
+  <title>Multipliers Archetipų Testas v10.9 — 15 klausimų (maišomi)</title>
   <style>
     :root{--bg:#0e0f13;--panel:#171922;--text:#e8ecf1;--muted:#aab4c0;--accent:#59c173;--accent2:#66a6ff;--grid:#2a2e39;--border:#222636;--chip:#2a2e39}
     [data-theme="light"]{--bg:#f7f9fc;--panel:#ffffff;--text:#11161c;--muted:#576270;--accent:#167e56;--accent2:#2b6fff;--grid:#dfe5ef;--border:#d6dde8;--chip:#eef2f9}
@@ -42,16 +42,18 @@
   <header>
     <h1>Multipliers Archetipų Testas v10.9</h1>
     <button id="theme" class="btn flat">Tema: Tamsi/Šviesi</button>
+    <button id="shuffle" class="btn flat">Permaišyti</button>
+    <button id="labels" class="btn flat">Rodyti archetipų etiketes: Išjungta</button>
     <button id="calc" class="btn">Apskaičiuoti</button>
     <button id="reset" class="btn secondary">Išvalyti</button>
     <button id="pdf" class="btn secondary">PDF (naršyklė)</button>
-    <span class="legend" id="libStatus">15 klausimų · 5 atsakymai (TM/LB/CH/DM/IN)</span>
+    <span class="legend" id="libStatus">15 klausimų · 5 atsakymai (maišomi TM/LB/CH/DM/IN)</span>
   </header>
 
   <main>
     <section class="card">
       <h2>Klausimynas</h2>
-      <div class="content legend">Kiekviename klausime pasirink vieną elgesį.</div>
+      <div class="content legend">Kiekviename klausime pasirink vieną elgesį. Atsakymo parinktys atitinka penkis archetipus, tačiau jų eilės tvarka <strong>atsitiktinai sumaišoma</strong> kiekvieną kartą, kad nesijaustų tendencijos.</div>
       <div class="content" id="questions"></div>
       <div class="actions content"><span id="status" class="legend"></span></div>
     </section>
@@ -68,7 +70,7 @@
   </main>
 
   <footer>
-    v10.9 · Oleg Mozochin + AI
+    v10.9 · Vieno failo versija (be CDN) · Atsitiktinis maišymas (klausimai + atsakymai)
   </footer>
 
 <script>
@@ -80,9 +82,7 @@ const ARCH = [
   {key:'IN', name:'Investor'}
 ];
 
-// 15 scenarijų: 3 kiekvienam archetipui. Kiekvieno scenarijaus "target" nurodo kuriam archetipui jis labiausiai tinka.
 const SCENARIOS = [
-  // TM (1–3)
   {target:'TM', t:'Komandoje atsiranda naujas žmogus su stipria analitika. Kaip elgiesi pirmą savaitę?', opts:[
     {a:'TM', d:'Pastebiu stiprybes, parenku realią užduotį ir paskiriu mentorystę.'},
     {a:'LB', d:'Aiškiai paaiškinu taisykles ir saugias bandymų ribas.'},
@@ -105,7 +105,6 @@ const SCENARIOS = [
     {a:'IN', d:'Deleguoju rezultatą esamam žmogui, pridedu resursų.'}
   ]},
 
-  // LB (4–6)
   {target:'LB', t:'Komanda dažnai klysta naujoje procedūroje.', opts:[
     {a:'TM', d:'Ieškau, kas turi natūralias stiprybes ir kviečiu vesti.'},
     {a:'LB', d:'Aiškiai sutariam standartus ir „saugų bandymų lauką“ be kaltinimų.'},
@@ -128,7 +127,6 @@ const SCENARIOS = [
     {a:'IN', d:'Skiriu resursus taisymui ir patikros taškus.'}
   ]},
 
-  // CH (7–9)
   {target:'CH', t:'Gamyba vėluoja. Kaip mobilizuoji komandą?', opts:[
     {a:'TM', d:'Sujungiu talentus, kad greičiau išspręstų siaurą vietą.'},
     {a:'LB', d:'Nustatau tvarką ir ritmą, kad būtų saugu dirbti greičiau.'},
@@ -151,7 +149,6 @@ const SCENARIOS = [
     {a:'IN', d:'Perdeleguoju rezultatą su naujais resursais.'}
   ]},
 
-  // DM (10–12)
   {target:'DM', t:'Prieš svarbų sprendimą gauni dvi priešingas nuomones.', opts:[
     {a:'TM', d:'Įtraukiu žmogų, kurio stiprybė – analitika.'},
     {a:'LB', d:'Sukuriu saugią erdvę argumentams be asmeniškumų.'},
@@ -174,7 +171,6 @@ const SCENARIOS = [
     {a:'IN', d:'Deleguoju sprendimą su minimaliais resursais ir patikra.'}
   ]},
 
-  // IN (13–15)
   {target:'IN', t:'Turi įgyvendinti rezultatą per 2 savaites.', opts:[
     {a:'TM', d:'Parenku geriausiai tinkantį žmogų ir motyvuoju dalyvauti.'},
     {a:'LB', d:'Nubrėžiu standartus ir saugą, kad komanda nebijotų rizikos.'},
@@ -198,16 +194,32 @@ const SCENARIOS = [
   ]}
 ];
 
+let SHOW_LABELS = false; // archetipų etikečių rodymas ant pasirinkimų
+let CURRENT_ORDER = [];   // paskutinis klausimų ir atsakymų maišymas
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function buildOrder(){
+  // Klausimai: pilnai sumaišyti
+  const qs = shuffle([...SCENARIOS]);
+  // Atsakymų tvarka: sumaišom KIEKVIENAME klausime atskirai
+  const withOpts = qs.map(q=>({ ...q, opts: shuffle([...q.opts]) }));
+  return withOpts;
+}
+
 function render(){
+  CURRENT_ORDER = buildOrder();
   const box = document.getElementById('questions'); box.innerHTML='';
-  SCENARIOS.forEach((q, i)=>{
+  CURRENT_ORDER.forEach((q, i)=>{
     const div = document.createElement('div'); div.className='q';
     const title = document.createElement('div'); title.innerHTML = `<strong>${(i+1).toString().padStart(2,'0)}.</strong> ${q.t}`;
     const opts = document.createElement('div'); opts.className='opts';
     q.opts.forEach((op, j)=>{
       const row = document.createElement('label'); row.className='opt';
       const input = document.createElement('input'); input.type='radio'; input.name='q_'+i; input.value=op.a; input.required=true;
-      const text = document.createElement('div'); text.innerHTML = `<strong>${ARCH.find(a=>a.key===op.a).name}</strong>: ${op.d}`;
+      const text = document.createElement('div');
+      const arche = ARCH.find(a=>a.key===op.a).name;
+      text.innerHTML = SHOW_LABELS ? `<strong>${arche}</strong>: ${op.d}` : `${op.d}`;
       row.appendChild(input); row.appendChild(text); opts.appendChild(row);
     });
     div.appendChild(title); div.appendChild(opts); div.dataset.target = q.target; box.appendChild(div);
@@ -224,21 +236,17 @@ function collect(){
     if(!chosen){ missing++; continue; }
     const arch = chosen.value; countsAll[arch] += 1;
     const target = r.dataset.target;
-    // Taškų taisyklė: jei pasirinktas archetipas sutampa su klausimo target → +3, kitaip +1 (pasirinktam archetipui)
     points[arch] += (arch===target? 3 : 1);
   }
   return {points, countsAll, missing};
 }
 
 function normalizeForRadar(points){
-  // Kiekvienas archetipas turi 3 „target“ klausimus; teorinis min=3 (visada pasirinkta ne target), max=9 (visada pasirinkta target).
   const norm = {TM:0,LB:0,CH:0,DM:0,IN:0};
   for(const k of Object.keys(points)){
     const p = points[k];
-    // ribojam į [3,9] (jei pasirenkama daug kartų kitų target klausimuose, vis tiek radare lyginam pagal 3 target galimybes)
     const clamped = Math.max(3, Math.min(9, p));
-    // map 3..9 → 1..5
-    norm[k] = 1 + (clamped-3)/6*4;
+    norm[k] = 1 + (clamped-3)/6*4; // 3..9 → 1..5
   }
   return norm;
 }
@@ -266,14 +274,12 @@ function buildInsights(points, countsAll){
   const chips = document.getElementById('chips'); chips.innerHTML='';
   const chip=(txt)=>{ const c=document.createElement('span'); c.className='chip'; c.textContent=txt; return c; };
 
-  // Elgesio pasikartojimas (kiek kartų rinktasi kiekvienas archetipas)
   const sortedCounts = Object.entries(countsAll).sort((a,b)=>b[1]-a[1]);
   const topPick = sortedCounts[0];
   chips.appendChild(chip(`Dažniausiai rinktasi: ${ARCH.find(x=>x.key===topPick[0]).name} × ${topPick[1]} / 15`));
   for(const [k,v] of sortedCounts.slice(1)) chips.appendChild(chip(`${ARCH.find(x=>x.key===k).name}: ${v}`));
-  if(topPick[1] >= 9) chips.appendChild(chip('⚠ Elgesys monotonus (\u2265 9 iš 15)'));
+  if(topPick[1] >= 9) chips.appendChild(chip('⚠ Elgesys monotonus (≥9 iš 15)'));
 
-  // Suvestinė
   const domKey = Object.keys(points).sort((a,b)=>points[b]-points[a])[0];
   const domName = ARCH.find(a=>a.key===domKey).name;
   const norm = normalizeForRadar(points);
@@ -283,7 +289,6 @@ function buildInsights(points, countsAll){
   summary.innerHTML = `Bendra: <strong>${cls}</strong> · Dominuojantis pasirinkimų archetipas: <strong>${domName}</strong>. `+
     ARCH.map(a=>`${a.name}: ${norm[a.key].toFixed(2)}`).join(' | ');
 
-  // Rekomendacijos (sutrumpintos)
   const h3 = document.createElement('h3'); h3.textContent = 'Rekomendacijos (30 d.)'; insights.appendChild(h3);
   const ul=document.createElement('ul');
   if(cls==='Multiplier'){
@@ -323,11 +328,28 @@ function reset(){
 function toggleTheme(){
   const html=document.documentElement; const isLight=html.getAttribute('data-theme')==='light';
   html.setAttribute('data-theme', isLight? '' : 'light');
-  // Persipiešiam radarą su naujomis spalvomis
   drawRadar({TM:1,LB:1,CH:1,DM:1,IN:1});
 }
+function toggleLabels(){
+  SHOW_LABELS = !SHOW_LABELS;
+  document.getElementById('labels').textContent = 'Rodyti archetipų etiketes: ' + (SHOW_LABELS? 'Įjungta' : 'Išjungta');
+  // Persikraunam klausimus su nauju rodymu
+  const pos = window.scrollY; render(); window.scrollTo(0,pos);
+}
 
-function init(){ render(); reset(); document.getElementById('calc').addEventListener('click', calc); document.getElementById('reset').addEventListener('click', ()=>{ render(); reset(); }); document.getElementById('pdf').addEventListener('click', ()=>window.print()); document.getElementById('theme').addEventListener('click', toggleTheme); }
+function reshuffle(){
+  const pos = window.scrollY; render(); reset(); window.scrollTo(0,pos);
+}
+
+function init(){
+  render(); reset();
+  document.getElementById('calc').addEventListener('click', calc);
+  document.getElementById('reset').addEventListener('click', ()=>{ render(); reset(); });
+  document.getElementById('pdf').addEventListener('click', ()=>window.print());
+  document.getElementById('theme').addEventListener('click', toggleTheme);
+  document.getElementById('shuffle').addEventListener('click', reshuffle);
+  document.getElementById('labels').addEventListener('click', toggleLabels);
+}
 window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
