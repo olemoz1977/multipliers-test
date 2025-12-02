@@ -1,6 +1,6 @@
 # Multipliers Test
 
-Šis testas paremtas Liz Wiseman knyga **„Multipliers: How the Best Leaders Make Everyone Smarter“**.
+Šie testai paremti Liz Wiseman knyga **„Multipliers: How the Best Leaders Make Everyone Smarter“**.
 
 Sveiki atvykę 👋  
 
