@@ -4,7 +4,8 @@
 
 Sveiki atvykę 👋  
 
-Šis testas padeda įvertinti, kaip stipriai **padaugini** (multipliuoti) kitų žmonių potencialą — remiantis „Multipliers“ filosofija.
+Šie testai padeda įvertinti, kaip stipriai **padaugini** (multipliuoti) kitų žmonių potencialą — remiantis „Multipliers“ filosofija.
+Testai neoficialus ir klausimai nevaliduoti. Naudokit pramogai bet atkreipkit demesį į rezultatus ;-).
 
 ---
 
